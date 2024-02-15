@@ -44,6 +44,7 @@ public class SessionUserService implements UserService {
             throw new DuplicatedEmailException("중복된 이메일입니다.");
         }
         userRepository.save(user);
+        httpSession.setAttribute(LOG_ID, user.getId());
     }
 
     @Override

@@ -5,8 +5,8 @@ import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPON
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_OK;
 
 import com.waruru.areyouhere.common.annotation.LoginRequired;
-import com.waruru.areyouhere.user.dto.LoginDto;
-import com.waruru.areyouhere.user.dto.SignUpDto;
+import com.waruru.areyouhere.user.dto.request.LoginRequestDto;
+import com.waruru.areyouhere.user.dto.request.SignUpRequestDto;
 import com.waruru.areyouhere.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,17 +31,17 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping
-    public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpDto signUpDto){
+    public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
 
-        userService.register(SignUpDto.toEntity(signUpDto, passwordEncoder));
+        userService.register(SignUpRequestDto.toEntity(signUpRequestDto, passwordEncoder));
         return RESPONSE_OK;
 
     }
 
     @PostMapping("/login")
-    public ResponseEntity<HttpStatus> login(@RequestBody @Valid LoginDto loginDto){
+    public ResponseEntity<HttpStatus> login(@RequestBody @Valid LoginRequestDto loginRequestDto){
 
-        if(userService.login(LoginDto.toEntity(loginDto, passwordEncoder))){
+        if(userService.login(LoginRequestDto.toEntity(loginRequestDto, passwordEncoder))){
             return RESPONSE_OK;
         }
 
@@ -62,9 +62,6 @@ public class UserController {
         }
         return RESPONSE_OK;
     }
-
-
-
 
 
 }

@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.user.dto;
+package com.waruru.areyouhere.user.dto.request;
 
 import com.waruru.areyouhere.user.domain.entity.User;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class LoginDto {
+public class LoginRequestDto {
 
     @NotEmpty
     @Email(message = "유효하지 않은 이메일 형식입니다.",
@@ -24,10 +24,10 @@ public class LoginDto {
     @NotEmpty
     private String password;
 
-    public static User toEntity(LoginDto loginDto, PasswordEncoder passwordEncoder){
+    public static User toEntity(LoginRequestDto loginRequestDto, PasswordEncoder passwordEncoder){
         return User.builder()
-                .email(loginDto.getEmail())
-                .password(passwordEncoder.encode(loginDto.getPassword()))
+                .email(loginRequestDto.getEmail())
+                .password(passwordEncoder.encode(loginRequestDto.getPassword()))
                 .build();
     }
 

@@ -30,10 +30,14 @@ public class User {
     @NotNull
     private String password;
 
+    @NotNull
+    private String nickname;
+
     @Builder
-    public User(String email, String password){
+    public User(String email, String password, String nickname){
         this.email = email;
         this.password = password;
+        this.nickname = nickname;
     }
 
 
