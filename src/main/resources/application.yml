@@ -1,16 +1,8 @@
+server:
+  port: 8080
+
 spring:
-#  datasource:
-#    url:
-#    username:
-#    password:
-#    driver-class-name:
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-      # show_sql: true
-      format_sql: true
-logging.level:
-  org.hibernate.SQL: debug
-# org.hibernate.orm.jdbc.bind: trace
+  profiles:
+    active: local
+  config:
+    import: classpath:application-db.yml
