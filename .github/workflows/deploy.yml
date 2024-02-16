@@ -24,6 +24,16 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
+      - name: set credentials
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: './src/main/resources/application-prod.yaml'
+        env:
+            SPRING_DATASOURCE_URL: ${{ secrets.AWS_DATASOURCE_URL }}
+            AWS_RDS_USERNAME: ${{ secrets.AWS_RDS_USERNAME }}
+            AWS_RDS_PASSWORD: ${{ secrets.AWS_RDS_PASSWORD }}
+            AWS_ELASTICACHE_HOST: ${{ secrets.AWS_ELASTICACHE_HOST }}
+            AWS_ELASTICACHE_DATABASE: ${{ secrets.AWS_ELASTICACHE_DATABASE }}
 
       - name: Login to Amazon ECR
         id: login-ecr

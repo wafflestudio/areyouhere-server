@@ -3,6 +3,8 @@ server:
 
 spring:
   profiles:
-    active: local
+    active: prod
   config:
-    import: classpath:application-db.yml
+    import:
+      - application-dev.yml
+      - application-prod.yml
