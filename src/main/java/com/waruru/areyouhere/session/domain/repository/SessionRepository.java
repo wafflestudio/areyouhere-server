@@ -49,5 +49,5 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
             + "INNER JOIN attendance ON session.id = attendance.session_id \n"
             + "WHERE session.id = :sessionId", nativeQuery = true )
     public Optional<SessionInfo> findSessionWithAttendance(@Param("sessionId") Long sessionId);
-
+    
 }

@@ -10,6 +10,8 @@ import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     @Transactional
     public void setAbsentAfterDeactivation(long courseId, long sessionId){
 
+
         List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId, sessionId);
 
         Session session = sessionRepository.findById(sessionId).orElseThrow(SessionIdNotFoundException::new);
@@ -60,8 +63,17 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Async
-    public void setAttend(Long sessionId, String attendanceName){
+    public void setAttend(Long courseId, Long sessionId, String attendanceName){
 
+        List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionId(courseId, sessionId);
+
+        Session session = sessionRepository.findById(sessionId).orElseThrow(SessionIdNotFoundException::new);
+        List<Attendance> attendances = absenteeBySessionId.stream().map(attendee -> Attendance.builder()
+                .attendee((attendee))
+                .session(session)
+                .isAttended(false)
+                .build()).toList();
+        attendanceRepository.saveAll(attendances);
     }
 
 }
