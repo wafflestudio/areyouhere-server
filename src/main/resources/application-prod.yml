@@ -1,0 +1,13 @@
+spring.config.activate.on-profile: prod
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${AWS_DATASOURCE_URL}
+    username: ${AWS_RDS_USERNAME}
+    password: ${AWS_RDS_PASSWORD}
+
+  data:
+    redis:
+      host: ${AWS_ELASTICACHE_HOST}
+      database: ${AWS_ELASTICACHE_DATABASE}
