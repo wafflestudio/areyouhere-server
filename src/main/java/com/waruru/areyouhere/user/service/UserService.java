@@ -1,16 +1,16 @@
 package com.waruru.areyouhere.user.service;
 
-import com.waruru.areyouhere.user.domain.entity.User;
+import com.waruru.areyouhere.user.domain.entity.Manager;
 
 public interface UserService {
 
-    public boolean login(User user);
+    public boolean login(Manager manager);
 
-    public void register(User user);
+    public void register(Manager manager);
 
     public void logout();
 
-    public User getLoginedUser();
+    public Manager getLoginedUser();
 
     public boolean isDuplicatedEmail(String email);
 }

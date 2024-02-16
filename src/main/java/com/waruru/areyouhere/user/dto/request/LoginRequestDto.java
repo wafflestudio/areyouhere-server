@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.user.dto.request;
 
-import com.waruru.areyouhere.user.domain.entity.User;
+import com.waruru.areyouhere.user.domain.entity.Manager;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
@@ -24,8 +24,8 @@ public class LoginRequestDto {
     @NotEmpty
     private String password;
 
-    public static User toEntity(LoginRequestDto loginRequestDto, PasswordEncoder passwordEncoder){
-        return User.builder()
+    public static Manager toEntity(LoginRequestDto loginRequestDto, PasswordEncoder passwordEncoder){
+        return Manager.builder()
                 .email(loginRequestDto.getEmail())
                 .password(passwordEncoder.encode(loginRequestDto.getPassword()))
                 .build();

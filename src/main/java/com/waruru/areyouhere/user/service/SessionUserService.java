@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.user.service;
 
-import com.waruru.areyouhere.user.domain.entity.User;
+import com.waruru.areyouhere.user.domain.entity.Manager;
 import com.waruru.areyouhere.user.domain.repository.UserRepository;
 import com.waruru.areyouhere.user.exception.DuplicatedEmailException;
 import com.waruru.areyouhere.user.exception.MemberNotFoundException;
@@ -21,12 +21,12 @@ public class SessionUserService implements UserService {
     private static final String LOG_ID = "logId";
 
     @Override
-    public boolean login(User user) {
-        User findUser = userRepository.findUserByEmail(user.getEmail())
+    public boolean login(Manager manager) {
+        Manager findManager = userRepository.findUserByEmail(manager.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
-        if(passwordEncoder.matches(user.getPassword(), findUser.getPassword())){
-            httpSession.setAttribute(LOG_ID, user.getId());
+        if(passwordEncoder.matches(manager.getPassword(), findManager.getPassword())){
+            httpSession.setAttribute(LOG_ID, manager.getId());
             return true;
         }
         return false;
@@ -37,18 +37,18 @@ public class SessionUserService implements UserService {
     }
 
     @Override
-    public void register(User user){
-        boolean isEmailDuplicated = isDuplicatedEmail(user.getEmail());
+    public void register(Manager manager){
+        boolean isEmailDuplicated = isDuplicatedEmail(manager.getEmail());
 
         if(isEmailDuplicated){
             throw new DuplicatedEmailException("중복된 이메일입니다.");
         }
-        userRepository.save(user);
-        httpSession.setAttribute(LOG_ID, user.getId());
+        userRepository.save(manager);
+        httpSession.setAttribute(LOG_ID, manager.getId());
     }
 
     @Override
-    public User getLoginedUser(){
+    public Manager getLoginedUser(){
         Long userId = (Long) httpSession.getAttribute(LOG_ID);
         if (userId == null){
             throw new UnAuthenticatedException();
