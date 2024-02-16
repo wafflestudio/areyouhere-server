@@ -6,5 +6,5 @@ spring:
     active: prod
   config:
     import:
-      - application-dev.yml
-      - application-prod.yml
+      - application-dev.yaml
+      - application-prod.yaml
