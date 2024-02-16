@@ -1,7 +1,7 @@
 package com.waruru.areyouhere.user.dto.request;
 
 
-import com.waruru.areyouhere.user.domain.entity.User;
+import com.waruru.areyouhere.user.domain.entity.Manager;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -33,11 +33,11 @@ public class SignUpRequestDto {
             regexp = "^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,16}$")
     private String nickname;
 
-    public static User toEntity(SignUpRequestDto signUpRequestDto, PasswordEncoder passwordEncoder){
-        return User.builder()
+    public static Manager toEntity(SignUpRequestDto signUpRequestDto, PasswordEncoder passwordEncoder){
+        return Manager.builder()
                 .email(signUpRequestDto.getEmail())
                 .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
-                .nickname(signUpRequestDto.nickname)
+                .name(signUpRequestDto.nickname)
                 .build();
     }
 }

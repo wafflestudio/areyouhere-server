@@ -2,7 +2,7 @@ package com.waruru.areyouhere.auth.interceptor;
 
 
 import com.waruru.areyouhere.common.annotation.LoginRequired;
-import com.waruru.areyouhere.user.domain.entity.User;
+import com.waruru.areyouhere.user.domain.entity.Manager;
 import com.waruru.areyouhere.user.exception.UnAuthenticatedException;
 import com.waruru.areyouhere.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,9 +22,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         if (handler instanceof HandlerMethod && ((HandlerMethod) handler).hasMethodAnnotation(LoginRequired.class)) {
-            User user = userService.getLoginedUser();
+            Manager manager = userService.getLoginedUser();
 
-            if (user == null) {
+            if (manager == null) {
                 throw new UnAuthenticatedException();
             }
         }
