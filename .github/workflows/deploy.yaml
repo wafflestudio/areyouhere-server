@@ -37,11 +37,11 @@ jobs:
         with:
           files: './src/main/resources/application-prod.yaml'
         env:
-            spring.datasource.url: ${{ secrets.AWS_DATASOURCE_URL }}
-            spring.datasource.username: ${{ secrets.AWS_RDS_USERNAME }}
-            spring.datasource.password: ${{ secrets.AWS_RDS_PASSWORD }}
-            spring.data.redis.host: ${{ secrets.AWS_ELASTICACHE_HOST }}
-            spring.data.redis.database: ${{ secrets.AWS_ELASTICACHE_DATABASE }}
+          spring.datasource.url: ${{ secrets.AWS_DATASOURCE_URL }}
+          spring.datasource.username: ${{ secrets.AWS_RDS_USERNAME }}
+          spring.datasource.password: ${{ secrets.AWS_RDS_PASSWORD }}
+          spring.data.redis.host: ${{ secrets.AWS_ELASTICACHE_HOST }}
+          spring.data.redis.database: ${{ secrets.AWS_ELASTICACHE_DATABASE }}
 
       - name: Login to Amazon ECR
         id: login-ecr
