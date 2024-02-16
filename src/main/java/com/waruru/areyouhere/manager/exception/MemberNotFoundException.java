@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.user.exception;
+package com.waruru.areyouhere.manager.exception;
 
 public class MemberNotFoundException extends RuntimeException{
     public MemberNotFoundException() {

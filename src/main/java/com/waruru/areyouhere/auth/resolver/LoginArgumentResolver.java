@@ -1,7 +1,7 @@
 package com.waruru.areyouhere.auth.resolver;
 
 import com.waruru.areyouhere.common.annotation.Login;
-import com.waruru.areyouhere.user.service.UserService;
+import com.waruru.areyouhere.manager.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final UserService userService;
+    private final ManagerService managerService;
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasMethodAnnotation(Login.class);
@@ -23,6 +23,6 @@ public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return userService.getLoginedUser();
+        return managerService.getLoginedUser();
     }
 }

@@ -1,11 +1,11 @@
-package com.waruru.areyouhere.user.domain.repository;
+package com.waruru.areyouhere.manager.domain.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UserRepositoryTest {
+class ManagerRepositoryTest {
 //    @Autowired
 //    private UserRepository userRepository;
 //

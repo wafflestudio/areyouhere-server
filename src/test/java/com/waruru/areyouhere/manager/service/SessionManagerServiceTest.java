@@ -1,13 +1,13 @@
-package com.waruru.areyouhere.user.service;
+package com.waruru.areyouhere.manager.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.waruru.areyouhere.user.domain.entity.Manager;
-import com.waruru.areyouhere.user.domain.repository.UserRepository;
-import com.waruru.areyouhere.user.dto.request.LoginRequestDto;
-import com.waruru.areyouhere.user.dto.request.SignUpRequestDto;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
+import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
+import com.waruru.areyouhere.manager.dto.request.LoginRequestDto;
+import com.waruru.areyouhere.manager.dto.request.SignUpRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,10 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ExtendWith(MockitoExtension.class)
 class SessionManagerServiceTest {
     @InjectMocks
-    private SessionUserService userService;
+    private SessionManagerService userService;
 
     @Mock
-    private UserRepository userRepository;
+    private ManagerRepository managerRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -46,7 +46,7 @@ class SessionManagerServiceTest {
     @DisplayName("이메일이 중복일 경우")
     void isDuplicatedEmail(){
         //given
-        when(userRepository.existsByEmail(any())).thenReturn(false);
+        when(managerRepository.existsByEmail(any())).thenReturn(false);
         //then
         assertFalse(userService.isDuplicatedEmail(manager.getEmail()));
     }
@@ -55,7 +55,7 @@ class SessionManagerServiceTest {
     @DisplayName("이메일이 중복이 아닐 경우")
     void isNotDuplicatedEmail(){
         //given
-        when(userRepository.existsByEmail(any())).thenReturn(true);
+        when(managerRepository.existsByEmail(any())).thenReturn(true);
         //then
         assertTrue(userService.isDuplicatedEmail(manager.getEmail()));
     }

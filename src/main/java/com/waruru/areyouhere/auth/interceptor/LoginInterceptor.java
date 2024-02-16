@@ -2,9 +2,9 @@ package com.waruru.areyouhere.auth.interceptor;
 
 
 import com.waruru.areyouhere.common.annotation.LoginRequired;
-import com.waruru.areyouhere.user.domain.entity.Manager;
-import com.waruru.areyouhere.user.exception.UnAuthenticatedException;
-import com.waruru.areyouhere.user.service.UserService;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
+import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
+import com.waruru.areyouhere.manager.service.ManagerService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +16,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @RequiredArgsConstructor
 public class LoginInterceptor implements HandlerInterceptor {
 
-    private final UserService userService;
+    private final ManagerService managerService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         if (handler instanceof HandlerMethod && ((HandlerMethod) handler).hasMethodAnnotation(LoginRequired.class)) {
-            Manager manager = userService.getLoginedUser();
+            Manager manager = managerService.getLoginedUser();
 
             if (manager == null) {
                 throw new UnAuthenticatedException();

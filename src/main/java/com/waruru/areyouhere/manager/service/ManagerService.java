@@ -1,8 +1,8 @@
-package com.waruru.areyouhere.user.service;
+package com.waruru.areyouhere.manager.service;
 
-import com.waruru.areyouhere.user.domain.entity.Manager;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
 
-public interface UserService {
+public interface ManagerService {
 
     public boolean login(Manager manager);
 
