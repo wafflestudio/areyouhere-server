@@ -27,7 +27,7 @@ jobs:
       - name: set credentials
         uses: microsoft/variable-substitution@v1
         with:
-          files: './src/main/resources/application-prod.yaml'
+          files: './src/main/resources/application-prod.yml'
         env:
             SPRING_DATASOURCE_URL: ${{ secrets.AWS_DATASOURCE_URL }}
             AWS_RDS_USERNAME: ${{ secrets.AWS_RDS_USERNAME }}
