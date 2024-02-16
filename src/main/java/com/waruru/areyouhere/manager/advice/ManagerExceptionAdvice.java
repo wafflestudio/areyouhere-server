@@ -16,17 +16,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice("com.waruru.areyouhere.manager")
 public class ManagerExceptionAdvice {
     @ExceptionHandler(MemberNotFoundException.class)
-    public ResponseEntity<HttpStatus> memberNotFoundException() {
+    public ResponseEntity<HttpStatus> memberNotFoundHandler() {
         return RESPONSE_NOT_FOUND;
     }
 
     @ExceptionHandler(UnAuthenticatedException.class)
-    public ResponseEntity<HttpStatus> unAuthorizedAccessException() {
+    public ResponseEntity<HttpStatus> unAuthorizedAccessHandler() {
         return RESPONSE_FORBIDDEN;
     }
 
     @ExceptionHandler(DuplicatedEmailException.class)
-    public ResponseEntity<HttpStatus> duplicatedEmailException(){
+    public ResponseEntity<HttpStatus> duplicatedEmailHandler(){
         return RESPONSE_CONFLICT;
     }
 
