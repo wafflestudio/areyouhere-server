@@ -1,12 +1,13 @@
 package com.waruru.areyouhere.session.domain.entity;
 
-
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
+import org.springframework.data.redis.core.index.Indexed;
 
 @AllArgsConstructor
 @Getter
@@ -17,9 +18,9 @@ public class AuthCode {
     private String authCode;
 
     @NotNull
+    @Indexed
     private long sessionId;
 
-    @TimeToLive
-    @NotNull
-    private long time;
+    private List<String> attendances;
+
 }
