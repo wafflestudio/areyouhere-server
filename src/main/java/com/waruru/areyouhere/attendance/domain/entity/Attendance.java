@@ -3,10 +3,14 @@ package com.waruru.areyouhere.attendance.domain.entity;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity(name = "attendance")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +25,11 @@ public class Attendance {
     private Session session;
 
     private boolean isAttended;
+
+    @Builder
+    public Attendance(Attendee attendee, Session session, boolean isAttended) {
+        this.attendee = attendee;
+        this.session = session;
+        this.isAttended = isAttended;
+    }
 }
