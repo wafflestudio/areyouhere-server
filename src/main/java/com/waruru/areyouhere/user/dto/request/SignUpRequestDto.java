@@ -37,7 +37,7 @@ public class SignUpRequestDto {
         return Manager.builder()
                 .email(signUpRequestDto.getEmail())
                 .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
-                .nickname(signUpRequestDto.nickname)
+                .name(signUpRequestDto.nickname)
                 .build();
     }
 }
