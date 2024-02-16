@@ -29,7 +29,7 @@ jobs:
         with:
           files: './src/main/resources/application-prod.yaml'
         env:
-            SPRING_DATASOURCE_URL: ${{ secrets.AWS_DATASOURCE_URL }}
+            AWS_DATASOURCE_URL: ${{ secrets.AWS_DATASOURCE_URL }}
             AWS_RDS_USERNAME: ${{ secrets.AWS_RDS_USERNAME }}
             AWS_RDS_PASSWORD: ${{ secrets.AWS_RDS_PASSWORD }}
             AWS_ELASTICACHE_HOST: ${{ secrets.AWS_ELASTICACHE_HOST }}
