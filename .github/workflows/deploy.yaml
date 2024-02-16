@@ -43,10 +43,6 @@ jobs:
           spring.data.redis.host: ${{ secrets.AWS_ELASTICACHE_HOST }}
           spring.data.redis.database: ${{ secrets.AWS_ELASTICACHE_DATABASE }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
       - name: Build, tag, and push image to Amazon ECR
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
