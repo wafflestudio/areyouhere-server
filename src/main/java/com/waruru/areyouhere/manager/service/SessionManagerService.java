@@ -1,10 +1,10 @@
-package com.waruru.areyouhere.user.service;
+package com.waruru.areyouhere.manager.service;
 
-import com.waruru.areyouhere.user.domain.entity.Manager;
-import com.waruru.areyouhere.user.domain.repository.UserRepository;
-import com.waruru.areyouhere.user.exception.DuplicatedEmailException;
-import com.waruru.areyouhere.user.exception.MemberNotFoundException;
-import com.waruru.areyouhere.user.exception.UnAuthenticatedException;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
+import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
+import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
+import com.waruru.areyouhere.manager.exception.MemberNotFoundException;
+import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,17 +12,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class SessionUserService implements UserService {
+public class SessionManagerService implements ManagerService {
 
     private final HttpSession httpSession;
-    private final UserRepository userRepository;
+    private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
 
     private static final String LOG_ID = "logId";
 
     @Override
     public boolean login(Manager manager) {
-        Manager findManager = userRepository.findUserByEmail(manager.getEmail())
+        Manager findManager = managerRepository.findManagerByEmail(manager.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
         if(passwordEncoder.matches(manager.getPassword(), findManager.getPassword())){
@@ -43,7 +43,7 @@ public class SessionUserService implements UserService {
         if(isEmailDuplicated){
             throw new DuplicatedEmailException("중복된 이메일입니다.");
         }
-        userRepository.save(manager);
+        managerRepository.save(manager);
         httpSession.setAttribute(LOG_ID, manager.getId());
     }
 
@@ -54,11 +54,11 @@ public class SessionUserService implements UserService {
             throw new UnAuthenticatedException();
         }
 
-        return userRepository.findUserById(userId).orElseThrow(MemberNotFoundException::new);
+        return managerRepository.findManagerById(userId).orElseThrow(MemberNotFoundException::new);
     }
 
     @Override
     public boolean isDuplicatedEmail(String email){
-        return userRepository.existsByEmail(email);
+        return managerRepository.existsByEmail(email);
     }
 }

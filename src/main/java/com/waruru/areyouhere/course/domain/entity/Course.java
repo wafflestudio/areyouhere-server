@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.course.domain.entity;
 
-import com.waruru.areyouhere.user.domain.entity.Manager;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
 import jakarta.persistence.*;
 import lombok.Getter;
 

@@ -1,7 +1,7 @@
-package com.waruru.areyouhere.user.dto.request;
+package com.waruru.areyouhere.manager.dto.request;
 
 
-import com.waruru.areyouhere.user.domain.entity.Manager;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;

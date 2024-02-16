@@ -1,13 +1,13 @@
-package com.waruru.areyouhere.user.controller;
+package com.waruru.areyouhere.manager.controller;
 
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_BAD_REQUEST;
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_CONFLICT;
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_OK;
 
 import com.waruru.areyouhere.common.annotation.LoginRequired;
-import com.waruru.areyouhere.user.dto.request.LoginRequestDto;
-import com.waruru.areyouhere.user.dto.request.SignUpRequestDto;
-import com.waruru.areyouhere.user.service.UserService;
+import com.waruru.areyouhere.manager.dto.request.LoginRequestDto;
+import com.waruru.areyouhere.manager.dto.request.SignUpRequestDto;
+import com.waruru.areyouhere.manager.service.ManagerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,18 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(UserController.MEMBER_API_URL)
-public class UserController {
+@RequestMapping(ManagerController.MEMBER_API_URL)
+public class ManagerController {
 
     public static final String MEMBER_API_URL = "/api/user";
 
-    private final UserService userService;
+    private final ManagerService managerService;
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping
     public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
 
-        userService.register(SignUpRequestDto.toEntity(signUpRequestDto, passwordEncoder));
+        managerService.register(SignUpRequestDto.toEntity(signUpRequestDto, passwordEncoder));
         return RESPONSE_OK;
 
     }
@@ -41,7 +41,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(@RequestBody @Valid LoginRequestDto loginRequestDto){
 
-        if(userService.login(LoginRequestDto.toEntity(loginRequestDto, passwordEncoder))){
+        if(managerService.login(LoginRequestDto.toEntity(loginRequestDto, passwordEncoder))){
             return RESPONSE_OK;
         }
 
@@ -51,13 +51,13 @@ public class UserController {
     @LoginRequired
     @GetMapping("/logout")
     public ResponseEntity<HttpStatus> logout(){
-        userService.logout();
+        managerService.logout();
         return RESPONSE_OK;
     }
 
     @GetMapping("/{email}")
     public ResponseEntity<HttpStatus> isDuplicatedEmail(@PathVariable String email){
-        if(userService.isDuplicatedEmail(email)){
+        if(managerService.isDuplicatedEmail(email)){
             return RESPONSE_CONFLICT;
         }
         return RESPONSE_OK;

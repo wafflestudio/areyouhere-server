@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.user.domain.entity;
+package com.waruru.areyouhere.manager.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
