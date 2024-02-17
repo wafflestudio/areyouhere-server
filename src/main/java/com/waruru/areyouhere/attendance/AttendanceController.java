@@ -46,7 +46,7 @@ public class AttendanceController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping
+    @PutMapping("/update")
     ResponseEntity<HttpStatus> updateAttendances(@RequestBody UpdateAttendanceRequestDto updateAttendanceRequestDto){
         attendanceService.setAttendanceStatuses(updateAttendanceRequestDto);
         return ResponseEntity.ok().build();
