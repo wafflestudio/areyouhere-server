@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.manager.service;
 
+import com.waruru.areyouhere.common.config.PasswordEncoder;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
@@ -8,7 +9,7 @@ import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,8 +27,8 @@ public class SessionManagerService implements ManagerService {
     public boolean login(Manager manager) {
         Manager findManager = managerRepository.findManagerByEmail(manager.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
-
-        if(passwordEncoder.matches(manager.getPassword(), findManager.getPassword())){
+        String encryptPassword = passwordEncoder.encrypt(manager.getEmail(), manager.getPassword());
+        if(encryptPassword.equals(findManager.getPassword())){
             httpSession.setAttribute(LOG_ID, manager.getId());
             return true;
         }

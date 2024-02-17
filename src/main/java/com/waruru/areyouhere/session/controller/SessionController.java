@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,13 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(SessionController.SESSION_API_URL)
 public class SessionController {
 
-    public static final String SESSION_API_URL = "/api/session/";
+    public static final String SESSION_API_URL = "/api/session";
 
     private final SessionService sessionService;
     private final AttendeeService attendeeService;
 
     // TODO : refactor => service Dto 그대로 사용.
-    @GetMapping("{courseId}")
+    @GetMapping("/{courseId}")
     public ResponseEntity<AllSessionAttendanceInfo> getAllSession(@PathVariable("courseId") Long courseId){
 
         List<SessionAttendanceInfo> allSessions = sessionService.getAllSessions(courseId);
@@ -41,12 +42,12 @@ public class SessionController {
                 .build());
     }
 
-    @GetMapping("detail/{sessionId}")
+    @GetMapping("/detail/{sessionId}")
     public ResponseEntity<SessionAttendanceInfo> getSessionBasicInfo(@PathVariable("sessionId") Long sessionId){
         return ResponseEntity.ok(sessionService.getSessionInfo(sessionId));
     }
 
-    @GetMapping("detail/attendee/{sessionId}")
+    @GetMapping("/detail/attendee/{sessionId}")
     public ResponseEntity<SessionAttendeesDto> getSessionAllAttendees(@PathVariable("sessionId") Long sessionId){
         List<SessionAttendees> sessionAttendees = attendeeService.getSessionAttendeesIfExistsOrEmpty(
                 sessionId);
@@ -58,7 +59,7 @@ public class SessionController {
                 .build());
     }
 
-    @GetMapping("detail/absentee/{sessionId}")
+    @GetMapping("/detail/absentee/{sessionId}")
     public ResponseEntity<SessionAttendeesDto> getSessionAbsenteeOnly(@PathVariable("sessionId") Long sessionId){
         List<SessionAttendees> sessionAttendees = attendeeService.getSessionAbsenteesIfExistsOrEmpty(
                 sessionId);
@@ -69,6 +70,8 @@ public class SessionController {
                 .sessionAttendees(sessionAttendees)
                 .build());
     }
+
+//    @PostMapping()
 
 
 

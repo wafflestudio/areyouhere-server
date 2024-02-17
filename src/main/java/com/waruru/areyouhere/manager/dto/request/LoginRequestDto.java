@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.manager.dto.request;
 
+import com.waruru.areyouhere.common.config.PasswordEncoder;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Email;
@@ -8,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 @Getter
 @Builder
@@ -27,7 +28,7 @@ public class LoginRequestDto {
     public static Manager toEntity(LoginRequestDto loginRequestDto, PasswordEncoder passwordEncoder){
         return Manager.builder()
                 .email(loginRequestDto.getEmail())
-                .password(passwordEncoder.encode(loginRequestDto.getPassword()))
+                .password(passwordEncoder.encrypt(loginRequestDto.email, loginRequestDto.getPassword()))
                 .build();
     }
 

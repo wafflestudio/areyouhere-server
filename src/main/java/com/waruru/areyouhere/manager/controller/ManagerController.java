@@ -6,6 +6,7 @@ import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPON
 
 import com.waruru.areyouhere.common.annotation.Login;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
+import com.waruru.areyouhere.common.config.PasswordEncoder;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.dto.request.LoginRequestDto;
 import com.waruru.areyouhere.manager.dto.request.SignUpRequestDto;
@@ -15,7 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
