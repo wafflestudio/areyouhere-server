@@ -25,10 +25,10 @@ public class LoginRequestDto {
     @NotEmpty
     private String password;
 
-    public static Manager toEntity(LoginRequestDto loginRequestDto, PasswordEncoder passwordEncoder){
+    public static Manager toEntity(LoginRequestDto loginRequestDto){
         return Manager.builder()
                 .email(loginRequestDto.getEmail())
-                .password(passwordEncoder.encrypt(loginRequestDto.email, loginRequestDto.getPassword()))
+                .password(loginRequestDto.getPassword())
                 .build();
     }
 

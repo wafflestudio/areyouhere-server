@@ -1,6 +1,5 @@
 package com.waruru.areyouhere.manager.service;
 
-import com.waruru.areyouhere.common.config.PasswordEncoder;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
@@ -19,7 +18,7 @@ public class SessionManagerService implements ManagerService {
 
     private final HttpSession httpSession;
     private final ManagerRepository managerRepository;
-    private final PasswordEncoder passwordEncoder;
+
 
     private static final String LOG_ID = "logId";
 
@@ -27,8 +26,7 @@ public class SessionManagerService implements ManagerService {
     public boolean login(Manager manager) {
         Manager findManager = managerRepository.findManagerByEmail(manager.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
-        String encryptPassword = passwordEncoder.encrypt(manager.getEmail(), manager.getPassword());
-        if(encryptPassword.equals(findManager.getPassword())){
+        if(manager.getPassword().equals(findManager.getPassword())){
             httpSession.setAttribute(LOG_ID, manager.getId());
             return true;
         }

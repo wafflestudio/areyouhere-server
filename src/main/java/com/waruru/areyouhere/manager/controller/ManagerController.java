@@ -6,7 +6,6 @@ import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPON
 
 import com.waruru.areyouhere.common.annotation.Login;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
-import com.waruru.areyouhere.common.config.PasswordEncoder;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.dto.request.LoginRequestDto;
 import com.waruru.areyouhere.manager.dto.request.SignUpRequestDto;
@@ -32,7 +31,6 @@ public class ManagerController {
     public static final String MANAGER_API_URL = "/api/manager";
 
     private final ManagerService managerService;
-    private final PasswordEncoder passwordEncoder;
 
     @LoginRequired
     @GetMapping
@@ -46,7 +44,7 @@ public class ManagerController {
     @PostMapping
     public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
 
-        managerService.register(SignUpRequestDto.toEntity(signUpRequestDto, passwordEncoder));
+        managerService.register(SignUpRequestDto.toEntity(signUpRequestDto));
         return RESPONSE_OK;
 
     }
@@ -54,7 +52,7 @@ public class ManagerController {
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(@RequestBody @Valid LoginRequestDto loginRequestDto){
 
-        if(managerService.login(LoginRequestDto.toEntity(loginRequestDto, passwordEncoder))){
+        if(managerService.login(LoginRequestDto.toEntity(loginRequestDto))){
             return RESPONSE_OK;
         }
 
