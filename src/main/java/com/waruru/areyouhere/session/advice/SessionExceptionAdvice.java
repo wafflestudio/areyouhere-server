@@ -41,5 +41,4 @@ public class SessionExceptionAdvice {
     public ResponseEntity<HttpStatus> currentSessionDeactivatedHandler(){
         return RESPONSE_NO_CONTENT;
     }
-
 }
