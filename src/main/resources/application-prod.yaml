@@ -7,12 +7,14 @@ management:
         include: health,info,startup,liveness,readiness
 
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${AWS_DATASOURCE_URL}
     username: ${AWS_RDS_USERNAME}
     password: ${AWS_RDS_PASSWORD}
-
   data:
     redis:
       host: ${AWS_ELASTICACHE_HOST}
