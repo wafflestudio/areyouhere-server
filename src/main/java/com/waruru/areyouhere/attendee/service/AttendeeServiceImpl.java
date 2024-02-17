@@ -18,7 +18,6 @@ public class AttendeeServiceImpl implements AttendeeService{
     private final AttendeeRepository attendeeRepository;
 
 
-
     public List<SessionAttendees> getSessionAbsenteesIfExistsOrEmpty(Long sessionId){
         List<SessionAttendeeInfo> sessionAttendees = attendeeRepository.findSessionOnlyAbsentee(sessionId);
         return sessionAttendees == null || sessionAttendees.isEmpty() ?
@@ -30,21 +29,6 @@ public class AttendeeServiceImpl implements AttendeeService{
                         .build()
                 ).toList();
     }
-
-
-    public List<ClassAttendees> getClassAttendeesIfExistsOrEmpty(Long courseId){
-        List<ClassAttendeeInfo> classAttendancesInfos = attendeeRepository.getClassAttendancesInfo(courseId);
-
-        return classAttendancesInfos == null || classAttendancesInfos.isEmpty() ?
-                Collections.emptyList()
-                : classAttendancesInfos.stream().map( classAttendancesInfo -> ClassAttendees.builder()
-                        .name(classAttendancesInfo.getName())
-                        .attendance(classAttendancesInfo.getAttendance())
-                        .absenece(classAttendancesInfo.getAbsence())
-                        .build()
-                ).toList();
-    }
-
 
 
 
