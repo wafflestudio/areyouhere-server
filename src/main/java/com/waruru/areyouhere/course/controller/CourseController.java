@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/courses")
+@RequestMapping("/api/course")
 @RequiredArgsConstructor
 public class CourseController {
 
@@ -32,8 +32,8 @@ public class CourseController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<List<Course>> getAllCourses(@RequestParam Long managerId) {
-        List<Course> courses = courseService.getAll(managerId);
+    public ResponseEntity<List<Course>> getAllCourses(@Login Manager manager) {
+        List<Course> courses = courseService.getAll(manager.getId());
         return ResponseEntity.ok(courses);
     }
 

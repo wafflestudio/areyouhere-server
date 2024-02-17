@@ -16,13 +16,13 @@ public class ClassAttendees {
 
     private int attendance;
 
-    private int absenece;
+    private int absence;
 
     @Builder
-    public ClassAttendees(Long id, String name, int attendance, int absenece) {
+    public ClassAttendees(Long id, String name, int attendance, int absence) {
         this.id = id;
         this.name = name;
         this.attendance = attendance;
-        this.absenece = absenece;
+        this.absence = absence;
     }
 }
