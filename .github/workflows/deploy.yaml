@@ -45,11 +45,11 @@ jobs:
         with:
           files: './src/main/resources/application-prod.yaml'
         env:
-          spring.datasource.url: ${{ secrets.AWS_DATASOURCE_URL }}
-          spring.datasource.username: ${{ secrets.AWS_RDS_USERNAME }}
-          spring.datasource.password: ${{ secrets.AWS_RDS_PASSWORD }}
-          spring.data.redis.host: ${{ secrets.AWS_ELASTICACHE_HOST }}
-          spring.data.redis.database: ${{ secrets.AWS_ELASTICACHE_DATABASE }}
+          AWS_DATASOURCE_URL: ${{ secrets.AWS_DATASOURCE_URL }}
+          AWS_RDS_USERNAME: ${{ secrets.AWS_RDS_USERNAME }}
+          AWS_RDS_PASSWORD: ${{ secrets.AWS_RDS_PASSWORD }}
+          AWS_ELASTICACHE_HOST: ${{ secrets.AWS_ELASTICACHE_HOST }}
+          AWS_ELASTICACHE_DATABASE: ${{ secrets.AWS_ELASTICACHE_DATABASE }}
 
       - name: Build, tag, and push image to Amazon ECR
         run: |
