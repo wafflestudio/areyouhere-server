@@ -15,4 +15,6 @@ public interface AttendeeService {
     public void createAttendees(Long courseId, List<String> newAttendees);
 
     public void deleteAttendees(List<Long> deleteAttendees);
+
+    public int getAttendeeByCourseId(Long courseId);
 }

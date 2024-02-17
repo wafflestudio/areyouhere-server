@@ -92,6 +92,11 @@ public class AttendeeServiceImpl implements AttendeeService{
                 ).toList();
     }
 
+    @Transactional
+    public int getAttendeeByCourseId(Long courseId){
+        return attendeeRepository.findAttendeesByCourse_Id(courseId).size();
+    }
+
 
 
 

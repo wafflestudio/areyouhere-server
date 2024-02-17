@@ -10,4 +10,6 @@ public interface AttendanceService {
     public void setAttend(Long sessionId, String attendanceName);
 
     public void setAttendanceStatuses(UpdateAttendanceRequestDto updateAttendanceRequestDto);
+    public int currentAttendance(Long sessionId);
+
 }

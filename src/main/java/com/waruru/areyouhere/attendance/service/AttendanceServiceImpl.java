@@ -100,6 +100,17 @@ public class AttendanceServiceImpl implements AttendanceService{
             attendanceRepository.save(attendance);
         }
     }
+    //TODO : 수정
+    @Transactional
+    public int currentAttendance(Long sessionId){
+        List<Attendance> attendancesBySessionId = attendanceRepository.findAttendancesBySession_Id(sessionId);
+        if(attendancesBySessionId == null || attendancesBySessionId.isEmpty()){
+            return 0;
+        }else{
+            return attendancesBySessionId.size();
+        }
+
+    }
 
 
 
