@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
+import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
+import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +40,6 @@ public class AttendeeServiceImpl implements AttendeeService{
     }
 
 
-
     // 그냥 service에서 throw로 exception 던지고 no content 204 반환하는게 좋지 않으련지?
     public List<SessionAttendees> getSessionAttendeesIfExistsOrEmpty(Long sessionId){
         List<SessionAttendeeInfo> sessionAttendees = attendeeRepository.findSessionAttendees(sessionId);
@@ -49,5 +51,6 @@ public class AttendeeServiceImpl implements AttendeeService{
                         .attendanceTime(sessionAttendee.getAttendanceTime())
                         .build()).toList();
     }
+
 
 }

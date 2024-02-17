@@ -34,4 +34,5 @@ public class SessionExceptionAdvice {
     public ResponseEntity<HttpStatus> studentNameNotFoundHandler() {
         return RESPONSE_NO_CONTENT;
     }
+
 }
