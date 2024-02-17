@@ -7,11 +7,13 @@ import com.waruru.areyouhere.manager.exception.MemberNotFoundException;
 import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SessionManagerService implements ManagerService {
 
     private final HttpSession httpSession;
@@ -50,6 +52,7 @@ public class SessionManagerService implements ManagerService {
     @Override
     public Manager getLoginedUser(){
         Long userId = (Long) httpSession.getAttribute(LOG_ID);
+
         if (userId == null){
             throw new UnAuthenticatedException();
         }

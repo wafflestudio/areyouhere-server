@@ -1,5 +1,7 @@
 package com.waruru.areyouhere.session.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonInclude(Include.NON_NULL)
 public class CurrentSessionDto {
     private String authCode;
     private String sessionName;

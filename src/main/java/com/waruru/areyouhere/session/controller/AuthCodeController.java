@@ -3,6 +3,8 @@ package com.waruru.areyouhere.session.controller;
 
 import com.waruru.areyouhere.session.service.AuthCodeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,12 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(AuthCodeController.AUTH_CODE_API_URL)
 public class AuthCodeController {
 
-    public static final String AUTH_CODE_API_URL = "/api/auth-code";
+    public static final String AUTH_CODE_API_URL = "/api/auth-code/";
 
     private final AuthCodeService authCodeService;
 
 
-
+//    @GetMapping("/sessionId")
+//    public ResponseEntity<String> create(){
+//
+//    }
 
 
 
