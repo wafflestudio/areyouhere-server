@@ -29,7 +29,6 @@ public class AuthCodeServiceImpl implements AuthCodeService{
     private final SessionIdRedisRepository sessionIdRedisRepository;
     private final SessionRepository sessionRepository;
     private final AttendeeRepository attendeeRepository;
-
     private final RandomIdentifierGenerator randomIdentifierGenerator;
 
     public Long checkAuthCodeAndGetSessionId(String authCode, String attendanceName){
@@ -68,6 +67,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 .map(Attendee::getName)
                 .toList();
 
+
         AuthCode authCode = AuthCode.builder()
                 .authCode(generatedAuthCode)
                 .sessionId(sessionId)
@@ -83,6 +83,12 @@ public class AuthCodeServiceImpl implements AuthCodeService{
         sessionIdRedisRepository.save(newsessionId);
 
         return generatedAuthCode;
+    }
+    // TODO : sessionId 검증, 해당 sessionId가 user 소유인지 검증.
+    public void deactivate(String authCode){
+        AuthCode authCodeByAuthCode = authCodeRedisRepository.findAuthCodeByAuthCode(authCode)
+                .orElseThrow(AuthCodeNotFoundException::new);
 
+        authCodeRedisRepository.delete(authCodeByAuthCode);
     }
 }

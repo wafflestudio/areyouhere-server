@@ -5,4 +5,6 @@ public interface AuthCodeService {
 
 
     public String createAuthCode(Long courseId, Long sessionId);
+
+    public void deactivate(String authCode);
 }
