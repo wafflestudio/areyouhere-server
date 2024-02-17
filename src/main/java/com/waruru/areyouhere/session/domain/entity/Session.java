@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
+// TODO : jpa Auditing 사용해서 baseEntity 상속하게 만들기
 
 @Getter
 @Entity(name = "session")
@@ -26,12 +27,17 @@ public class Session {
 
     private String name;
 
+    private boolean isDeactivated;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
     @Builder
-    public Session(Course course, String name){
+
+    public Session(Long id, Course course, String name, boolean isDeactivated) {
+        this.id = id;
         this.course = course;
         this.name = name;
+        this.isDeactivated = isDeactivated;
     }
 }

@@ -4,9 +4,11 @@ import com.waruru.areyouhere.session.domain.entity.AuthCode;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
+import com.waruru.areyouhere.session.domain.repository.dto.SessionInfo;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.service.dto.CurrentSessionDto;
+import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -60,11 +62,32 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Session> getAllSessions(Long ManagerId, Long courseId){
-        List<Session> allSessions = sessionRepository.findAllByCourseId(courseId);
+    public List<SessionAttendanceInfo> getAllSessions(Long ManagerId, Long courseId){
+        List<SessionInfo> allSessions = sessionRepository.findSessionsWithAttendance(courseId);
         return allSessions == null || allSessions.isEmpty()
                 ? Collections.emptyList()
-                : allSessions;
+                : allSessions.stream().map(allSession -> SessionAttendanceInfo.builder()
+                        .name(allSession.getname())
+                        .date(allSession.getdate())
+                        .attendees(allSession.getattendee())
+                        .absentees(allSession.getabsentee())
+                        .build()).toList();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public SessionAttendanceInfo getSessions(Long sessionId){
+        SessionInfo sessionWithAttendance = sessionRepository
+                .findSessionWithAttendance(sessionId)
+                .orElseThrow(SessionIdNotFoundException::new);
+
+        return SessionAttendanceInfo.builder()
+                .name(sessionWithAttendance.getname())
+                .date(sessionWithAttendance.getdate())
+                .attendees(sessionWithAttendance.getattendee())
+                .absentees(sessionWithAttendance.getabsentee())
+                .build();
+
     }
 
     @Transactional(readOnly = true)
