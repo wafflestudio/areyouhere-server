@@ -11,7 +11,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 
+
 //TODO: createdTime 별도 테이블로 분리
+
+
 @Getter
 @Entity(name = "attendance")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,9 +32,6 @@ public class Attendance {
     private Session session;
 
     private boolean isAttended;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
 
     @Builder
     public Attendance(Attendee attendee, Session session, boolean isAttended) {

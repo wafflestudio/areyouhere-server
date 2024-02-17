@@ -60,9 +60,10 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Async
-    public void setAttend(Long courseId, Long sessionId, String attendanceName){
+    public void setAttend(Long courseId, Long sessionId, String attendanceName) {
 
-        List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId, sessionId);
+        List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId,
+                sessionId);
 
         Session session = sessionRepository.findById(sessionId).orElseThrow(SessionIdNotFoundException::new);
         List<Attendance> attendances = absenteeBySessionId.stream().map(attendee -> Attendance.builder()
