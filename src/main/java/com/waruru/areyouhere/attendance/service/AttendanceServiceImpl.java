@@ -11,6 +11,7 @@ import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +57,11 @@ public class AttendanceServiceImpl implements AttendanceService{
                 .isAttended(false)
                 .build()).toList();
         attendanceRepository.saveAll(attendances);
+    }
+
+    @Async
+    public void setAttend(Long sessionId, String attendanceName){
+
     }
 
 }

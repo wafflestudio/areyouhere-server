@@ -35,4 +35,6 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
             + "WHERE attd.course_id = :courseId \n"
             + "GROUP BY attd.id", nativeQuery = true)
     public List<ClassAttendeeInfo> getClassAttendancesInfo(@Param("courseId") Long courseId);
+
+    public List<Attendee> findAttendeesByCourse_Id(Long courseId);
 }
