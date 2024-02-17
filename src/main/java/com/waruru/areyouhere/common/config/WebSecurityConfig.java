@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.common.config;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.filters.ExpiresFilter;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
+@AllArgsConstructor
 @Configuration
 public class WebSecurityConfig {
     @Bean
