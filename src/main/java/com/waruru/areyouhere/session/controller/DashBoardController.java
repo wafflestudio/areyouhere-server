@@ -3,8 +3,12 @@ package com.waruru.areyouhere.session.controller;
 
 import com.waruru.areyouhere.common.annotation.LoginRequired;
 import com.waruru.areyouhere.session.dto.CurrentSessionResponseDto;
+import com.waruru.areyouhere.session.dto.PreviousFiveSessionResponseDto;
+import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.service.SessionService;
 import com.waruru.areyouhere.session.service.dto.CurrentSessionDto;
+import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +34,28 @@ public class DashBoardController {
                 .authCode(currentSessionInfo.getAuthCode())
                 .sessionName(currentSessionInfo.getSessionName())
                 .sessionTime(currentSessionInfo.getSessionTime())
+                .id(currentSessionInfo.getId())
                 .build();
         return ResponseEntity.ok(currentSessionResponseDto);
     }
+
+
+    // TODO : refactor all service dto를 그대로 반환하고 있음.
+    @LoginRequired
+    @GetMapping("/session/{courseId}")
+    public ResponseEntity<PreviousFiveSessionResponseDto> getRecentFiveSessionInfo(@PathVariable Long courseId){
+
+        List<SessionAttendanceInfo> recentFiveSessions = sessionService.getRecentFiveSessions(courseId);
+        if(recentFiveSessions.isEmpty()){
+            throw new CurrentSessionNotFoundException();
+        }
+
+
+        return ResponseEntity.ok(PreviousFiveSessionResponseDto.builder()
+                .sessionAttendanceInfos(recentFiveSessions)
+                .build());
+    }
+
 
 
 

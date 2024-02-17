@@ -25,7 +25,7 @@ public class AttendeeServiceImpl implements AttendeeService{
 
     private final AttendeeRepository attendeeRepository;
 
-    // 그냥 service에서 throw로 exception 던지고 no content 204 반환하는게 좋지 않으련지?
+    // TODO : refactor => 그냥 service에서 throw로 exception 던지고 no content 204 반환하는게 좋지 않으련지?
     public List<SessionAttendees> getSessionAttendeesIfExistsOrEmpty(Long sessionId){
         List<SessionAttendeeInfo> sessionAttendees = attendeeRepository.findSessionAttendees(sessionId);
         return sessionAttendees == null || sessionAttendees.isEmpty() ?

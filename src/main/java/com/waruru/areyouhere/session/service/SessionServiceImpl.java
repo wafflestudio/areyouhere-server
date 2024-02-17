@@ -7,12 +7,12 @@ import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionIdRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.domain.repository.dto.SessionInfo;
-import com.waruru.areyouhere.session.exception.CurrentSessionDeactivatedException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.service.dto.CurrentSessionDto;
 import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +49,7 @@ public class SessionServiceImpl implements SessionService {
             throw new CurrentSessionNotFoundException();
         }
 
+        // warning! 널 익셉션이 발생한다면 authCode를 redis에 삽입하는 과정에서 어느 쪽이 빠져있는 것이다.
         SessionId sessionId = sessionIdRedisRepository
                 .findById(mostRecentSession.getId())
                 .orElseGet(null);
@@ -71,25 +72,50 @@ public class SessionServiceImpl implements SessionService {
                 .authCode(authCode.getAuthCode())
                 .sessionTime(LocalDateTime.parse(authCode.getLocalDate()))
                 .sessionName(mostRecentSession.getName())
+                .id(mostRecentSession.getId())
                 .build();
     }
 
+    // TODO : 리팩토링 필수 말도 안됨.
     @Transactional(readOnly = true)
     @Override
-    public List<Session> getRecentFiveSessions(Long ManagerId, Long courseId){
-        List<Session> recentFiveSessions = sessionRepository.findTOP5BySessionByCourseId(courseId);
-        return recentFiveSessions == null || recentFiveSessions.isEmpty()
-                ? Collections.emptyList()
-                : recentFiveSessions;
+    public List<SessionAttendanceInfo> getRecentFiveSessions(Long courseId){
+        List<Session> recentFiveSessions = sessionRepository.findTOP6BySessionByCourseId(courseId);
+        if(recentFiveSessions == null || recentFiveSessions.isEmpty()){
+            return Collections.emptyList();
+        }
+        int i = 0;
+        if(recentFiveSessions.get(0).isDeactivated()){
+            recentFiveSessions.remove(5);
+
+        }else{
+            recentFiveSessions.remove(0);
+        }
+        List<SessionAttendanceInfo> list = new ArrayList<>();
+        for (Session recentFiveSession : recentFiveSessions) {
+            SessionInfo sessionWithAttendance = sessionRepository.findSessionWithAttendance(
+                    recentFiveSession.getId())
+                    .orElseThrow(SessionIdNotFoundException::new);
+
+            list.add(SessionAttendanceInfo.builder()
+                    .attendees(sessionWithAttendance.getattendee())
+                    .absentees(sessionWithAttendance.getabsentee())
+                    .date(sessionWithAttendance.getdate())
+                    .name(sessionWithAttendance.getname())
+                    .build()
+            );
+        }
+        return list;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<SessionAttendanceInfo> getAllSessions(Long ManagerId, Long courseId){
+    public List<SessionAttendanceInfo> getAllSessions(Long courseId){
         List<SessionInfo> allSessions = sessionRepository.findSessionsWithAttendance(courseId);
         return allSessions == null || allSessions.isEmpty()
                 ? Collections.emptyList()
                 : allSessions.stream().map(allSession -> SessionAttendanceInfo.builder()
+                        .id(allSession.getid())
                         .name(allSession.getname())
                         .date(allSession.getdate())
                         .attendees(allSession.getattendee())
@@ -99,12 +125,13 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public SessionAttendanceInfo getSessions(Long sessionId){
+    public SessionAttendanceInfo getSessionInfo(Long sessionId){
         SessionInfo sessionWithAttendance = sessionRepository
                 .findSessionWithAttendance(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
 
         return SessionAttendanceInfo.builder()
+                .id(sessionWithAttendance.getid())
                 .name(sessionWithAttendance.getname())
                 .date(sessionWithAttendance.getdate())
                 .attendees(sessionWithAttendance.getattendee())

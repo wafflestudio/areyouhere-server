@@ -14,11 +14,13 @@ public class CurrentSessionResponseDto {
     private String authCode;
     private String sessionName;
     private LocalDateTime sessionTime;
+    private Long id;
 
     @Builder
-    public CurrentSessionResponseDto(String authCode, int totalAttendees, int currentAttendees, String sessionName, LocalDateTime sessionTime) {
+    public CurrentSessionResponseDto(String authCode, String sessionName, LocalDateTime sessionTime, Long id) {
         this.authCode = authCode;
         this.sessionName = sessionName;
         this.sessionTime = sessionTime;
+        this.id = id;
     }
 }

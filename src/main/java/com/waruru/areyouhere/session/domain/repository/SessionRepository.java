@@ -4,7 +4,6 @@ import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.dto.SessionInfo;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,8 +16,8 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
     public List<Session> findAllByCourseId(@Param("courseId") Long courseId);
 
 
-    @Query("SELECT s FROM session s WHERE s.course.id = :courseId order by s.createdAt desc limit 5")
-    public List<Session> findTOP5BySessionByCourseId(@Param("courseId") Long courseId);
+    @Query("SELECT s FROM session s WHERE s.course.id = :courseId order by s.createdAt desc limit 6")
+    public List<Session> findTOP6BySessionByCourseId(@Param("courseId") Long courseId);
 
     @Query("SELECT s FROM session s WHERE s.course.id = :courseId order by s.createdAt desc limit 1")
     public Optional<Session> findMostRecentSessionByCourseId(@Param("courseId") Long courseId);
