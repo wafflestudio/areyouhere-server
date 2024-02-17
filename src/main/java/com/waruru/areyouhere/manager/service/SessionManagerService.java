@@ -29,7 +29,7 @@ public class SessionManagerService implements ManagerService {
         Manager findManager = managerRepository.findManagerByEmail(manager.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
         if(manager.getPassword().equals(findManager.getPassword())){
-            httpSession.setAttribute(LOG_ID, manager.getId());
+            httpSession.setAttribute(LOG_ID, findManager.getId());
             return true;
         }
         return false;
