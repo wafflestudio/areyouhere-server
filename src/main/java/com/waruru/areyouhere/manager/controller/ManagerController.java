@@ -4,9 +4,12 @@ import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPON
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_CONFLICT;
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_OK;
 
+import com.waruru.areyouhere.common.annotation.Login;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.dto.request.LoginRequestDto;
 import com.waruru.areyouhere.manager.dto.request.SignUpRequestDto;
+import com.waruru.areyouhere.manager.dto.response.ManagerDto;
 import com.waruru.areyouhere.manager.service.ManagerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +25,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(ManagerController.MEMBER_API_URL)
+@RequestMapping(ManagerController.MANAGER_API_URL)
 public class ManagerController {
 
-    public static final String MEMBER_API_URL = "/api/user";
+    public static final String MANAGER_API_URL = "/api/manager";
 
     private final ManagerService managerService;
     private final PasswordEncoder passwordEncoder;
+
+    @LoginRequired
+    @GetMapping
+    public ResponseEntity<ManagerDto> isLogined(@Login Manager manager){
+        return ResponseEntity.ok(ManagerDto.builder()
+                        .email(manager.getEmail())
+                        .name(manager.getName())
+                .build());
+    }
 
     @PostMapping
     public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
@@ -62,6 +74,8 @@ public class ManagerController {
         }
         return RESPONSE_OK;
     }
+
+
 
 
 }
