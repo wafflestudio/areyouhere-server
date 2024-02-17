@@ -3,10 +3,12 @@ package com.waruru.areyouhere.attendance.domain.entity;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 @Getter
 @Entity(name = "attendance")
@@ -25,6 +27,9 @@ public class Attendance {
     private Session session;
 
     private boolean isAttended;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     @Builder
     public Attendance(Attendee attendee, Session session, boolean isAttended) {
