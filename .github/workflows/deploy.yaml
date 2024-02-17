@@ -23,6 +23,17 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
+      - name: set credentials
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: './src/main/resources/application-prod.yaml'
+        env:
+          spring.datasource.url: ${{ secrets.AWS_DATASOURCE_URL }}
+          spring.datasource.username: ${{ secrets.AWS_RDS_USERNAME }}
+          spring.datasource.password: ${{ secrets.AWS_RDS_PASSWORD }}
+          spring.data.redis.host: ${{ secrets.AWS_ELASTICACHE_HOST }}
+          spring.data.redis.database: ${{ secrets.AWS_ELASTICACHE_DATABASE }}
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -39,17 +50,6 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-
-      - name: set credentials
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: './src/main/resources/application-prod.yaml'
-        env:
-          spring.datasource.url: ${{ secrets.AWS_DATASOURCE_URL }}
-          spring.datasource.username: ${{ secrets.AWS_RDS_USERNAME }}
-          spring.datasource.password: ${{ secrets.AWS_RDS_PASSWORD }}
-          spring.data.redis.host: ${{ secrets.AWS_ELASTICACHE_HOST }}
-          spring.data.redis.database: ${{ secrets.AWS_ELASTICACHE_DATABASE }}
 
       - name: Build, tag, and push image to Amazon ECR
         run: |
