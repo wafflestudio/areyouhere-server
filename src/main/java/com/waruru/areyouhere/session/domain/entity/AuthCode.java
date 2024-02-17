@@ -1,6 +1,8 @@
 package com.waruru.areyouhere.session.domain.entity;
 
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,10 +23,11 @@ public class AuthCode {
     private String authCode;
 
     @NotNull
-    @Indexed
     private long sessionId;
 
     private List<String> attendances;
+
+    String localDate = LocalDate.now().toString();
 
     @Builder
     public AuthCode(String authCode, long sessionId, List<String> attendances) {

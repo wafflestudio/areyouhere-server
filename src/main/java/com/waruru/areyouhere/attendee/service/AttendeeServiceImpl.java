@@ -9,6 +9,14 @@ import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
+import com.waruru.areyouhere.attendee.domain.entity.Attendee;
+import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
+import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
+import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
+import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
+import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
+
 
 
 @Service
@@ -54,7 +62,6 @@ public class AttendeeServiceImpl implements AttendeeService{
                         .build()
                 ).toList();
     }
-
 
 
 

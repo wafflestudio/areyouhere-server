@@ -49,6 +49,21 @@ public class AttendanceServiceImpl implements AttendanceService{
     public void setAbsentAfterDeactivation(long courseId, long sessionId){
 
         List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId, sessionId);
+        Session session = sessionRepository.findById(sessionId).orElseThrow(SessionIdNotFoundException::new);
+        List<Attendance> attendances = absenteeBySessionId.stream().map(attendee -> Attendance.builder()
+                .attendee((attendee))
+                .session(session)
+                .isAttended(false)
+                .build()).toList();
+        attendanceRepository.saveAll(attendances);
+    }
+
+    @Async
+    public void setAttend(Long courseId, Long sessionId, String attendanceName) {
+
+        List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId,
+                sessionId);
+
 
         Session session = sessionRepository.findById(sessionId).orElseThrow(SessionIdNotFoundException::new);
         List<Attendance> attendances = absenteeBySessionId.stream().map(attendee -> Attendance.builder()

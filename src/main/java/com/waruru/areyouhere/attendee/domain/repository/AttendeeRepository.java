@@ -37,4 +37,5 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
     public List<ClassAttendeeInfo> getClassAttendancesInfo(@Param("courseId") Long courseId);
 
     public List<Attendee> findAttendeesByCourse_Id(Long courseId);
+
 }

@@ -4,6 +4,7 @@ import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPON
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_NO_CONTENT;
 
 import com.waruru.areyouhere.session.exception.AuthCodeNotFoundException;
+import com.waruru.areyouhere.session.exception.CurrentSessionDeactivatedException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
@@ -32,6 +33,12 @@ public class SessionExceptionAdvice {
 
     @ExceptionHandler(StudentNameNotFoundException.class)
     public ResponseEntity<HttpStatus> studentNameNotFoundHandler() {
+        return RESPONSE_NO_CONTENT;
+    }
+
+
+    @ExceptionHandler(CurrentSessionDeactivatedException.class)
+    public ResponseEntity<HttpStatus> currentSessionDeactivatedHandler(){
         return RESPONSE_NO_CONTENT;
     }
 }
