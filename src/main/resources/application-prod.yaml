@@ -17,3 +17,4 @@ spring:
     redis:
       host: ${AWS_ELASTICACHE_HOST}
       database: ${AWS_ELASTICACHE_DATABASE}
+      port: 6379
