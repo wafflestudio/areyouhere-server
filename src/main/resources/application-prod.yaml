@@ -1,5 +1,11 @@
 spring.config.activate.on-profile: prod
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,startup,liveness,readiness
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
