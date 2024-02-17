@@ -17,7 +17,7 @@ public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
     private final ManagerService managerService;
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasMethodAnnotation(Login.class);
+        return parameter.hasParameterAnnotation(Login.class);
     }
 
     @Override

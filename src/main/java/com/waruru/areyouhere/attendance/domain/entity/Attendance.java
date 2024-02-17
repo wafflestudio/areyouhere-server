@@ -39,4 +39,8 @@ public class Attendance {
         this.session = session;
         this.isAttended = isAttended;
     }
+
+    public void setAttended(boolean attended) {
+        isAttended = attended;
+    }
 }

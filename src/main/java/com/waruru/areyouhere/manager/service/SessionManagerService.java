@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class SessionManagerService implements ManagerService {
     private static final String LOG_ID = "logId";
 
     @Override
+    @Transactional
     public boolean login(Manager manager) {
         Manager findManager = managerRepository.findManagerByEmail(manager.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
@@ -33,11 +35,13 @@ public class SessionManagerService implements ManagerService {
         return false;
     }
     @Override
+    @Transactional
     public void logout() {
         httpSession.removeAttribute(LOG_ID);
     }
 
     @Override
+    @Transactional
     public void register(Manager manager){
         boolean isEmailDuplicated = isDuplicatedEmail(manager.getEmail());
 
@@ -49,6 +53,7 @@ public class SessionManagerService implements ManagerService {
     }
 
     @Override
+    @Transactional
     public Manager getLoginedUser(){
         Long userId = (Long) httpSession.getAttribute(LOG_ID);
 
@@ -56,10 +61,11 @@ public class SessionManagerService implements ManagerService {
             throw new UnAuthenticatedException();
         }
 
-        return managerRepository.findManagerById(userId).orElseThrow(MemberNotFoundException::new);
+        return managerRepository.findById(userId).orElseThrow(MemberNotFoundException::new);
     }
 
     @Override
+    @Transactional
     public boolean isDuplicatedEmail(String email){
         return managerRepository.existsByEmail(email);
     }

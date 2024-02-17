@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.attendance.service;
 
+import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
 import com.waruru.areyouhere.attendance.service.dto.AttendanceCount;
 
 public interface AttendanceService {
@@ -7,4 +8,6 @@ public interface AttendanceService {
     public void setAbsentAfterDeactivation(long courseId, long sessionId);
 
     public void setAttend(Long sessionId, String attendanceName);
+
+    public void setAttendanceStatuses(UpdateAttendanceRequestDto updateAttendanceRequestDto);
 }

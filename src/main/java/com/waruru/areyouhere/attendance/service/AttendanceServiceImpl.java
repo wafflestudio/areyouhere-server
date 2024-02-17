@@ -3,6 +3,8 @@ package com.waruru.areyouhere.attendance.service;
 
 import com.waruru.areyouhere.attendance.domain.entity.Attendance;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
+import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
+import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
 import com.waruru.areyouhere.attendance.service.dto.AttendanceCount;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
@@ -11,6 +13,7 @@ import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -85,9 +88,17 @@ public class AttendanceServiceImpl implements AttendanceService{
         attendanceRepository.save(attendance);
     }
 
+    // TODO : controller 그대로 받아오지 말기.
+    // TODO : N + 1
     @Transactional
-    public void setAttendanceStatuses(){
-
+    public void setAttendanceStatuses(UpdateAttendanceRequestDto updateAttendanceRequestDto){
+        List<UpdateAttendance> updateAttendances = updateAttendanceRequestDto.getUpdateAttendances();
+        for (UpdateAttendance updateAttendance : updateAttendances) {
+            Attendance attendance = attendanceRepository.findById(updateAttendance.getAttendanceId())
+                    .orElseThrow(SessionIdNotFoundException::new);
+            attendance.setAttended(updateAttendance.isAttendanceStatus());
+            attendanceRepository.save(attendance);
+        }
     }
 
 
