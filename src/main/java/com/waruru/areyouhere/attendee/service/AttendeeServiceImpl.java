@@ -4,7 +4,6 @@ import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
-import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
 import java.util.Collections;
 import java.util.List;
@@ -60,6 +59,5 @@ public class AttendeeServiceImpl implements AttendeeService{
                         .attendanceTime(sessionAttendee.getAttendanceTime())
                         .build()).toList();
     }
-
 
 }

@@ -26,6 +26,8 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
             + "and atda.isAttnded = false", nativeQuery = true)
     public List<SessionAttendeeInfo> findSessionOnlyAbsentee(@Param("sessionId") Long sessionId);
 
+    public List<Attendee> findAttendeesByCourse_Id(Long courseId);
+
 
     @Query(value = "SELECT attd.id, attd.name, "
             + "COUNT(case when atdc.isAttended = true then 1 end) as attendance, "
@@ -35,7 +37,4 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
             + "WHERE attd.course_id = :courseId \n"
             + "GROUP BY attd.id", nativeQuery = true)
     public List<ClassAttendeeInfo> getClassAttendancesInfo(@Param("courseId") Long courseId);
-
-    public List<Attendee> findAttendeesByCourse_Id(Long courseId);
-
 }
