@@ -11,4 +11,8 @@ public interface AttendeeService {
     public List<SessionAttendees> getSessionAbsenteesIfExistsOrEmpty(Long sessionId);
 
     public List<ClassAttendees> getClassAttendeesIfExistsOrEmpty(Long courseId);
+
+    public void createAttendees(Long courseId, List<String> newAttendees);
+
+    public void deleteAttendees(List<Long> deleteAttendees);
 }

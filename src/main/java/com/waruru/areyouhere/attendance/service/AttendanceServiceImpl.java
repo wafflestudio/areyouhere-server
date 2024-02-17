@@ -24,7 +24,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     private final SessionRepository sessionRepository;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public AttendanceCount getAttendanceCount(long sessionId) {
         List<Attendance> attendancesBySessionId = attendanceRepository.findAttendancesBySession_Id(sessionId);
 
@@ -63,7 +63,6 @@ public class AttendanceServiceImpl implements AttendanceService{
 
         List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId,
                 sessionId);
-
 
         Session session = sessionRepository.findById(sessionId).orElseThrow(SessionIdNotFoundException::new);
         List<Attendance> attendances = absenteeBySessionId.stream().map(attendee -> Attendance.builder()

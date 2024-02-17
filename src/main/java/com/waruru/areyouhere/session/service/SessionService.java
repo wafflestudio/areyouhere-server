@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface SessionService {
 
+    public void create(Long courseId, String sessionName);
+
     public CurrentSessionDto getCurrentSessionInfo(Long courseId);
     public List<SessionAttendanceInfo> getRecentFiveSessions(Long courseId);
 
@@ -16,6 +18,6 @@ public interface SessionService {
 
     public Session getSession(Long ManagerId, Long sessionId);
 
-    public void deleteSession(Long ManagerId, Long sessionId);
+    public void delete(Long sessionId);
 
 }

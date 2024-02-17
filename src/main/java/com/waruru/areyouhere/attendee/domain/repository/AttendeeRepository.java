@@ -27,7 +27,7 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
     public List<SessionAttendeeInfo> findSessionOnlyAbsentee(@Param("sessionId") Long sessionId);
 
 
-    @Query(value = "SELECT attd.id, attd.name, "
+    @Query(value = "SELECT attd.id as attendeeId, attd.name as name, "
             + "COUNT(case when atdc.isAttended = true then 1 end) as attendance, "
             + "COUNT(case when atdc.isAttended = false then 1 end) as absence \n"
             + "FROM attendee as attd \n"

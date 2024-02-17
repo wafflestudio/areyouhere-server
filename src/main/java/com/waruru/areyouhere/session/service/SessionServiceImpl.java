@@ -1,5 +1,7 @@
 package com.waruru.areyouhere.session.service;
 
+import com.waruru.areyouhere.course.domain.entity.Course;
+import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.session.domain.entity.AuthCode;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.entity.SessionId;
@@ -7,6 +9,7 @@ import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionIdRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.domain.repository.dto.SessionInfo;
+import com.waruru.areyouhere.session.exception.CourseIdNotFoundException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.service.dto.CurrentSessionDto;
@@ -15,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,17 +29,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class SessionServiceImpl implements SessionService {
 
     private final SessionRepository sessionRepository;
+    private final CourseRepository courseRepository;
     private final AuthCodeRedisRepository authCodeRedisRepository;
     private final SessionIdRedisRepository sessionIdRedisRepository;
 
     @Transactional
-    public void createSession(Long courseId, String sessionName){
-        // TODO: courseId 존재 여부 검증
-//        Session session = Session.builder()
-//                .course(TODO : course 조회)
-//                .sessionName(sessionName)
-//                .build();
+    public void create(Long courseId, String sessionName){
+        // TODO : exception 수정
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(SessionIdNotFoundException::new);
 
+        Session session = Session.builder()
+                .name(sessionName)
+                .course(course)
+                .isDeactivated(false)
+                .build();
+        sessionRepository.save(session);
+    }
+
+    public void delete(Long sessionId){
+        sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
+        sessionRepository.deleteById(sessionId);
     }
     // TODO : 리팩토링 노타임..
     @Transactional(readOnly = true)
@@ -145,12 +159,6 @@ public class SessionServiceImpl implements SessionService {
     public Session getSession(Long ManagerId, Long sessionId) {
         return sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
-    }
-
-    @Transactional
-    @Override
-    public void deleteSession(Long ManagerId, Long sessionId){
-        sessionRepository.deleteById(sessionId);
     }
 
 
