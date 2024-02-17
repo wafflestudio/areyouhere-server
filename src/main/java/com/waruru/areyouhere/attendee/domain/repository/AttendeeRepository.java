@@ -1,6 +1,7 @@
 package com.waruru.areyouhere.attendee.domain.repository;
 
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
+import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,6 +26,13 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
             + "and atda.isAttnded = false", nativeQuery = true)
     public List<SessionAttendeeInfo> findSessionOnlyAbsentee(@Param("sessionId") Long sessionId);
 
-    public List<Attendee> 
 
+    @Query(value = "SELECT attd.id, attd.name, "
+            + "COUNT(case when atdc.isAttended = true then 1 end) as attendance, "
+            + "COUNT(case when atdc.isAttended = false then 1 end) as absence \n"
+            + "FROM attendee as attd \n"
+            + "INNER JOIN attendance as atdc ON attendee.id = atdc.attendee_id \n"
+            + "WHERE attd.course_id = :courseId \n"
+            + "GROUP BY attd.id", nativeQuery = true)
+    public List<ClassAttendeeInfo> getClassAttendancesInfo(@Param("courseId") Long courseId);
 }
