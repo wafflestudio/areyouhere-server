@@ -42,3 +42,7 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.named('bootJar') {
+	archiveFileName.set("are-you-here.jar")
+}
