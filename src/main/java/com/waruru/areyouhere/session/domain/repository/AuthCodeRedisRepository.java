@@ -8,8 +8,6 @@ public interface AuthCodeRedisRepository extends CrudRepository<AuthCode, String
 
     public Optional<AuthCode> findAuthCodeByAuthCode(String authCode);
 
-    public Optional<AuthCode> findAuthCodeBySessionId(long sessionId);
-
     public void deleteAuthCodeByAuthCode(String authCode);
 
 

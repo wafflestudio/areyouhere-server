@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(DashBoardController.DASHBOARD)
 public class DashBoardController {
 
-    public static final String DASHBOARD = "/api/dashboard";
+    public static final String DASHBOARD = "/api/course/dashboard";
 
     private final SessionService sessionService;
 
