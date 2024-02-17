@@ -3,7 +3,9 @@ package com.waruru.areyouhere.attendee.service;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
+import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
+import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
 import java.util.Collections;
 import java.util.List;
@@ -39,9 +41,25 @@ public class AttendeeServiceImpl implements AttendeeService{
                         .attendeeName(sessionAttendee.getAttendeeName())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
                         .attendanceTime(sessionAttendee.getAttendanceTime())
-                        .build()).toList();
+                        .build()
+                ).toList();
     }
 
+
+    public List<ClassAttendees> getClassAttendeesIfExistsOrEmpty(Long courseId){
+        List<ClassAttendeeInfo> classAttendancesInfos = attendeeRepository.getClassAttendancesInfo(courseId);
+
+        return classAttendancesInfos == null || classAttendancesInfos.isEmpty() ?
+                Collections.emptyList()
+                : classAttendancesInfos.stream().map( classAttendancesInfo -> ClassAttendees.builder()
+                        .name(classAttendancesInfo.getName())
+                        .attendance(classAttendancesInfo.getAttendance())
+                        .absenece(classAttendancesInfo.getAbsence())
+                        .build()
+                ).toList();
+    }
+
+    
 
 
 
