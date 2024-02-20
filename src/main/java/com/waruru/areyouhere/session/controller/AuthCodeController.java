@@ -34,9 +34,15 @@ public class AuthCodeController {
 
     @PostMapping("/deactivate")
     public ResponseEntity<HttpStatus> deactivate(@RequestBody AuthCodeDeactivationRequestDto authCodeDeactivationRequestDto){
-        authCodeService.deactivate(authCodeDeactivationRequestDto.getAuthCode());
-        sessionService.checkSessionNotDeactivated(authCodeDeactivationRequestDto.getSessionId());
-        attendanceService.setAbsentAfterDeactivation(authCodeDeactivationRequestDto.getCourseId(), authCodeDeactivationRequestDto.getSessionId());
+        Long sessionId = authCodeDeactivationRequestDto.getSessionId();
+        Long courseId = authCodeDeactivationRequestDto.getCourseId();
+
+        String authCode = authCodeDeactivationRequestDto.getAuthCode();
+
+        sessionService.checkSessionNotDeactivated(sessionId);
+        sessionService.deactivate(sessionId);
+        authCodeService.deactivate(authCode);
+        attendanceService.setAbsentAfterDeactivation(courseId, sessionId);
         return ResponseEntity.ok().build();
     }
 

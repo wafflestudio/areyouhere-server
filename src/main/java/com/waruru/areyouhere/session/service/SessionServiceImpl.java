@@ -43,7 +43,7 @@ public class SessionServiceImpl implements SessionService {
         Session session = Session.builder()
                 .name(sessionName)
                 .course(course)
-                .isDeactivated(true)
+                .isDeactivated(false)
                 .build();
         sessionRepository.save(session);
     }
@@ -59,14 +59,14 @@ public class SessionServiceImpl implements SessionService {
         Session mostRecentSession = sessionRepository
                 .findMostRecentSessionByCourseId(courseId)
                 .orElseThrow(CurrentSessionNotFoundException::new);
-
+        // 제일 최근 세션이 이미 출석 체크가 끝났는지
         if(mostRecentSession.isDeactivated()){
             throw new CurrentSessionDeactivatedException();
         }
-
+        // 제일 최근 세션이 출석 코드를 만들지 않았는지
         SessionId sessionId = sessionIdRedisRepository
                 .findById(mostRecentSession.getId())
-                .orElseGet(null);
+                .orElse(null);
 
         if(sessionId == null){
             return  CurrentSessionDto.builder()
@@ -75,12 +75,12 @@ public class SessionServiceImpl implements SessionService {
                             .sessionName(mostRecentSession.getName())
                             .build();
         }
-
+        // 제일 최근 세션이 출석 코드를 만들었다면.
         // warning! 널 익셉션이 발생한다면 authCode를 redis에 삽입하는 과정에서 어느 쪽이 빠져있는 것이다.
 
         AuthCode authCode = authCodeRedisRepository
                 .findAuthCodeByAuthCode(sessionId.getAuthCode())
-                .orElseGet(null);
+                .orElse(null);
 
         return CurrentSessionDto.builder()
                 .authCode(authCode.getAuthCode())
@@ -90,7 +90,7 @@ public class SessionServiceImpl implements SessionService {
                 .build();
     }
 
-    // TODO : 리팩토링 필수 말도 안됨.
+    // TODO : 리팩토링 필수 말도 안됨. activate 확인은 RDB에 가는 게 아니라 redis에 해당 sessionId가 있는지만 확인하면 된다.
     @Transactional(readOnly = true)
     @Override
     public List<SessionAttendanceInfo> getRecentFiveSessions(Long courseId){
@@ -171,6 +171,15 @@ public class SessionServiceImpl implements SessionService {
     public Session getSession(Long ManagerId, Long sessionId) {
         return sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
+    }
+
+    @Transactional
+    @Override
+    public void deactivate(Long sessionId){
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(SessionIdNotFoundException::new);
+        session.setDeactivated(true);
+        sessionRepository.save(session);
     }
 
 

@@ -22,4 +22,6 @@ public interface SessionService {
 
     public void checkSessionNotDeactivated(Long sessionId);
 
+    public void deactivate(Long sessionId);
+
 }
