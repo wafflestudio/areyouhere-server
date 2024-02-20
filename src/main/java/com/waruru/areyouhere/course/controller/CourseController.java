@@ -32,7 +32,7 @@ public class CourseController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<List<Course>> getAllCourses(@RequestParam Manager manager) {
+    public ResponseEntity<List<Course>> getAllCourses(@Login Manager manager) {
         List<Course> courses = courseService.getAll(manager.getId());
         return ResponseEntity.ok(courses);
     }
