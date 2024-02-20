@@ -61,7 +61,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
 
-        if(session.isDeactivated()){
+        if(!session.isDeactivated()){
             throw new CurrentSessionNotFoundException();
         }
 

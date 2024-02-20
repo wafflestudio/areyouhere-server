@@ -10,6 +10,7 @@ import com.waruru.areyouhere.session.domain.repository.SessionIdRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.domain.repository.dto.SessionInfo;
 import com.waruru.areyouhere.session.exception.CourseIdNotFoundException;
+import com.waruru.areyouhere.session.exception.CurrentSessionDeactivatedException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.service.dto.CurrentSessionDto;
@@ -42,7 +43,7 @@ public class SessionServiceImpl implements SessionService {
         Session session = Session.builder()
                 .name(sessionName)
                 .course(course)
-                .isDeactivated(false)
+                .isDeactivated(true)
                 .build();
         sessionRepository.save(session);
     }
@@ -60,10 +61,9 @@ public class SessionServiceImpl implements SessionService {
                 .orElseThrow(CurrentSessionNotFoundException::new);
 
         if(mostRecentSession.isDeactivated()){
-            throw new CurrentSessionNotFoundException();
+            throw new CurrentSessionDeactivatedException();
         }
 
-        // warning! 널 익셉션이 발생한다면 authCode를 redis에 삽입하는 과정에서 어느 쪽이 빠져있는 것이다.
         SessionId sessionId = sessionIdRedisRepository
                 .findById(mostRecentSession.getId())
                 .orElseGet(null);
