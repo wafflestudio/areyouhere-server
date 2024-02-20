@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.session.service;
 
+import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
@@ -28,7 +29,6 @@ public class AuthCodeServiceImpl implements AuthCodeService{
 
     private final AuthCodeRedisRepository authCodeRedisRepository;
     private final SessionIdRedisRepository sessionIdRedisRepository;
-    private final SessionRepository sessionRepository;
     private final AttendeeRepository attendeeRepository;
     private final RandomIdentifierGenerator randomIdentifierGenerator;
 
@@ -58,13 +58,6 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 break;
         }
 
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(SessionIdNotFoundException::new);
-
-        if(!session.isDeactivated()){
-            throw new CurrentSessionNotFoundException();
-        }
-
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(courseId);
         List<String> attendees = attendeesByCourseId.stream()
                 .map(Attendee::getName)
@@ -92,7 +85,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
     public void deactivate(String authCode){
         AuthCode authCodeByAuthCode = authCodeRedisRepository.findAuthCodeByAuthCode(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
-
         authCodeRedisRepository.delete(authCodeByAuthCode);
+
     }
 }

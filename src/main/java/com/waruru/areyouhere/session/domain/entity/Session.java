@@ -32,8 +32,11 @@ public class Session {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @Builder
+    public void setDeactivated(boolean deactivated) {
+        isDeactivated = deactivated;
+    }
 
+    @Builder
     public Session(Long id, Course course, String name, boolean isDeactivated) {
         this.id = id;
         this.course = course;

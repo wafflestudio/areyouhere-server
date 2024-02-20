@@ -20,4 +20,6 @@ public interface SessionService {
 
     public void delete(Long sessionId);
 
+    public void checkSessionNotDeactivated(Long sessionId);
+
 }

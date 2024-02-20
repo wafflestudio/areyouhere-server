@@ -98,12 +98,14 @@ public class SessionServiceImpl implements SessionService {
         if(recentFiveSessions == null || recentFiveSessions.isEmpty()){
             return Collections.emptyList();
         }
-        int i = 0;
-        if(recentFiveSessions.get(0).isDeactivated()){
-            recentFiveSessions.remove(5);
+
+        if(!recentFiveSessions.get(0).isDeactivated()){
+            recentFiveSessions.remove(0);
 
         }else{
-            recentFiveSessions.remove(0);
+            if(recentFiveSessions.size() > 5){
+                recentFiveSessions.remove(5);
+            }
         }
         List<SessionAttendanceInfo> list = new ArrayList<>();
         for (Session recentFiveSession : recentFiveSessions) {
@@ -152,6 +154,16 @@ public class SessionServiceImpl implements SessionService {
                 .absentees(sessionWithAttendance.getabsentee())
                 .build();
 
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public void checkSessionNotDeactivated(Long sessionId){
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(SessionIdNotFoundException::new);
+        if(session.isDeactivated()){
+            throw new CurrentSessionDeactivatedException();
+        }
     }
 
     @Transactional(readOnly = true)

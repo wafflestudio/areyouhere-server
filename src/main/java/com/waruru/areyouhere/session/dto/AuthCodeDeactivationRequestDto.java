@@ -11,5 +11,7 @@ import lombok.NoArgsConstructor;
 public class AuthCodeDeactivationRequestDto {
 
     private String authCode;
+    private Long sessionId;
+    private Long courseId;
 
 }
