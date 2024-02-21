@@ -1,8 +1,10 @@
 package com.waruru.areyouhere.session.domain.entity;
 
+import com.waruru.areyouhere.attendance.domain.entity.Attendance;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,15 +27,19 @@ public class AuthCode {
     @NotNull
     private long sessionId;
 
-    private List<String> attendances;
+    private String attendances;
 
     private String createdAt;
+
+    public List<String> getAttendances() {
+        return  Arrays.asList(attendances.substring(1, attendances.length() - 1).split(", "));
+    }
 
     @Builder
     public AuthCode(String authCode, long sessionId, List<String> attendances, String createdAt) {
         this.authCode = authCode;
         this.sessionId = sessionId;
-        this.attendances = attendances;
         this.createdAt = createdAt;
+        this.attendances = attendances.toString();
     }
 }
