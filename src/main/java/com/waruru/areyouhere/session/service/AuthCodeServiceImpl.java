@@ -85,7 +85,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
     // TODO : sessionId 검증, 해당 sessionId가 user 소유인지 검증.
     @Transactional
     public void deactivate(String authCode){
-        AuthCode authCodeByAuthCode = authCodeRedisRepository.findAuthCodeByAuthCode(authCode)
+        AuthCode authCodeByAuthCode = authCodeRedisRepository.findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
         authCodeRedisRepository.delete(authCodeByAuthCode);
 

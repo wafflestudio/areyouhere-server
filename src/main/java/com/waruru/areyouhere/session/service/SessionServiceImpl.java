@@ -80,7 +80,7 @@ public class SessionServiceImpl implements SessionService {
         // warning! 널 익셉션이 발생한다면 authCode를 redis에 삽입하는 과정에서 어느 쪽이 빠져있는 것이다.
 
         AuthCode authCode = authCodeRedisRepository
-                .findAuthCodeByAuthCode(sessionId.getAuthCode())
+                .findById(sessionId.getAuthCode())
                 .orElse(null);
 
         return CurrentSessionDto.builder()
