@@ -33,6 +33,9 @@ public class Attendance {
 
     private boolean isAttended;
 
+    @CreatedDate
+    private LocalDateTime createdAt;
+
     @Builder
     public Attendance(Attendee attendee, Session session, boolean isAttended) {
         this.attendee = attendee;

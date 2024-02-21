@@ -27,12 +27,13 @@ public class AuthCode {
 
     private List<String> attendances;
 
-    String localDate = LocalDate.now().toString();
+    private String createdAt;
 
     @Builder
-    public AuthCode(String authCode, long sessionId, List<String> attendances) {
+    public AuthCode(String authCode, long sessionId, List<String> attendances, String createdAt) {
         this.authCode = authCode;
         this.sessionId = sessionId;
         this.attendances = attendances;
+        this.createdAt = createdAt;
     }
 }

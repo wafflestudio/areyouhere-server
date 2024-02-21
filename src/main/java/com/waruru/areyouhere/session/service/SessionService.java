@@ -3,6 +3,7 @@ package com.waruru.areyouhere.session.service;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.service.dto.CurrentSessionDto;
 import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SessionService {
@@ -23,5 +24,7 @@ public interface SessionService {
     public void checkSessionNotDeactivated(Long sessionId);
 
     public void deactivate(Long sessionId);
+
+    public void setSessionStartTime(Long sessionId, LocalDateTime currentTime);
 
 }

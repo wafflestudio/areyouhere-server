@@ -34,6 +34,8 @@ public class Session {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    // 논의해볼 부분 : previous Session에서 보여줄 시간은
+    // authCode 생성 기점으로 갈 것인가. 아니면 session 생성 기점으로 갈 것인가.
     @Setter
     private LocalDateTime authCodeCreatedAt;
 
