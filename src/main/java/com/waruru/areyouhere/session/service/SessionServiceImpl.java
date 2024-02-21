@@ -73,6 +73,7 @@ public class SessionServiceImpl implements SessionService {
                             .authCode(null)
                             .sessionTime(null)
                             .sessionName(mostRecentSession.getName())
+                            .id(mostRecentSession.getId())
                             .build();
         }
         // 제일 최근 세션이 출석 코드를 만들었다면.
