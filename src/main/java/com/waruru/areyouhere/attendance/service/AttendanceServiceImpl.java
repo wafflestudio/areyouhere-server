@@ -9,20 +9,24 @@ import com.waruru.areyouhere.attendance.service.dto.AttendanceCount;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.session.domain.entity.Session;
+import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AttendanceServiceImpl implements AttendanceService{
 
     private final AttendanceRepository attendanceRepository;
     private final AttendeeRepository attendeeRepository;
     private final SessionRepository sessionRepository;
+    private final AuthCodeRedisRepository authCodeRedisRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -61,6 +65,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     // TODO :redis의 이점을 누리려면 이렇게 RDB를 거쳐야 하는 친구는 다른 스레드로 보내서 비동기 처리 필요.
     // TODO : attend가 기록되기 전 유저에게는 응답이 바로 나가야 함.
     // TODO : 근데 course에 존재하는 session의 학생인지도 검증해야되는데..?
+    // TODO : authCode와 책임 분리가 제대로 되고 있지 않다. 분리해야한다.
     @Transactional
     public void setAttend(Long sessionId, String attendanceName){
         Session session = sessionRepository.findById(sessionId)

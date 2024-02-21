@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AuthCodeServiceImpl implements AuthCodeService{
 
     private final AuthCodeRedisRepository authCodeRedisRepository;
