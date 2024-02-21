@@ -37,7 +37,6 @@ public class AuthCodeServiceImpl implements AuthCodeService{
 
     @Transactional
     public Long checkAuthCodeAndGetSessionId(String authCode, String attendanceName){
-        log.debug("authCode : {}", authCode);
         AuthCode authCodeData = authCodeRedisRepository
                 .findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
