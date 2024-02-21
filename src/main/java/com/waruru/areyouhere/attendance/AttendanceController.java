@@ -41,7 +41,7 @@ public class AttendanceController {
         String attendeeName = attendRequestDto.getAttendeeName();
         String authCode = attendRequestDto.getAuthCode();
 
-        Long sessionId = authCodeService.checkAuthCodeAndGetSessionId(attendeeName, authCode);
+        Long sessionId = authCodeService.checkAuthCodeAndGetSessionId(authCode, attendeeName);
         attendanceService.setAttend(sessionId, authCode);
         return ResponseEntity.ok().build();
     }

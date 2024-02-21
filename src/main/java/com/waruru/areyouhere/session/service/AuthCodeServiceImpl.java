@@ -18,7 +18,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.swing.DebugGraphics;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthCodeServiceImpl implements AuthCodeService{
 
     private final AuthCodeRedisRepository authCodeRedisRepository;
@@ -35,8 +38,9 @@ public class AuthCodeServiceImpl implements AuthCodeService{
 
     @Transactional
     public Long checkAuthCodeAndGetSessionId(String authCode, String attendanceName){
+        log.debug("authCode : {}", authCode);
         AuthCode authCodeData = authCodeRedisRepository
-                .findAuthCodeByAuthCode(authCode)
+                .findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
 
         authCodeData.getAttendances().stream()
@@ -53,7 +57,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
         while(true){
             generatedAuthCode = randomIdentifierGenerator.generateRandomIdentifier(4);
             Optional<AuthCode> authCodeData = authCodeRedisRepository
-                    .findAuthCodeByAuthCode(generatedAuthCode);
+                    .findById(generatedAuthCode);
 
             if(authCodeData.isEmpty())
                 break;
