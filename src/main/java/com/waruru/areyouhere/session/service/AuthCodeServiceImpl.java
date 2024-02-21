@@ -14,6 +14,7 @@ import com.waruru.areyouhere.session.exception.AuthCodeNotFoundException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
     }
 
     @Transactional
-    public String createAuthCode(Long courseId, Long sessionId){
+    public String createAuthCode(Long courseId, Long sessionId, LocalDateTime currentTime){
         String generatedAuthCode = "";
         while(true){
             generatedAuthCode = randomIdentifierGenerator.generateRandomIdentifier(4);
@@ -68,6 +69,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 .authCode(generatedAuthCode)
                 .sessionId(sessionId)
                 .attendances(attendees)
+                .createdAt(currentTime.toString())
                 .build();
         authCodeRedisRepository.save(authCode);
 

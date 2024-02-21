@@ -12,24 +12,24 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
     @Query(value = "SELECT attendee FROM attendee WHERE attendee.course_id = :courseId And attendee.id NOT IN (SELECT att.attendee_id FROM attendance as att WHERE att.session_id = :sessionId)", nativeQuery = true)
     public List<Attendee> findAbsenteeBySessionIdWhenNoRegister(@Param("courseId") Long courseId, @Param("sessionId") Long sessionId);
 
-    @Query(value = "SELECT atdee.name as name, atda.isAttended as isAttended, atda.createdAt as AttendanceTime \n"
+    @Query(value = "SELECT atdee.name as name, atda.is_attended as isAttended, atda.created_at as AttendanceTime \n"
             + "FROM attendee as atdee \n"
             + "INNER JOIN attendance as atda ON atdee.id = atda.attendee_id  \n"
             + "WHERE atda.session_id = :sessionId", nativeQuery = true)
     public List<SessionAttendeeInfo> findSessionAttendees(@Param("sessionId") Long sessionId);
 
 
-    @Query(value = "SELECT atdee.name as name, atda.isAttended as isAttended, atda.createdAt as AttendanceTime \n"
+    @Query(value = "SELECT atdee.name as name, atda.is_attended as isAttended, atda.created_at as AttendanceTime \n"
             + "FROM attendee as atdee \n"
             + "INNER JOIN attendance as atda ON atdee.id = atda.attendee_id  \n"
             + "WHERE atda.session_id = :sessionId \n"
-            + "and atda.isAttnded = false", nativeQuery = true)
+            + "and atda.is_attended = false", nativeQuery = true)
     public List<SessionAttendeeInfo> findSessionOnlyAbsentee(@Param("sessionId") Long sessionId);
 
 
     @Query(value = "SELECT attd.id as attendeeId, attd.name as name, "
-            + "COUNT(case when atdc.isAttended = true then 1 end) as attendance, "
-            + "COUNT(case when atdc.isAttended = false then 1 end) as absence \n"
+            + "COUNT(case when atdc.is_attended = true then 1 end) as attendance, "
+            + "COUNT(case when atdc.is_attended = false then 1 end) as absence \n"
             + "FROM attendee as attd \n"
             + "INNER JOIN attendance as atdc ON attendee.id = atdc.attendee_id \n"
             + "WHERE attd.course_id = :courseId \n"

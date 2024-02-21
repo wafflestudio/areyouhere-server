@@ -73,6 +73,7 @@ public class SessionServiceImpl implements SessionService {
                             .authCode(null)
                             .sessionTime(null)
                             .sessionName(mostRecentSession.getName())
+                            .id(mostRecentSession.getId())
                             .build();
         }
         // 제일 최근 세션이 출석 코드를 만들었다면.
@@ -84,7 +85,7 @@ public class SessionServiceImpl implements SessionService {
 
         return CurrentSessionDto.builder()
                 .authCode(authCode.getAuthCode())
-                .sessionTime(LocalDateTime.parse(authCode.getLocalDate()))
+                .sessionTime(LocalDateTime.parse(authCode.getCreatedAt()))
                 .sessionName(mostRecentSession.getName())
                 .id(mostRecentSession.getId())
                 .build();
@@ -179,6 +180,14 @@ public class SessionServiceImpl implements SessionService {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         session.setDeactivated(true);
+        sessionRepository.save(session);
+    }
+
+    @Transactional
+    public void setSessionStartTime(Long sessionId, LocalDateTime currentTime){
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(SessionIdNotFoundException::new);
+        session.setAuthCodeCreatedAt(currentTime);
         sessionRepository.save(session);
     }
 

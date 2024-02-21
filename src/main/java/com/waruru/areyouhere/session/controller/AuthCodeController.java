@@ -6,6 +6,7 @@ import com.waruru.areyouhere.session.dto.AuthCodeDeactivationRequestDto;
 import com.waruru.areyouhere.session.dto.AuthCodeRequestDto;
 import com.waruru.areyouhere.session.service.AuthCodeService;
 import com.waruru.areyouhere.session.service.SessionService;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +29,12 @@ public class AuthCodeController {
 
     @PostMapping
     public ResponseEntity<String> create(@RequestBody AuthCodeRequestDto authCodeRequestDto){
+        LocalDateTime currentTime = LocalDateTime.now();
+        Long sessionId = authCodeRequestDto.getSessionId();
+        sessionService.setSessionStartTime(sessionId, currentTime);
 
-        return ResponseEntity.ok(authCodeService.createAuthCode(authCodeRequestDto.getCourseId(), authCodeRequestDto.getSessionId()));
+        Long courseId = authCodeRequestDto.getCourseId();
+        return ResponseEntity.ok(authCodeService.createAuthCode(courseId, sessionId, currentTime));
     }
 
     @PostMapping("/deactivate")

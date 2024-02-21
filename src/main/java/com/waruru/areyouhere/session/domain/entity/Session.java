@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -27,14 +28,17 @@ public class Session {
 
     private String name;
 
+    @Setter
     private boolean isDeactivated;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public void setDeactivated(boolean deactivated) {
-        isDeactivated = deactivated;
-    }
+    // 논의해볼 부분 : previous Session에서 보여줄 시간은
+    // authCode 생성 기점으로 갈 것인가. 아니면 session 생성 기점으로 갈 것인가.
+    @Setter
+    private LocalDateTime authCodeCreatedAt;
+
 
     @Builder
     public Session(Long id, Course course, String name, boolean isDeactivated) {
