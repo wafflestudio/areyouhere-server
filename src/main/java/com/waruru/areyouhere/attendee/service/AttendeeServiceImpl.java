@@ -87,7 +87,7 @@ public class AttendeeServiceImpl implements AttendeeService{
                         .id(classAttendancesInfo.getattendeeId())
                         .name(classAttendancesInfo.getName())
                         .attendance(classAttendancesInfo.getAttendance())
-                        .absenece(classAttendancesInfo.getAbsence())
+                        .absence(classAttendancesInfo.getAbsence())
                         .build()
                 ).toList();
     }

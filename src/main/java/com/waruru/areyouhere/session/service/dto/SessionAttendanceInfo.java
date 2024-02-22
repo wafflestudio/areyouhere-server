@@ -13,18 +13,18 @@ public class SessionAttendanceInfo {
 
     String name;
 
-    int attendees;
+    int attendee;
 
-    int absentees;
+    int absentee;
 
     Long id;
 
     @Builder
-    public SessionAttendanceInfo(LocalDateTime date, String name, int attendees, int absentees, Long id) {
+    public SessionAttendanceInfo(LocalDateTime date, String name, int attendee, int absentee, Long id) {
         this.date = date;
         this.name = name;
-        this.attendees = attendees;
-        this.absentees = absentees;
+        this.attendee = attendee;
+        this.absentee = absentee;
         this.id = id;
     }
 

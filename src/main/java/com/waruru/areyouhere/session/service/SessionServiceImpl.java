@@ -115,8 +115,8 @@ public class SessionServiceImpl implements SessionService {
                     .orElseThrow(SessionIdNotFoundException::new);
 
             list.add(SessionAttendanceInfo.builder()
-                    .attendees(sessionWithAttendance.getattendee())
-                    .absentees(sessionWithAttendance.getabsentee())
+                    .attendee(sessionWithAttendance.getattendee())
+                    .absentee(sessionWithAttendance.getabsentee())
                     .date(sessionWithAttendance.getdate())
                     .name(sessionWithAttendance.getname())
                     .id(sessionWithAttendance.getid())
@@ -136,8 +136,8 @@ public class SessionServiceImpl implements SessionService {
                         .id(allSession.getid())
                         .name(allSession.getname())
                         .date(allSession.getdate())
-                        .attendees(allSession.getattendee())
-                        .absentees(allSession.getabsentee())
+                        .attendee(allSession.getattendee())
+                        .absentee(allSession.getabsentee())
                         .build()).toList();
     }
 
@@ -152,8 +152,8 @@ public class SessionServiceImpl implements SessionService {
                 .id(sessionWithAttendance.getid())
                 .name(sessionWithAttendance.getname())
                 .date(sessionWithAttendance.getdate())
-                .attendees(sessionWithAttendance.getattendee())
-                .absentees(sessionWithAttendance.getabsentee())
+                .attendee(sessionWithAttendance.getattendee())
+                .absentee(sessionWithAttendance.getabsentee())
                 .build();
 
     }
