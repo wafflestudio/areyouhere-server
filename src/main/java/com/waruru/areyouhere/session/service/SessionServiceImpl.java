@@ -119,6 +119,7 @@ public class SessionServiceImpl implements SessionService {
                     .absentees(sessionWithAttendance.getabsentee())
                     .date(sessionWithAttendance.getdate())
                     .name(sessionWithAttendance.getname())
+                    .id(sessionWithAttendance.getid())
                     .build()
             );
         }
