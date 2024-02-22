@@ -16,10 +16,10 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
     public List<Session> findAllByCourseId(@Param("courseId") Long courseId);
 
 
-    @Query("SELECT s FROM session s WHERE s.course.id = :courseId order by s.authCodeCreatedAt desc limit 6")
+    @Query("SELECT s FROM session s WHERE s.course.id = :courseId order by s.createdAt desc limit 6")
     public List<Session> findTOP6BySessionByCourseId(@Param("courseId") Long courseId);
 
-    @Query("SELECT s FROM session s WHERE s.course.id = :courseId order by s.authCodeCreatedAt desc limit 1")
+    @Query("SELECT s FROM session s WHERE s.course.id = :courseId order by s.createdAt desc limit 1")
     public Optional<Session> findMostRecentSessionByCourseId(@Param("courseId") Long courseId);
 
     //find attendee who participate particular course and no attendance in particular session by query

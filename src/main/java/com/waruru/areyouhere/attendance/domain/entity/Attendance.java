@@ -9,8 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-
-
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 //TODO: createdTime 별도 테이블로 분리
 
@@ -18,6 +17,7 @@ import org.springframework.data.annotation.CreatedDate;
 @Getter
 @Entity(name = "attendance")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -11,12 +11,14 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 // TODO : jpa Auditing 사용해서 baseEntity 상속하게 만들기
 
 @Getter
 @Entity(name = "session")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
