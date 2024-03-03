@@ -32,7 +32,7 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
             + "COUNT(case when atdc.is_attended = true then 1 end) as attendance, "
             + "COUNT(case when atdc.is_attended = false then 1 end) as absence \n"
             + "FROM attendee as attd \n"
-            + "INNER JOIN attendance as atdc ON attd.id = atdc.attendee_id \n"
+            + "LEFT OUTER JOIN attendance as atdc ON attd.id = atdc.attendee_id \n"
             + "WHERE attd.course_id = :courseId \n"
             + "GROUP BY attd.id", nativeQuery = true)
     public List<ClassAttendeeInfo> getClassAttendancesInfo(@Param("courseId") Long courseId);
