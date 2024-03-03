@@ -5,6 +5,7 @@ import com.waruru.areyouhere.attendance.dto.CurrentAttendanceCount;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
 import com.waruru.areyouhere.attendance.service.AttendanceService;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
+import com.waruru.areyouhere.common.annotation.LoginRequired;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.session.domain.entity.Session;
@@ -36,6 +37,7 @@ public class AttendanceController {
     private final SessionRepository sessionRepository;
     private final CourseRepository courseRepository;
 
+    @LoginRequired
     @PostMapping
     public ResponseEntity<HttpStatus> attend(@RequestBody AttendRequestDto attendRequestDto){
         String attendeeName = attendRequestDto.getAttendeeName();
@@ -46,12 +48,16 @@ public class AttendanceController {
         return ResponseEntity.ok().build();
     }
 
+    @LoginRequired
     @PutMapping("/update")
     ResponseEntity<HttpStatus> updateAttendances(@RequestBody UpdateAttendanceRequestDto updateAttendanceRequestDto){
         attendanceService.setAttendanceStatuses(updateAttendanceRequestDto);
         return ResponseEntity.ok().build();
     }
+
+
     // TODO : 아예 바꿔
+    @LoginRequired
     @GetMapping("{courseId}/{sessionId}")
     ResponseEntity<CurrentAttendanceCount> getCurrentAttendances(@PathVariable("courseId") Long courseId, @PathVariable("sessionId") Long sessionId){
         int currentAttendance = attendanceService.currentAttendance(sessionId);

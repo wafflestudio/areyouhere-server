@@ -5,6 +5,7 @@ import com.waruru.areyouhere.attendee.dto.DeleteAttendeesDto;
 import com.waruru.areyouhere.attendee.dto.NewAttendeesDto;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
+import com.waruru.areyouhere.common.annotation.LoginRequired;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class AttendeeController {
 
     private final AttendeeService attendeeService;
 
+    @LoginRequired
     @GetMapping("/{courseId}")
     public ResponseEntity<ClassAttendeesDto> getClassAttendees(@PathVariable("courseId") Long courseId){
         List<ClassAttendees> classAttendees = attendeeService.getClassAttendeesIfExistsOrEmpty(courseId);
@@ -37,12 +39,14 @@ public class AttendeeController {
                 .build());
     }
 
+    @LoginRequired
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody NewAttendeesDto newAttendeesDto){
         attendeeService.createAttendees(newAttendeesDto.getCourseId(), newAttendeesDto.getNewAttendees());
         return ResponseEntity.ok().build();
     }
 
+    @LoginRequired
     @DeleteMapping
     public ResponseEntity<HttpStatus> delete(@RequestBody DeleteAttendeesDto deleteAttendeesDto){
         attendeeService.deleteAttendees(deleteAttendeesDto.getAttendeeIds());

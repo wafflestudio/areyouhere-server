@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.manager.service;
 
+import com.waruru.areyouhere.course.exception.UnauthorizedManagerException;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
@@ -27,7 +28,7 @@ public class SessionManagerService implements ManagerService {
     @Transactional
     public boolean login(Manager manager) {
         Manager findManager = managerRepository.findManagerByEmail(manager.getEmail())
-                .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(UnAuthenticatedException::new);
         if(manager.getPassword().equals(findManager.getPassword())){
             httpSession.setAttribute(LOG_ID, findManager.getId());
             return true;
@@ -54,14 +55,14 @@ public class SessionManagerService implements ManagerService {
 
     @Override
     @Transactional
-    public Manager getLoginedUser(){
+    public Manager getLoginUser(){
         Long userId = (Long) httpSession.getAttribute(LOG_ID);
 
         if (userId == null){
             throw new UnAuthenticatedException();
         }
 
-        return managerRepository.findById(userId).orElseThrow(MemberNotFoundException::new);
+        return managerRepository.findById(userId).orElseThrow(UnAuthenticatedException::new);
     }
 
     @Override

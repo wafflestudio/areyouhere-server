@@ -23,6 +23,6 @@ public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return managerService.getLoginedUser();
+        return managerService.getLoginUser();
     }
 }

@@ -10,7 +10,7 @@ public interface ManagerService {
 
     public void logout();
 
-    public Manager getLoginedUser();
+    public Manager getLoginUser();
 
     public boolean isDuplicatedEmail(String email);
 }

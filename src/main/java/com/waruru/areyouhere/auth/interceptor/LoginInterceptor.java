@@ -7,7 +7,6 @@ import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import com.waruru.areyouhere.manager.service.ManagerService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javax.swing.DebugGraphics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -26,8 +25,8 @@ public class LoginInterceptor implements HandlerInterceptor {
             throws Exception {
         if (handler instanceof HandlerMethod && ((HandlerMethod) handler).hasMethodAnnotation(LoginRequired.class)) {
 
-            Manager manager = managerService.getLoginedUser();
-
+            Manager manager = managerService.getLoginUser();
+            // never could be null, So server error.
             if (manager == null) {
                 throw new UnAuthenticatedException();
             }
