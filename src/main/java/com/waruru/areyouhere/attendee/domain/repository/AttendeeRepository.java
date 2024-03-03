@@ -13,14 +13,14 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
     @Query(value = "SELECT * FROM attendee WHERE attendee.course_id = :courseId And attendee.id NOT IN (SELECT att.attendee_id FROM attendance as att WHERE att.session_id = :sessionId)", nativeQuery = true)
     public List<Attendee> findAbsenteeBySessionIdWhenNoRegister(@Param("courseId") Long courseId, @Param("sessionId") Long sessionId);
 
-    @Query(value = "SELECT atdee.name as AttendeeName, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime \n"
+    @Query(value = "SELECT atdee.id as attendeeId, atdee.name as AttendeeName, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime \n"
             + "FROM attendee as atdee \n"
             + "INNER JOIN attendance as atda ON atdee.id = atda.attendee_id  \n"
             + "WHERE atda.session_id = :sessionId", nativeQuery = true)
     public List<SessionAttendeeInfo> findSessionAttendees(@Param("sessionId") Long sessionId);
 
 
-    @Query(value = "SELECT atdee.name as AttendeeName, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime \n"
+    @Query(value = "SELECT atdee.id as attendeeId,atdee.name as AttendeeName, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime \n"
             + "FROM attendee as atdee \n"
             + "INNER JOIN attendance as atda ON atdee.id = atda.attendee_id  \n"
             + "WHERE atda.session_id = :sessionId \n"

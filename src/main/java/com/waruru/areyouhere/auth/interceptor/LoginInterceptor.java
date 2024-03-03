@@ -28,8 +28,6 @@ public class LoginInterceptor implements HandlerInterceptor {
             try {
                 Manager manager = managerService.getLoginUser();
             } catch (UnAuthenticatedException e) {
-                request.setAttribute("message", "로그인이 필요합니다.");
-                request.setAttribute("exception", "UnAuthenticatedException");
                 request.getRequestDispatcher("/api/manager/unauthorized").forward(request, response);
                 return false;
             }

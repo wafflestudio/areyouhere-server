@@ -57,6 +57,7 @@ public class AttendeeServiceImpl implements AttendeeService{
         return sessionAttendees == null || sessionAttendees.isEmpty() ?
                 Collections.emptyList()
                 : sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
+                        .id(sessionAttendee.getAttendeeId())
                         .attendeeName(sessionAttendee.getAttendeeName())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
                         .attendanceTime(sessionAttendee.getAttendanceTime())
@@ -69,6 +70,7 @@ public class AttendeeServiceImpl implements AttendeeService{
         return sessionAttendees == null || sessionAttendees.isEmpty() ?
                 Collections.emptyList()
                 : sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
+                        .id(sessionAttendee.getAttendeeId())
                         .attendeeName(sessionAttendee.getAttendeeName())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
                         .attendanceTime(sessionAttendee.getAttendanceTime())
