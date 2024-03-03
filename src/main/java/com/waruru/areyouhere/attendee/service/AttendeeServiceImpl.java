@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.attendee.service;
 
+import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AttendeeServiceImpl implements AttendeeService{
 
     private final AttendeeRepository attendeeRepository;
+    private final AttendanceRepository attendanceRepository;
     private final CourseRepository courseRepository;
 
     //TODO : stream 변경
@@ -40,15 +42,12 @@ public class AttendeeServiceImpl implements AttendeeService{
     }
 
 
-    //TODO : refactor -> 말도 안되는 jpa 처리
+
     // TODO : courseId 검증 -> 해당 course의 attendee인지.
     @Transactional
     public void deleteAttendees(List<Long> deleteAttendees){
-
-        for(Long attendeeId : deleteAttendees){
-            attendeeRepository.deleteById(attendeeId);
-        }
-
+        attendanceRepository.deleteAllByAttendeeIds(deleteAttendees);
+        attendeeRepository.deleteAllByIds(deleteAttendees);
     }
 
     // TODO : refactor => 그냥 service에서 throw로 exception 던지고 no content 204 반환하는게 좋지 않으련지?
