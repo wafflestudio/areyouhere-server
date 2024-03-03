@@ -5,6 +5,7 @@ import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -37,5 +38,9 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
     public List<ClassAttendeeInfo> getClassAttendancesInfo(@Param("courseId") Long courseId);
 
     public List<Attendee> findAttendeesByCourse_Id(Long courseId);
+
+    @Modifying
+    @Query("delete from attendee a where a.id in :ids")
+    public void deleteAllByIds(@Param("ids") List<Long> ids);
 
 }
