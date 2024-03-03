@@ -2,6 +2,7 @@ package com.waruru.areyouhere.manager.controller;
 
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_BAD_REQUEST;
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_CONFLICT;
+import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_FORBIDDEN;
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_OK;
 
 import com.waruru.areyouhere.common.annotation.Login;
@@ -34,7 +35,7 @@ public class ManagerController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<ManagerDto> isLogined(@Login Manager manager){
+    public ResponseEntity<ManagerDto> isLogin(@Login Manager manager){
         return ResponseEntity.ok(ManagerDto.builder()
                         .email(manager.getEmail())
                         .name(manager.getName())
@@ -74,7 +75,9 @@ public class ManagerController {
         return RESPONSE_OK;
     }
 
-
-
+    @GetMapping("/unauthorized")
+    public ResponseEntity<HttpStatus> unauthorized(){
+        return RESPONSE_FORBIDDEN;
+    }
 
 }
