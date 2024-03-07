@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class UpdateAttendanceRequestDto {
+    private Long sessionId;
     private List<UpdateAttendance> updateAttendances;
 }

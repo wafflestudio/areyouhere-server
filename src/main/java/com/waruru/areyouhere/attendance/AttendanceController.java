@@ -2,6 +2,7 @@ package com.waruru.areyouhere.attendance;
 
 import com.waruru.areyouhere.attendance.dto.AttendRequestDto;
 import com.waruru.areyouhere.attendance.dto.CurrentAttendanceCount;
+import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
 import com.waruru.areyouhere.attendance.service.AttendanceService;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
@@ -12,6 +13,7 @@ import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.service.AuthCodeService;
 import com.waruru.areyouhere.session.service.SessionService;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,9 +35,6 @@ public class AttendanceController {
     private final AuthCodeService authCodeService;
     private final AttendanceService attendanceService;
     private final AttendeeService attendeeService;
-    private final SessionService sessionService;
-    private final SessionRepository sessionRepository;
-    private final CourseRepository courseRepository;
 
     @LoginRequired
     @PostMapping
@@ -51,7 +50,10 @@ public class AttendanceController {
     @LoginRequired
     @PutMapping("/update")
     ResponseEntity<HttpStatus> updateAttendances(@RequestBody UpdateAttendanceRequestDto updateAttendanceRequestDto){
-        attendanceService.setAttendanceStatuses(updateAttendanceRequestDto);
+        Long sessionId = updateAttendanceRequestDto.getSessionId();
+        List<UpdateAttendance> updateAttendance = updateAttendanceRequestDto.getUpdateAttendances();
+
+        attendanceService.setAttendanceStatuses(sessionId, updateAttendance);
         return ResponseEntity.ok().build();
     }
 

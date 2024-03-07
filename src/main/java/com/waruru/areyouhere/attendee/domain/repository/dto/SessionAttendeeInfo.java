@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public interface SessionAttendeeInfo {
 
-    public Long getAttendeeId();
+    public Long getAttendanceId();
     public String getAttendeeName();
 
     public Boolean getAttendanceStatus();

@@ -3,8 +3,10 @@ package com.waruru.areyouhere.course.dto;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CourseGetResponse {
     private Long id;

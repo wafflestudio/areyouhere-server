@@ -9,7 +9,6 @@ import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
-import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.exception.CourseIdNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +56,7 @@ public class AttendeeServiceImpl implements AttendeeService{
         return sessionAttendees == null || sessionAttendees.isEmpty() ?
                 Collections.emptyList()
                 : sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
-                        .id(sessionAttendee.getAttendeeId())
+                        .id(sessionAttendee.getAttendanceId())
                         .attendeeName(sessionAttendee.getAttendeeName())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
                         .attendanceTime(sessionAttendee.getAttendanceTime())
@@ -70,7 +69,7 @@ public class AttendeeServiceImpl implements AttendeeService{
         return sessionAttendees == null || sessionAttendees.isEmpty() ?
                 Collections.emptyList()
                 : sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
-                        .id(sessionAttendee.getAttendeeId())
+                        .id(sessionAttendee.getAttendanceId())
                         .attendeeName(sessionAttendee.getAttendeeName())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
                         .attendanceTime(sessionAttendee.getAttendanceTime())

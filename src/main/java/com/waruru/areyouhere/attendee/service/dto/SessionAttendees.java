@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public class SessionAttendees {
 
-    private Long id;
+    private Long attendanceId;
 
     private String attendeeName;
 
@@ -20,8 +20,8 @@ public class SessionAttendees {
 
 
     @Builder
-    public SessionAttendees(Long id, String attendeeName, boolean attendanceStatus, LocalDateTime attendanceTime) {
-        this.id = id;
+    public SessionAttendees(Long attendanceId, String attendeeName, boolean attendanceStatus, LocalDateTime attendanceTime) {
+        this.attendanceId = attendanceId;
         this.attendeeName = attendeeName;
         this.attendanceStatus = attendanceStatus;
         this.attendanceTime = attendanceTime;

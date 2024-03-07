@@ -92,9 +92,11 @@ public class AttendanceServiceImpl implements AttendanceService{
 
     // TODO : controller 그대로 받아오지 말기.
     // TODO : N + 1
+    // Session을 찾아서
+    // 해당 session의 attandance들을 바꿔준다.
     @Transactional
-    public void setAttendanceStatuses(UpdateAttendanceRequestDto updateAttendanceRequestDto){
-        List<UpdateAttendance> updateAttendances = updateAttendanceRequestDto.getUpdateAttendances();
+    public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances){
+
         for (UpdateAttendance updateAttendance : updateAttendances) {
             Attendance attendance = attendanceRepository.findById(updateAttendance.getAttendanceId())
                     .orElseThrow(SessionIdNotFoundException::new);
@@ -102,6 +104,7 @@ public class AttendanceServiceImpl implements AttendanceService{
             attendanceRepository.save(attendance);
         }
     }
+
     //TODO : 수정
     @Transactional
     public int currentAttendance(Long sessionId){
@@ -113,7 +116,4 @@ public class AttendanceServiceImpl implements AttendanceService{
         }
 
     }
-
-
-
 }
