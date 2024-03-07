@@ -30,9 +30,6 @@ public class AttendeeController {
     @GetMapping("/{courseId}")
     public ResponseEntity<ClassAttendeesDto> getClassAttendees(@PathVariable("courseId") Long courseId){
         List<ClassAttendees> classAttendees = attendeeService.getClassAttendeesIfExistsOrEmpty(courseId);
-        if(classAttendees.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
 
         return ResponseEntity.ok(ClassAttendeesDto.builder()
                 .classAttendees(classAttendees)

@@ -5,6 +5,8 @@ import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
+import com.waruru.areyouhere.attendee.exception.ClassAttendeesEmptyException;
+import com.waruru.areyouhere.attendee.exception.SessionAttendeesEmptyException;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
 import com.waruru.areyouhere.course.domain.entity.Course;
@@ -54,9 +56,11 @@ public class AttendeeServiceImpl implements AttendeeService{
     @Transactional(readOnly = true)
     public List<SessionAttendees> getSessionAttendeesIfExistsOrEmpty(Long sessionId){
         List<SessionAttendeeInfo> sessionAttendees = attendeeRepository.findSessionAttendees(sessionId);
-        return sessionAttendees == null || sessionAttendees.isEmpty() ?
-                Collections.emptyList()
-                : sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
+
+        if(sessionAttendees == null || sessionAttendees.isEmpty())
+            throw new SessionAttendeesEmptyException();
+
+        return sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
                         .attendanceId(sessionAttendee.getAttendanceId())
                         .attendeeName(sessionAttendee.getAttendeeName())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
@@ -67,9 +71,11 @@ public class AttendeeServiceImpl implements AttendeeService{
     @Transactional(readOnly = true)
     public List<SessionAttendees> getSessionAbsenteesIfExistsOrEmpty(Long sessionId){
         List<SessionAttendeeInfo> sessionAttendees = attendeeRepository.findSessionOnlyAbsentee(sessionId);
-        return sessionAttendees == null || sessionAttendees.isEmpty() ?
-                Collections.emptyList()
-                : sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
+
+        if(sessionAttendees == null || sessionAttendees.isEmpty())
+            throw new SessionAttendeesEmptyException();
+
+        return sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
                         .attendanceId(sessionAttendee.getAttendanceId())
                         .attendeeName(sessionAttendee.getAttendeeName())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
@@ -82,9 +88,10 @@ public class AttendeeServiceImpl implements AttendeeService{
     public List<ClassAttendees> getClassAttendeesIfExistsOrEmpty(Long courseId){
         List<ClassAttendeeInfo> classAttendancesInfos = attendeeRepository.getClassAttendancesInfo(courseId);
 
-        return classAttendancesInfos == null || classAttendancesInfos.isEmpty() ?
-                Collections.emptyList()
-                : classAttendancesInfos.stream().map( classAttendancesInfo -> ClassAttendees.builder()
+        if(classAttendancesInfos == null || classAttendancesInfos.isEmpty())
+            throw new ClassAttendeesEmptyException();
+
+        return classAttendancesInfos.stream().map( classAttendancesInfo -> ClassAttendees.builder()
                         .id(classAttendancesInfo.getattendeeId())
                         .name(classAttendancesInfo.getName())
                         .attendance(classAttendancesInfo.getAttendance())

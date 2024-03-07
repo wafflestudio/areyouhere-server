@@ -66,9 +66,7 @@ public class SessionController {
     public ResponseEntity<SessionAttendeesDto> getSessionAllAttendees(@PathVariable("sessionId") Long sessionId){
         List<SessionAttendees> sessionAttendees = attendeeService.getSessionAttendeesIfExistsOrEmpty(
                 sessionId);
-        if(sessionAttendees.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
+
         return ResponseEntity.ok(SessionAttendeesDto.builder()
                 .sessionAttendees(sessionAttendees)
                 .build());
@@ -78,22 +76,10 @@ public class SessionController {
     public ResponseEntity<SessionAttendeesDto> getSessionAbsenteeOnly(@PathVariable("sessionId") Long sessionId){
         List<SessionAttendees> sessionAttendees = attendeeService.getSessionAbsenteesIfExistsOrEmpty(
                 sessionId);
-        if(sessionAttendees.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
+
         return ResponseEntity.ok(SessionAttendeesDto.builder()
                 .sessionAttendees(sessionAttendees)
                 .build());
     }
-
-//    @PostMapping()
-
-
-
-
-
-
-
-
 
 }
