@@ -26,7 +26,6 @@ public class AttendanceServiceImpl implements AttendanceService{
     private final AttendanceRepository attendanceRepository;
     private final AttendeeRepository attendeeRepository;
     private final SessionRepository sessionRepository;
-    private final AuthCodeRedisRepository authCodeRedisRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -72,14 +71,12 @@ public class AttendanceServiceImpl implements AttendanceService{
                 .orElseThrow(SessionIdNotFoundException::new);
         Long courseId = session.getCourse().getId(); // lazy loading?
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(courseId);
-        // TODO : stream 변경
-        Attendee attendee = null;
-        for(Attendee curAttendee: attendeesByCourseId){
-            if(curAttendee.getName().equals(attendanceName)){
-                attendee = curAttendee;
-                break;
-            }
-        }
+
+        Attendee attendee = attendeesByCourseId.stream()
+                .filter(s -> s.getName().equals(attendanceName))
+                .findFirst()
+                .orElse(null);
+
         // TODO : attendeesByCourseId null 및 empty 체크
 
         Attendance attendance = Attendance.builder()

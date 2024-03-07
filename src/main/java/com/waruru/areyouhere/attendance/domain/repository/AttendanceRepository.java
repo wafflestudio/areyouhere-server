@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long>{
-    // TODO: jdbcTemplate을 통한 batch insert 최적화.
     public List<Attendance> findAttendancesBySession_Id(Long sessionId);
 
 

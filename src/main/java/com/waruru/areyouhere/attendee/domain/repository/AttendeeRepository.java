@@ -39,7 +39,7 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
 
     public List<Attendee> findAttendeesByCourse_Id(Long courseId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("delete from attendee a where a.id in :ids")
     public void deleteAllByIds(@Param("ids") List<Long> ids);
 

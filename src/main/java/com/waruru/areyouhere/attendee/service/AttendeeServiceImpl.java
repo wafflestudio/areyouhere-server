@@ -28,17 +28,16 @@ public class AttendeeServiceImpl implements AttendeeService{
     private final AttendanceRepository attendanceRepository;
     private final CourseRepository courseRepository;
 
-    //TODO : stream 변경
     @Transactional
     public void createAttendees(Long courseId, List<String> newAttendees){
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseIdNotFoundException::new);
-        List<Attendee> attendees = new ArrayList<>();
-        for(String newAttendee : newAttendees){
-            attendees.add(Attendee.builder()
-                    .course(course)
-                    .name(newAttendee).build());
-        }
+
+        List<Attendee> attendees = newAttendees.stream()
+                .map(newAttendee -> Attendee.builder()
+                        .course(course)
+                        .name(newAttendee).build())
+                .toList();
         attendeeRepository.saveAll(attendees);
     }
 
@@ -55,7 +54,6 @@ public class AttendeeServiceImpl implements AttendeeService{
     @Transactional(readOnly = true)
     public List<SessionAttendees> getSessionAttendeesIfExistsOrEmpty(Long sessionId){
         List<SessionAttendeeInfo> sessionAttendees = attendeeRepository.findSessionAttendees(sessionId);
-        log.info(sessionAttendees.get(0).getAttendanceId().toString());
         return sessionAttendees == null || sessionAttendees.isEmpty() ?
                 Collections.emptyList()
                 : sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
@@ -99,8 +97,6 @@ public class AttendeeServiceImpl implements AttendeeService{
     public int getAttendeeByCourseId(Long courseId){
         return attendeeRepository.findAttendeesByCourse_Id(courseId).size();
     }
-
-
 
 
 }
