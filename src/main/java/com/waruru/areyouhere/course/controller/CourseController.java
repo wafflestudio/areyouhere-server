@@ -2,6 +2,7 @@ package com.waruru.areyouhere.course.controller;
 
 import com.waruru.areyouhere.common.annotation.Login;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
+import com.waruru.areyouhere.course.dto.CourseGetResponse;
 import com.waruru.areyouhere.course.dto.request.CourseCreationRequest;
 import com.waruru.areyouhere.course.dto.request.CourseUpdateRequest;
 import com.waruru.areyouhere.course.service.CourseService;
@@ -19,6 +20,13 @@ import java.util.List;
 public class CourseController {
 
     private final CourseService courseService;
+
+    @LoginRequired
+    @GetMapping("/{courseId}")
+    ResponseEntity<CourseGetResponse> getCourse(@PathVariable Long courseId) {
+        Course course = courseService.findCourse(courseId);
+        return ResponseEntity.ok(CourseGetResponse.from(course));
+    }
 
     @LoginRequired
     @PostMapping

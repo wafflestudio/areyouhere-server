@@ -83,4 +83,12 @@ public class CourseServiceImpl implements CourseService {
 
         courseRepository.delete(course);
     }
+
+    @Override
+    @Transactional
+    public Course findCourse(Long courseId) {
+        return courseRepository.findById(courseId).
+                orElseThrow(() -> new IllegalArgumentException("Course not found"));
+    }
+
 }
