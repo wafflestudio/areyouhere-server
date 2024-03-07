@@ -14,12 +14,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AttendeeServiceImpl implements AttendeeService{
 
     private final AttendeeRepository attendeeRepository;
@@ -53,10 +55,11 @@ public class AttendeeServiceImpl implements AttendeeService{
     @Transactional(readOnly = true)
     public List<SessionAttendees> getSessionAttendeesIfExistsOrEmpty(Long sessionId){
         List<SessionAttendeeInfo> sessionAttendees = attendeeRepository.findSessionAttendees(sessionId);
+        log.info(sessionAttendees.get(0).getAttendanceId().toString());
         return sessionAttendees == null || sessionAttendees.isEmpty() ?
                 Collections.emptyList()
                 : sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
-                        .id(sessionAttendee.getAttendanceId())
+                        .attendanceId(sessionAttendee.getAttendanceId())
                         .attendeeName(sessionAttendee.getAttendeeName())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
                         .attendanceTime(sessionAttendee.getAttendanceTime())
@@ -69,7 +72,7 @@ public class AttendeeServiceImpl implements AttendeeService{
         return sessionAttendees == null || sessionAttendees.isEmpty() ?
                 Collections.emptyList()
                 : sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
-                        .id(sessionAttendee.getAttendanceId())
+                        .attendanceId(sessionAttendee.getAttendanceId())
                         .attendeeName(sessionAttendee.getAttendeeName())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
                         .attendanceTime(sessionAttendee.getAttendanceTime())
