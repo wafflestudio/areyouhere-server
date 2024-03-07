@@ -1,26 +1,18 @@
-package com.waruru.areyouhere.session.service;
+package com.waruru.areyouhere.attendance.service;
 
-import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
 import com.waruru.areyouhere.session.domain.entity.AuthCode;
-import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.entity.SessionId;
 import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionIdRedisRepository;
-import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.AuthCodeNotFoundException;
-import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
-import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.swing.DebugGraphics;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,7 +81,9 @@ public class AuthCodeServiceImpl implements AuthCodeService{
     public void deactivate(String authCode){
         AuthCode authCodeByAuthCode = authCodeRedisRepository.findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
+
         authCodeRedisRepository.delete(authCodeByAuthCode);
+        sessionIdRedisRepository.deleteById(authCodeByAuthCode.getSessionId());
 
     }
 }

@@ -1,10 +1,10 @@
-package com.waruru.areyouhere.session.controller;
+package com.waruru.areyouhere.attendance.controller;
 
 
 import com.waruru.areyouhere.attendance.service.AttendanceService;
 import com.waruru.areyouhere.session.dto.AuthCodeDeactivationRequestDto;
 import com.waruru.areyouhere.session.dto.AuthCodeRequestDto;
-import com.waruru.areyouhere.session.service.AuthCodeService;
+import com.waruru.areyouhere.attendance.service.AuthCodeService;
 import com.waruru.areyouhere.session.service.SessionService;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;

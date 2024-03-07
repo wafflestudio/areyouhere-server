@@ -87,10 +87,6 @@ public class AttendanceServiceImpl implements AttendanceService{
         attendanceRepository.save(attendance);
     }
 
-    // TODO : controller 그대로 받아오지 말기.
-    // TODO : N + 1
-    // Session을 찾아서
-    // 해당 session의 attandance들을 바꿔준다.
     @Transactional
     public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances){
 
@@ -102,8 +98,7 @@ public class AttendanceServiceImpl implements AttendanceService{
         }
     }
 
-    //TODO : 수정
-    @Transactional
+    @Transactional(readOnly = true)
     public int currentAttendance(Long sessionId){
         List<Attendance> attendancesBySessionId = attendanceRepository.findAttendancesBySession_Id(sessionId);
         if(attendancesBySessionId == null || attendancesBySessionId.isEmpty()){

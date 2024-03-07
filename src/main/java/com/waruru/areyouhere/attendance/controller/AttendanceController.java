@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.attendance;
+package com.waruru.areyouhere.attendance.controller;
 
 import com.waruru.areyouhere.attendance.dto.AttendRequestDto;
 import com.waruru.areyouhere.attendance.dto.CurrentAttendanceCount;
@@ -7,14 +7,8 @@ import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
 import com.waruru.areyouhere.attendance.service.AttendanceService;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
-import com.waruru.areyouhere.course.domain.entity.Course;
-import com.waruru.areyouhere.course.domain.repository.CourseRepository;
-import com.waruru.areyouhere.session.domain.entity.Session;
-import com.waruru.areyouhere.session.domain.repository.SessionRepository;
-import com.waruru.areyouhere.session.service.AuthCodeService;
-import com.waruru.areyouhere.session.service.SessionService;
+import com.waruru.areyouhere.attendance.service.AuthCodeService;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +30,6 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
     private final AttendeeService attendeeService;
 
-    @LoginRequired
     @PostMapping
     public ResponseEntity<HttpStatus> attend(@RequestBody AttendRequestDto attendRequestDto){
         String attendeeName = attendRequestDto.getAttendeeName();

@@ -6,8 +6,6 @@ import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
 import com.waruru.areyouhere.session.dto.CreateSessionRequestDto;
 import com.waruru.areyouhere.session.dto.DeleteSessionRequestDto;
 import com.waruru.areyouhere.session.dto.SessionAttendeesDto;
-import com.waruru.areyouhere.session.exception.CourseIdNotFoundException;
-import com.waruru.areyouhere.session.service.AuthCodeService;
 import com.waruru.areyouhere.session.service.SessionService;
 import com.waruru.areyouhere.session.service.dto.AllSessionAttendanceInfo;
 import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
