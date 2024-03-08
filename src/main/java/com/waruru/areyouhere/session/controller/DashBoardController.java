@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(DashBoardController.DASHBOARD)
 public class DashBoardController {
 
-    public static final String DASHBOARD = "/api/course/dashboard";
+    public static final String DASHBOARD = "/api/course/{courseId}/dashboard";
 
     private final SessionService sessionService;
 
     @LoginRequired
-    @GetMapping("/{courseId}")
+    @GetMapping
     public ResponseEntity<CurrentSessionResponseDto> getCurrentSessionInfo(@PathVariable Long courseId) {
         CurrentSessionDto currentSessionInfo = sessionService.getCurrentSessionInfo(courseId);
         CurrentSessionResponseDto currentSessionResponseDto = CurrentSessionResponseDto.builder()
@@ -42,7 +42,7 @@ public class DashBoardController {
 
     // TODO : refactor all service dto를 그대로 반환하고 있음.
     @LoginRequired
-    @GetMapping("/session/{courseId}")
+    @GetMapping("/session")
     public ResponseEntity<PreviousFiveSessionResponseDto> getRecentFiveSessionInfo(@PathVariable Long courseId){
 
         List<SessionAttendanceInfo> recentFiveSessions = sessionService.getRecentFiveSessions(courseId);
@@ -55,8 +55,6 @@ public class DashBoardController {
                 .sessionAttendanceInfos(recentFiveSessions)
                 .build());
     }
-
-
 
 
 }

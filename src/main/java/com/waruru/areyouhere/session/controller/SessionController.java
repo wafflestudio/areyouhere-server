@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,8 +33,8 @@ public class SessionController {
     private final AttendeeService attendeeService;
 
     // TODO : refactor => service Dto 그대로 사용.
-    @GetMapping("/{courseId}")
-    public ResponseEntity<AllSessionAttendanceInfo> getAllSession(@PathVariable("courseId") Long courseId){
+    @GetMapping
+    public ResponseEntity<AllSessionAttendanceInfo> getAllSession(@RequestParam("courseId") Long courseId){
 
         List<SessionAttendanceInfo> allSessions = sessionService.getAllSessions(courseId);
         if(allSessions.isEmpty()){
@@ -57,12 +58,12 @@ public class SessionController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/detail/{sessionId}")
+    @GetMapping("/{sessionId}")
     public ResponseEntity<SessionAttendanceInfo> getSessionBasicInfo(@PathVariable("sessionId") Long sessionId){
         return ResponseEntity.ok(sessionService.getSessionInfo(sessionId));
     }
 
-    @GetMapping("/detail/attendee/{sessionId}")
+    @GetMapping("/{sessionId}/attendee")
     public ResponseEntity<SessionAttendeesDto> getSessionAllAttendees(@PathVariable("sessionId") Long sessionId){
         List<SessionAttendees> sessionAttendees = attendeeService.getSessionAttendeesIfExistsOrEmpty(
                 sessionId);
@@ -72,7 +73,7 @@ public class SessionController {
                 .build());
     }
 
-    @GetMapping("/detail/absentee/{sessionId}")
+    @GetMapping("/{sessionId}/absentee")
     public ResponseEntity<SessionAttendeesDto> getSessionAbsenteeOnly(@PathVariable("sessionId") Long sessionId){
         List<SessionAttendees> sessionAttendees = attendeeService.getSessionAbsenteesIfExistsOrEmpty(
                 sessionId);

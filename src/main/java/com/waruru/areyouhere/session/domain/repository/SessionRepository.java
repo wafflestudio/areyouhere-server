@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 public interface SessionRepository extends JpaRepository<Session, Long>{
 
 
-    //TODO: query 수정 -> course가 조회가 어떻게 되는지 의심스러움.
     @Query("SELECT s FROM session s WHERE s.course.id = :courseId")
     public List<Session> findAllByCourseId(@Param("courseId") Long courseId);
 

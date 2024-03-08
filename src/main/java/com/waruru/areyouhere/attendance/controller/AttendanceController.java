@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,6 +31,8 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
     private final AttendeeService attendeeService;
 
+    //TODO: 정보 보내주기.
+
     @PostMapping
     public ResponseEntity<HttpStatus> attend(@RequestBody AttendRequestDto attendRequestDto){
         String attendeeName = attendRequestDto.getAttendeeName();
@@ -41,7 +44,7 @@ public class AttendanceController {
     }
 
     @LoginRequired
-    @PutMapping("/update")
+    @PutMapping
     ResponseEntity<HttpStatus> updateAttendances(@RequestBody UpdateAttendanceRequestDto updateAttendanceRequestDto){
         Long sessionId = updateAttendanceRequestDto.getSessionId();
         List<UpdateAttendance> updateAttendance = updateAttendanceRequestDto.getUpdateAttendances();
@@ -53,8 +56,8 @@ public class AttendanceController {
 
     // TODO : 아예 바꿔
     @LoginRequired
-    @GetMapping("{courseId}/{sessionId}")
-    ResponseEntity<CurrentAttendanceCount> getCurrentAttendances(@PathVariable("courseId") Long courseId, @PathVariable("sessionId") Long sessionId){
+    @GetMapping
+    ResponseEntity<CurrentAttendanceCount> getCurrentAttendances(@RequestParam("courseId") Long courseId, @RequestParam("sessionId") Long sessionId){
         int currentAttendance = attendanceService.currentAttendance(sessionId);
 
         int total = attendeeService.getAttendeeByCourseId(courseId);

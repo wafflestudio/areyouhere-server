@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,8 +28,8 @@ public class AttendeeController {
     private final AttendeeService attendeeService;
 
     @LoginRequired
-    @GetMapping("/{courseId}")
-    public ResponseEntity<ClassAttendeesDto> getClassAttendees(@PathVariable("courseId") Long courseId){
+    @GetMapping
+    public ResponseEntity<ClassAttendeesDto> getClassAttendees(@RequestParam("courseId") Long courseId){
         List<ClassAttendees> classAttendees = attendeeService.getClassAttendeesIfExistsOrEmpty(courseId);
 
         return ResponseEntity.ok(ClassAttendeesDto.builder()

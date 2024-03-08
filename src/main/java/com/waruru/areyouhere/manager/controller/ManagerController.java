@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,12 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ManagerController.MANAGER_API_URL)
 public class ManagerController {
 
-    public static final String MANAGER_API_URL = "/api/manager";
+    public static final String MANAGER_API_URL = "/api/auth";
 
     private final ManagerService managerService;
 
     @LoginRequired
-    @GetMapping
+    @GetMapping("/me")
     public ResponseEntity<ManagerDto> isLogin(@Login Manager manager){
         return ResponseEntity.ok(ManagerDto.builder()
                         .email(manager.getEmail())
@@ -42,7 +43,7 @@ public class ManagerController {
                 .build());
     }
 
-    @PostMapping
+    @PostMapping("/signup")
     public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
 
         managerService.register(SignUpRequestDto.toEntity(signUpRequestDto));
@@ -67,8 +68,8 @@ public class ManagerController {
         return RESPONSE_OK;
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<HttpStatus> isDuplicatedEmail(@PathVariable String email){
+    @GetMapping("/email-availability")
+    public ResponseEntity<HttpStatus> isDuplicatedEmail(@RequestParam String email){
         if(managerService.isDuplicatedEmail(email)){
             return RESPONSE_CONFLICT;
         }
