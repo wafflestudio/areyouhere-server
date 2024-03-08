@@ -91,7 +91,6 @@ public class SessionServiceImpl implements SessionService {
                 .build();
     }
 
-    // TODO : 리팩토링 필수 말도 안됨. activate 확인은 RDB에 가는 게 아니라 redis에 해당 sessionId가 있는지만 확인하면 된다.
     @Transactional(readOnly = true)
     @Override
     public List<SessionAttendanceInfo> getRecentFiveSessions(Long courseId){

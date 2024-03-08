@@ -1,0 +1,12 @@
+spring.config.activate.on-profile: prod
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/areyouhere?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Seoul&CharacterEncoding=UTF-8
+    username: root
+    password:
+  data:
+    redis:
+      host: localhost
+      port: 6379

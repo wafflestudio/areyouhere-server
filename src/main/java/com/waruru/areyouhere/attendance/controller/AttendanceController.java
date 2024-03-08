@@ -34,6 +34,8 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
     private final AttendeeService attendeeService;
 
+
+    // FIXME 로직 문제. -> 출석 중복 체크.
     @PostMapping
     public ResponseEntity<AttendResponseDto> attend(@RequestBody AttendRequestDto attendRequestDto){
         String attendeeName = attendRequestDto.getAttendeeName();
