@@ -26,7 +26,7 @@ public class SignUpRequestDto {
 
     @NotEmpty
     @Pattern(message = "비밀 번호는 영문과 특수 문자, 숫자를 포함하여 8자 이상이어야 합니다.",
-            regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,20}$")
+            regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[\\W_]).{8,20}$")
     private String password;
 
     @NotEmpty
