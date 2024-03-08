@@ -6,6 +6,14 @@ spring:
     url: jdbc:mysql://localhost:3306/areyouhere?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Seoul&CharacterEncoding=UTF-8
     username: root
     password:
+  jpa:
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
   data:
     redis:
       host: localhost
