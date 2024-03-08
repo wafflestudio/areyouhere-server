@@ -17,7 +17,7 @@ public interface SessionService {
 
     public SessionAttendanceInfo getSessionInfo(Long sessionId);
 
-    public Session getSession(Long ManagerId, Long sessionId);
+    public Session getSession(Long sessionId);
 
     public void delete(Long sessionId);
 

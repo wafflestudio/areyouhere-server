@@ -1,6 +1,7 @@
 package com.waruru.areyouhere.attendance.controller;
 
 import com.waruru.areyouhere.attendance.dto.AttendRequestDto;
+import com.waruru.areyouhere.attendance.dto.AttendResponseDto;
 import com.waruru.areyouhere.attendance.dto.CurrentAttendanceCount;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
@@ -8,6 +9,8 @@ import com.waruru.areyouhere.attendance.service.AttendanceService;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
 import com.waruru.areyouhere.attendance.service.AuthCodeService;
+import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,16 +34,21 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
     private final AttendeeService attendeeService;
 
-    //TODO: 정보 보내주기.
-
     @PostMapping
-    public ResponseEntity<HttpStatus> attend(@RequestBody AttendRequestDto attendRequestDto){
+    public ResponseEntity<AttendResponseDto> attend(@RequestBody AttendRequestDto attendRequestDto){
         String attendeeName = attendRequestDto.getAttendeeName();
         String authCode = attendRequestDto.getAuthCode();
+        LocalDateTime attendanceTime = LocalDateTime.now();
+        AuthCodeInfo authCodeInfo = authCodeService.checkAuthCodeAndGetSessionId(authCode, attendeeName);
+        attendanceService.setAttend(authCodeInfo.getSessionId(), attendeeName);
 
-        Long sessionId = authCodeService.checkAuthCodeAndGetSessionId(authCode, attendeeName);
-        attendanceService.setAttend(sessionId, attendeeName);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(
+                AttendResponseDto.builder()
+                        .attendanceName(attendeeName)
+                        .courseName(authCodeInfo.getCourseName())
+                        .sessionName(authCodeInfo.getSessionName())
+                        .attendanceTime(attendanceTime).build()
+        );
     }
 
     @LoginRequired
@@ -59,9 +67,7 @@ public class AttendanceController {
     @GetMapping
     ResponseEntity<CurrentAttendanceCount> getCurrentAttendances(@RequestParam("courseId") Long courseId, @RequestParam("sessionId") Long sessionId){
         int currentAttendance = attendanceService.currentAttendance(sessionId);
-
         int total = attendeeService.getAttendeeByCourseId(courseId);
-
         return ResponseEntity.ok(new CurrentAttendanceCount(currentAttendance, total));
     }
 

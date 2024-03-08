@@ -170,7 +170,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public Session getSession(Long ManagerId, Long sessionId) {
+    public Session getSession(Long sessionId) {
         return sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
     }

@@ -24,7 +24,7 @@ public class CourseController {
     @LoginRequired
     @GetMapping("/{courseId}")
     ResponseEntity<CourseGetResponse> getCourse(@PathVariable Long courseId) {
-        Course course = courseService.findCourse(courseId);
+        Course course = courseService.getCourse(courseId);
         return ResponseEntity.ok(CourseGetResponse.from(course));
     }
 

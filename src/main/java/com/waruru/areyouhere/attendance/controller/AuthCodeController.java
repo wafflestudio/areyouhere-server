@@ -2,6 +2,9 @@ package com.waruru.areyouhere.attendance.controller;
 
 
 import com.waruru.areyouhere.attendance.service.AttendanceService;
+import com.waruru.areyouhere.course.domain.entity.Course;
+import com.waruru.areyouhere.course.service.CourseService;
+import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.dto.AuthCodeDeactivationRequestDto;
 import com.waruru.areyouhere.session.dto.AuthCodeRequestDto;
 import com.waruru.areyouhere.attendance.service.AuthCodeService;
@@ -25,16 +28,18 @@ public class AuthCodeController {
     private final AuthCodeService authCodeService;
     private final AttendanceService attendanceService;
     private final SessionService sessionService;
+    private final CourseService courseService;
 
 
     @PostMapping
     public ResponseEntity<String> create(@RequestBody AuthCodeRequestDto authCodeRequestDto){
         LocalDateTime currentTime = LocalDateTime.now();
         Long sessionId = authCodeRequestDto.getSessionId();
-        sessionService.setSessionStartTime(sessionId, currentTime);
-
         Long courseId = authCodeRequestDto.getCourseId();
-        return ResponseEntity.ok(authCodeService.createAuthCode(courseId, sessionId, currentTime));
+        Course course = courseService.getCourse(courseId);
+        Session session = sessionService.getSession(sessionId);
+        sessionService.setSessionStartTime(sessionId, currentTime);
+        return ResponseEntity.ok(authCodeService.createAuthCode(course, session, currentTime));
     }
 
     @PostMapping("/deactivate")

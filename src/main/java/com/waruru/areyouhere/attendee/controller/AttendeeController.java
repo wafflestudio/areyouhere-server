@@ -45,7 +45,7 @@ public class AttendeeController {
     }
 
     @LoginRequired
-    @DeleteMapping
+    @PostMapping("/delete")
     public ResponseEntity<HttpStatus> delete(@RequestBody DeleteAttendeesDto deleteAttendeesDto){
         attendeeService.deleteAttendees(deleteAttendeesDto.getAttendeeIds());
         return ResponseEntity.ok().build();

@@ -86,7 +86,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public Course findCourse(Long courseId) {
+    public Course getCourse(Long courseId) {
         return courseRepository.findById(courseId).
                 orElseThrow(() -> new IllegalArgumentException("Course not found"));
     }

@@ -12,5 +12,5 @@ public interface CourseService {
     void update(Long managerId, Long courseId, String name, String description, boolean onlyListNameAllowed);
     void delete(Long managerId, Long courseId);
 
-    public Course findCourse(Long courseId);
+    public Course getCourse(Long courseId);
 }

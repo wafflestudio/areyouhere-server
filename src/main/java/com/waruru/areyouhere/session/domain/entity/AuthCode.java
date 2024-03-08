@@ -29,17 +29,27 @@ public class AuthCode {
 
     private String attendances;
 
+    @NotNull
+    private String courseName;
+
+    @NotNull
+    private String sessionName;
+
     private String createdAt;
 
     public List<String> getAttendances() {
         return  Arrays.asList(attendances.substring(1, attendances.length() - 1).split(", "));
     }
 
+
     @Builder
-    public AuthCode(String authCode, long sessionId, List<String> attendances, String createdAt) {
+    public AuthCode(String authCode, long sessionId, List<String> attendances, String courseName, String sessionName,
+                    String createdAt) {
         this.authCode = authCode;
         this.sessionId = sessionId;
-        this.createdAt = createdAt;
         this.attendances = attendances.toString();
+        this.courseName = courseName;
+        this.sessionName = sessionName;
+        this.createdAt = createdAt;
     }
 }
