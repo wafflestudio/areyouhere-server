@@ -1,5 +1,9 @@
 package com.waruru.areyouhere.manager.service;
 
+import com.waruru.areyouhere.auth.entity.LoginUser;
+import com.waruru.areyouhere.auth.session.SessionManager;
+import com.waruru.areyouhere.course.domain.entity.Course;
+import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.course.exception.UnauthorizedManagerException;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
@@ -7,6 +11,8 @@ import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
 import com.waruru.areyouhere.manager.exception.MemberNotFoundException;
 import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import jakarta.servlet.http.HttpSession;
+import java.util.HashSet;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,11 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class SessionManagerService implements ManagerService {
 
-    private final HttpSession httpSession;
     private final ManagerRepository managerRepository;
-
-
-    private static final String LOG_ID = "logId";
+    private final SessionManager sessionManager;
 
     @Override
     @Transactional
@@ -30,7 +33,7 @@ public class SessionManagerService implements ManagerService {
         Manager findManager = managerRepository.findManagerByEmail(manager.getEmail())
                 .orElseThrow(UnAuthenticatedException::new);
         if(manager.getPassword().equals(findManager.getPassword())){
-            httpSession.setAttribute(LOG_ID, findManager.getId());
+            sessionManager.createSession(findManager.getId());
             return true;
         }
         return false;
@@ -38,7 +41,7 @@ public class SessionManagerService implements ManagerService {
     @Override
     @Transactional
     public void logout() {
-        httpSession.removeAttribute(LOG_ID);
+        sessionManager.removeSession();
     }
 
     @Override
@@ -50,19 +53,20 @@ public class SessionManagerService implements ManagerService {
             throw new DuplicatedEmailException("중복된 이메일입니다.");
         }
         managerRepository.save(manager);
-        httpSession.setAttribute(LOG_ID, manager.getId());
+
+        sessionManager.createSession(manager.getId());
     }
 
     @Override
     @Transactional
     public Manager getLoginUser(){
-        Long userId = (Long) httpSession.getAttribute(LOG_ID);
+        LoginUser loginUser = sessionManager.getSession();
 
-        if (userId == null){
+        if (loginUser == null){
             throw new UnAuthenticatedException();
         }
 
-        return managerRepository.findById(userId).orElseThrow(UnAuthenticatedException::new);
+        return managerRepository.findById(loginUser.getId()).orElseThrow(UnAuthenticatedException::new);
     }
 
     @Override

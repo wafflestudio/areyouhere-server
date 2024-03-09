@@ -2,11 +2,14 @@ package com.waruru.areyouhere.course.service;
 
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
+import com.waruru.areyouhere.auth.entity.LoginUser;
+import com.waruru.areyouhere.auth.session.SessionManager;
 import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import java.util.Map;
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
+    private final SessionManager sessionManager;
     private final RandomIdentifierGenerator randomIdentifierGenerator;
     private final AttendeeRepository attendeeRepository;
 
@@ -49,6 +53,8 @@ public class CourseServiceImpl implements CourseService {
             attendeesToSave.add(attendee);
         }
         attendeeRepository.saveAll(attendeesToSave);
+        sessionManager.addCourseId(course.getId());
+
     }
 
     @Override
@@ -82,6 +88,7 @@ public class CourseServiceImpl implements CourseService {
         }
 
         courseRepository.delete(course);
+        sessionManager.removeCourseId(courseId);
     }
 
     @Override

@@ -27,6 +27,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (handler instanceof HandlerMethod && ((HandlerMethod) handler).hasMethodAnnotation(LoginRequired.class)) {
             try {
                 Manager manager = managerService.getLoginUser();
+
             } catch (UnAuthenticatedException e) {
                 request.getRequestDispatcher("/api/manager/unauthorized").forward(request, response);
                 return false;
