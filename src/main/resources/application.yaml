@@ -1,6 +1,8 @@
 server:
   port: 8080
-
+  servlet:
+    session:
+      timeout: 1800
 spring:
   profiles:
     active: dev
@@ -8,3 +10,5 @@ spring:
     import:
       - application-dev.yaml
       - application-prod.yaml
+      - application-temp.yaml
+
