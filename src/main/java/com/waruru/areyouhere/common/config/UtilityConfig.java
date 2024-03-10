@@ -11,6 +11,4 @@ public class UtilityConfig {
     public RandomIdentifierGenerator randomIdentifierGenerator() {
         return new AlphanumericIdGenerator();
     }
-    @Bean
-    public PasswordEncoder passwordEncoder(){return new PasswordEncoder();}
 }

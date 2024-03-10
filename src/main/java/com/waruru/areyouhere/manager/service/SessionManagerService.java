@@ -2,20 +2,14 @@ package com.waruru.areyouhere.manager.service;
 
 import com.waruru.areyouhere.auth.entity.LoginUser;
 import com.waruru.areyouhere.auth.session.SessionManager;
-import com.waruru.areyouhere.course.domain.entity.Course;
-import com.waruru.areyouhere.course.domain.repository.CourseRepository;
-import com.waruru.areyouhere.course.exception.UnauthorizedManagerException;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
-import com.waruru.areyouhere.manager.exception.MemberNotFoundException;
 import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
-import jakarta.servlet.http.HttpSession;
-import java.util.HashSet;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,13 +20,14 @@ public class SessionManagerService implements ManagerService {
 
     private final ManagerRepository managerRepository;
     private final SessionManager sessionManager;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
-    public boolean login(Manager manager) {
-        Manager findManager = managerRepository.findManagerByEmail(manager.getEmail())
+    public boolean login(String email, String password) {
+        Manager findManager = managerRepository.findManagerByEmail(email)
                 .orElseThrow(UnAuthenticatedException::new);
-        if(manager.getPassword().equals(findManager.getPassword())){
+        if(passwordEncoder.matches(password, findManager.getPassword())){
             sessionManager.createSession(findManager.getId());
             return true;
         }
@@ -46,13 +41,20 @@ public class SessionManagerService implements ManagerService {
 
     @Override
     @Transactional
-    public void register(Manager manager){
-        boolean isEmailDuplicated = isDuplicatedEmail(manager.getEmail());
+    public void register(String email, String password, String nickname){
+        boolean isEmailDuplicated = isDuplicatedEmail(email);
 
         if(isEmailDuplicated){
             throw new DuplicatedEmailException("중복된 이메일입니다.");
         }
-        managerRepository.save(manager);
+        Manager manager = managerRepository.save(
+                Manager.builder()
+                        .name(nickname)
+                        .email(email)
+                        .password(passwordEncoder.encode(password))
+                        .build()
+
+        );
 
         sessionManager.createSession(manager.getId());
     }

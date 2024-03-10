@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +45,7 @@ public class ManagerController {
     @PostMapping("/signup")
     public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
 
-        managerService.register(SignUpRequestDto.toEntity(signUpRequestDto));
+        managerService.register(signUpRequestDto.getEmail(), signUpRequestDto.getPassword(), signUpRequestDto.getNickname());
         return RESPONSE_OK;
 
     }
@@ -54,7 +53,7 @@ public class ManagerController {
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(@RequestBody @Valid LoginRequestDto loginRequestDto){
 
-        if(managerService.login(LoginRequestDto.toEntity(loginRequestDto))){
+        if(managerService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword())){
             return RESPONSE_OK;
         }
 

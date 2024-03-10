@@ -4,9 +4,9 @@ import com.waruru.areyouhere.manager.domain.entity.Manager;
 
 public interface ManagerService {
 
-    public boolean login(Manager manager);
+    public boolean login(String email, String password);
 
-    public void register(Manager manager);
+    public void register(String email, String password, String nickname);
 
     public void logout();
 
