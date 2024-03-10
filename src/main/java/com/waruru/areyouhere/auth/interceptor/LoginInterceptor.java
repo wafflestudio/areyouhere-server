@@ -27,6 +27,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (handler instanceof HandlerMethod && ((HandlerMethod) handler).hasMethodAnnotation(LoginRequired.class)) {
             try {
                 Manager manager = managerService.getLoginUser();
+                //TODO CSRF 토큰 도입 혹은 JWT 도입 - 프론트엔드와 합의 필요
+                // TODO referer 체크
+                // TODO 세션을 유지한다면 장기적으로 redis로 넘어갈텐데 SecurityContextRepository를 사용해야할 것 같다.
 
             } catch (UnAuthenticatedException e) {
                 request.getRequestDispatcher("/api/manager/unauthorized").forward(request, response);
