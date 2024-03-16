@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.course.exception;
+package com.waruru.areyouhere.attendee.exception;
 
 public class AttendeesNotUniqueException extends RuntimeException{
     public AttendeesNotUniqueException() {
