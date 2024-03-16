@@ -26,10 +26,11 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
     @Query("SELECT s.course.id FROM session s WHERE s.id = :sessionId")
     public Optional<Long> findCourseIdBySession_Id(@Param("sessionId") Long sessionId);
 
-    // refactor
+    // TODO 지나친 Native SQL의 문제점
     // 단발쿼리로 나가는 것의 단점 -> 너무 request 의존적이다. 과연 속도 이점이 얼마나 될 지? 옳은 코드인지 모르겠다.
     // session list를 구해오고 그 순서대로 출석자, 결석자 수를 정렬해서 가져오는 것이 더 나은 방법이 아닐까? 어차피 쿼리는 두 번 나가는데 큰 차이도 없다.
     // 무엇보다 network IO 말고 DB 상에서 어떤 게 빠를지 고민해볼 필요도 있다.
+
     @Query(value = "SELECT session.id as id, session.auth_code_created_at as date, session.name as name, "
             + "COUNT(case when attendance.is_attended = true then 1 end) as attendee, "
             + "COUNT(case when attendance.is_attended = false then 1 end) as absentee \n"

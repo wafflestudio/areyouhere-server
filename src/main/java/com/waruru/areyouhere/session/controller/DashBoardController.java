@@ -40,7 +40,6 @@ public class DashBoardController {
     }
 
 
-    // TODO : refactor all service dto를 그대로 반환하고 있음.
     @LoginRequired
     @GetMapping("/session")
     public ResponseEntity<PreviousFiveSessionResponseDto> getRecentFiveSessionInfo(@PathVariable Long courseId){

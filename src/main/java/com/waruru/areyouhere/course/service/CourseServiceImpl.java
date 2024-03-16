@@ -1,15 +1,18 @@
 package com.waruru.areyouhere.course.service;
 
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
+import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.auth.entity.LoginUser;
 import com.waruru.areyouhere.auth.session.SessionManager;
 import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
+import com.waruru.areyouhere.course.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import jakarta.servlet.http.HttpSession;
+import java.util.Set;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,12 +29,13 @@ public class CourseServiceImpl implements CourseService {
     private final ManagerRepository managerRepository;
     private final SessionManager sessionManager;
     private final RandomIdentifierGenerator randomIdentifierGenerator;
-    private final AttendeeRepository attendeeRepository;
+    private final AttendeeBatchRepository attendeeBatchRepository;
 
     @Override
     @Transactional
     public void create(Long managerId, String name, String description, List<String> attendees, boolean onlyListNameAllowed) {
         Manager manager = managerRepository.findManagerById(managerId).orElseThrow(() -> new IllegalArgumentException("Manager not found"));
+
         Course course = Course.builder()
                 .manager(manager)
                 .name(name)
@@ -40,19 +44,20 @@ public class CourseServiceImpl implements CourseService {
                 .build();
         courseRepository.save(course);
 
-        Map<String, Integer> attendeeCounts = new HashMap<>();
         List<Attendee> attendeesToSave = new ArrayList<>();
-        for (String attendeeName : attendees) {
-            int count = attendeeCounts.getOrDefault(attendeeName, 0);
-            attendeeCounts.put(attendeeName, count + 1);
-            String finalName = attendeeName + (count > 0 ? randomIdentifierGenerator.generateRandomIdentifier(4) : "");
-            Attendee attendee = Attendee.builder()
-                    .course(course)
-                    .name(finalName)
-                    .build();
-            attendeesToSave.add(attendee);
+
+        if(!isAttendeesUnique(attendees)){
+            throw new AttendeesNotUniqueException();
         }
-        attendeeRepository.saveAll(attendeesToSave);
+
+        attendees.stream()
+                .map(attendeeName -> Attendee.builder()
+                        .course(course)
+                        .name(attendeeName)
+                        .build())
+                .forEach(attendeesToSave::add);
+
+        attendeeBatchRepository.insertAttendeesBatch(attendeesToSave);
         sessionManager.addCourseId(course.getId());
 
     }
@@ -96,6 +101,11 @@ public class CourseServiceImpl implements CourseService {
     public Course getCourse(Long courseId) {
         return courseRepository.findById(courseId).
                 orElseThrow(() -> new IllegalArgumentException("Course not found"));
+    }
+
+    private boolean isAttendeesUnique(List<String> attendees) {
+        Set<String> uniqueAttendees = Set.copyOf(attendees);
+        return uniqueAttendees.size() == attendees.size();
     }
 
 }

@@ -1,5 +1,8 @@
 package com.waruru.areyouhere.course.advice;
 
+import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_BAD_REQUEST;
+
+import com.waruru.areyouhere.course.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
 import com.waruru.areyouhere.course.exception.ManagerNotFoundException;
 import com.waruru.areyouhere.course.exception.UnauthorizedManagerException;
@@ -29,6 +32,11 @@ public class CourseExceptionAdvice {
         // 여기서 에러 응답을 구성하여 반환
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
+    @ExceptionHandler(AttendeesNotUniqueException.class)
+    public ResponseEntity<HttpStatus> handleAttendeesNotUniqueException(AttendeesNotUniqueException ex) {
+        return RESPONSE_BAD_REQUEST;
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGlobalException(Exception ex, WebRequest request) {

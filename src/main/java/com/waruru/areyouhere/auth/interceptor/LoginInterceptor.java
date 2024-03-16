@@ -30,7 +30,8 @@ public class LoginInterceptor implements HandlerInterceptor {
                 //TODO CSRF 토큰 도입 혹은 JWT 도입 - 프론트엔드와 합의 필요
                 // TODO referer 체크
                 // TODO 세션을 유지한다면 장기적으로 redis로 넘어갈텐데 SecurityContextRepository를 사용해야할 것 같다.
-
+                // TODO: 인증과 인가는 별개이다. 인가 중에서도 각 user가 어디 record에 접근권한을 가질 지 제어하는 공통된 로직을 고민해 봐야 한다.
+                // TODO
             } catch (UnAuthenticatedException e) {
                 request.getRequestDispatcher("/api/manager/unauthorized").forward(request, response);
                 return false;
