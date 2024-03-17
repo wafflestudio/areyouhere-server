@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.course.dto;
+package com.waruru.areyouhere.course.dto.response;
 
 import com.waruru.areyouhere.course.domain.entity.Course;
 import lombok.AccessLevel;

@@ -2,7 +2,9 @@ package com.waruru.areyouhere.course.controller;
 
 import com.waruru.areyouhere.common.annotation.Login;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
-import com.waruru.areyouhere.course.dto.CourseGetResponse;
+import com.waruru.areyouhere.course.dto.CourseData;
+import com.waruru.areyouhere.course.dto.response.AllCourseResponse;
+import com.waruru.areyouhere.course.dto.response.CourseGetResponse;
 import com.waruru.areyouhere.course.dto.request.CourseCreationRequest;
 import com.waruru.areyouhere.course.dto.request.CourseUpdateRequest;
 import com.waruru.areyouhere.course.service.CourseService;
@@ -40,9 +42,18 @@ public class CourseController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<List<Course>> getAllCourses(@Login Manager manager) {
+    public ResponseEntity<AllCourseResponse> getAllCourses(@Login Manager manager) {
         List<Course> courses = courseService.getAll(manager.getId());
-        return ResponseEntity.ok(courses);
+        List<CourseData> courseData = courses.stream()
+                .map(course -> CourseData.builder()
+                        .id(course.getId())
+                        .name(course.getName())
+                        .description(course.getDescription())
+                        .allowOnlyRegistered(course.getAllowOnlyRegistered())
+                        .build()).toList();
+        AllCourseResponse response = new AllCourseResponse(courseData);
+
+        return ResponseEntity.ok(response);
     }
 
     @LoginRequired
