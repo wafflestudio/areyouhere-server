@@ -10,6 +10,7 @@ import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -88,6 +89,7 @@ public class CourseServiceImpl implements CourseService {
         }
 
         courseRepository.delete(course);
+
         sessionManager.removeCourseId(courseId);
     }
 

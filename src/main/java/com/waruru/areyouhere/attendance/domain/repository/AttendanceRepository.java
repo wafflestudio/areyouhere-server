@@ -11,9 +11,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>{
     public List<Attendance> findAttendancesBySession_Id(Long sessionId);
 
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("delete from attendance a where a.attendee.id in :ids")
     public void deleteAllByAttendeeIds(@Param("ids") List<Long> ids);
-
-
 }

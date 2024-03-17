@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.attendee.service;
 
+import com.waruru.areyouhere.attendee.dto.AttendeeData;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
 import java.util.List;
@@ -12,7 +13,7 @@ public interface AttendeeService {
 
     public List<ClassAttendees> getClassAttendeesIfExistsOrEmpty(Long courseId);
 
-    public void createAttendees(Long courseId, List<String> newAttendees);
+    public void createAttendees(Long courseId, List<AttendeeData> newAttendees);
 
     public void deleteAttendees(List<Long> deleteAttendees);
 

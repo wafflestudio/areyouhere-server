@@ -8,5 +8,6 @@ import lombok.Data;
 public class NewAttendeesDto {
     private Long courseId;
 
-    List<String> newAttendees;
+    List<AttendeeData> newAttendees;
 }
+

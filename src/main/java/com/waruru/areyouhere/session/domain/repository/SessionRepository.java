@@ -37,7 +37,8 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
             + "FROM session "
             + "INNER JOIN attendance ON session.id = attendance.session_id \n"
             + "WHERE session.course_id = :courseId \n"
-            + "GROUP BY session.id", nativeQuery = true)
+            + "GROUP BY session.id \n"
+            + "ORDER BY date ASC", nativeQuery = true)
     public List<SessionInfo> findSessionsWithAttendance(@Param("courseId") Long courseId);
 
     //TODO : refactor - application단 로직에서 출석자와 결석자를 counting 한다면 조금 더 가독성있으면서 성능 차이는 없습니다.

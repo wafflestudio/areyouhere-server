@@ -21,9 +21,14 @@ public class Attendee {
 
     private String name;
 
+    private String note;
+
     @Builder
-    public Attendee(Course course, String name){
+    public Attendee(Course course, String name, String note){
         this.course = course;
         this.name = name;
+        this.note = note;
     }
+
+
 }

@@ -15,6 +15,7 @@ import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,11 +62,9 @@ public class AttendanceServiceImpl implements AttendanceService{
                 .build()).toList();
         attendanceRepository.saveAll(attendances);
     }
-    // TODO :redis의 이점을 누리려면 이렇게 RDB를 거쳐야 하는 친구는 다른 스레드로 보내서 비동기 처리 필요.
-    // TODO : attend가 기록되기 전 유저에게는 응답이 바로 나가야 함.
-    // TODO : 근데 course에 존재하는 session의 학생인지도 검증해야되는데..?
-    // TODO : authCode와 책임 분리가 제대로 되고 있지 않다. 분리해야한다.
+
     @Transactional
+    @Async
     public void setAttend(Long sessionId, String attendanceName){
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
