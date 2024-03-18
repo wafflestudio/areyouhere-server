@@ -2,6 +2,7 @@ package com.waruru.areyouhere.attendee.domain.repository;
 
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
+import com.waruru.areyouhere.attendee.domain.repository.dto.EachClassAttendeeCountInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -39,6 +40,13 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
 
 
     public List<Attendee> findAttendeesByCourse_Id(Long courseId);
+
+    @Query(value = "SELECT a.course_id as CourseId, COUNT(*) as AttendeeCnt \n"
+            + "FROM attendee a \n"
+            + "JOIN course c ON a.course_id = c.id \n"
+            + "WHERE c.manager_id = :managerId \n"
+            + "GROUP BY a.course_id", nativeQuery = true)
+    public List<EachClassAttendeeCountInfo> countAttendeesEachCourseByManagerId(@Param("managerId") Long managerId);
 
     @Modifying(clearAutomatically = true)
     @Query("delete from attendee a where a.id in :ids")

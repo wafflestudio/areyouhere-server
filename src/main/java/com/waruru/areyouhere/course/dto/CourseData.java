@@ -14,11 +14,14 @@ public class CourseData {
     private String description;
 
     private Boolean allowOnlyRegistered;
+
+    private Long attendees;
     @Builder
-    public CourseData(Long id, String name, String description, Boolean allowOnlyRegistered) {
+    public CourseData(Long id, String name, String description, Boolean allowOnlyRegistered, Long attendees) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.allowOnlyRegistered = allowOnlyRegistered;
+        this.attendees = attendees;
     }
 }

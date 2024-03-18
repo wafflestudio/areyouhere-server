@@ -11,6 +11,7 @@ import com.waruru.areyouhere.course.service.CourseService;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,16 +44,8 @@ public class CourseController {
     @LoginRequired
     @GetMapping
     public ResponseEntity<AllCourseResponse> getAllCourses(@Login Manager manager) {
-        List<Course> courses = courseService.getAll(manager.getId());
-        List<CourseData> courseData = courses.stream()
-                .map(course -> CourseData.builder()
-                        .id(course.getId())
-                        .name(course.getName())
-                        .description(course.getDescription())
-                        .allowOnlyRegistered(course.getAllowOnlyRegistered())
-                        .build()).toList();
-        AllCourseResponse response = new AllCourseResponse(courseData);
-
+        List<CourseData> courses = courseService.getAll(manager.getId());
+        AllCourseResponse response = new AllCourseResponse(courses);
         return ResponseEntity.ok(response);
     }
 

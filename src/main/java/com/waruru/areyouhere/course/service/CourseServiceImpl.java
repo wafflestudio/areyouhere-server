@@ -2,14 +2,19 @@ package com.waruru.areyouhere.course.service;
 
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
+import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
+import com.waruru.areyouhere.attendee.domain.repository.dto.EachClassAttendeeCountInfo;
 import com.waruru.areyouhere.auth.session.SessionManager;
 import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
+import com.waruru.areyouhere.course.dto.CourseData;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +25,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
     private final SessionManager sessionManager;
     private final RandomIdentifierGenerator randomIdentifierGenerator;
     private final AttendeeBatchRepository attendeeBatchRepository;
+    private final AttendeeRepository attendeeRepository;
 
     @Override
     @Transactional
@@ -60,8 +67,24 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Course> getAll(Long managerId) {
-        return courseRepository.findAllByManagerId(managerId);
+    public List<CourseData> getAll(Long managerId) {
+        List<Course> courses = courseRepository.findAllByManagerId(managerId);
+        List<EachClassAttendeeCountInfo> eachClassAttendeeCountInfos = attendeeRepository.countAttendeesEachCourseByManagerId(
+                managerId);
+        log.info("eachClassAttendeeCountInfos: {}", eachClassAttendeeCountInfos);
+        Map<Long, Long> courseAttendeeCountMap = eachClassAttendeeCountInfos.stream()
+                .collect(Collectors.toMap(EachClassAttendeeCountInfo::getCourseId, EachClassAttendeeCountInfo::getAttendeeCnt));
+        log.info("courseAttendeeCountMap: {}", courseAttendeeCountMap);
+
+        return courses.stream()
+                .map(course -> CourseData.builder()
+                        .id(course.getId())
+                        .name(course.getName())
+                        .description(course.getDescription())
+                        .allowOnlyRegistered(course.getAllowOnlyRegistered())
+                        .attendees(courseAttendeeCountMap.getOrDefault(course.getId(), 0L))
+                        .build()
+                ).toList();
     }
 
     @Override
