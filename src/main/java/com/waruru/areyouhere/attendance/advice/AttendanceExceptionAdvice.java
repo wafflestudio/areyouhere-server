@@ -1,8 +1,10 @@
 package com.waruru.areyouhere.attendance.advice;
 
+import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_BAD_REQUEST;
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_NOT_FOUND;
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_NO_CONTENT;
 
+import com.waruru.areyouhere.attendance.exception.AlreadyAttendException;
 import com.waruru.areyouhere.session.exception.AuthCodeNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
@@ -27,5 +29,10 @@ public class AttendanceExceptionAdvice {
     @ExceptionHandler(AuthCodeNotFoundException.class)
     public ResponseEntity<HttpStatus> authCodeNotFoundHandler(){
         return RESPONSE_NOT_FOUND;
+    }
+
+    @ExceptionHandler(AlreadyAttendException.class)
+    public ResponseEntity<HttpStatus> alreadyAttendHandler(){
+        return RESPONSE_BAD_REQUEST;
     }
 }

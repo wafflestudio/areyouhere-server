@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.attendance.service;
 
+import com.waruru.areyouhere.attendance.exception.AlreadyAttendException;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
@@ -14,8 +15,13 @@ import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +35,17 @@ public class AuthCodeServiceImpl implements AuthCodeService{
     private final SessionIdRedisRepository sessionIdRedisRepository;
     private final AttendeeRepository attendeeRepository;
     private final RandomIdentifierGenerator randomIdentifierGenerator;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public AuthCodeInfo checkAuthCodeAndGetSessionId(String authCode, String attendanceName){
+
+        Set<String> alreadyAttendedMembers = redisTemplate.opsForSet().members(authCode);
+
+        if(alreadyAttendedMembers != null && alreadyAttendedMembers.contains(attendanceName)){
+            throw new AlreadyAttendException();
+        }
+
         AuthCode authCodeData = authCodeRedisRepository
                 .findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
@@ -40,6 +54,9 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 .filter(att -> att.equals(attendanceName))
                 .findAny()
                 .orElseThrow(StudentNameNotFoundException::new);
+
+        setAttendanceInRedis(authCode, attendanceName);
+
 
         return AuthCodeInfo.builder()
                 .courseName(authCodeData.getCourseName())
@@ -93,6 +110,17 @@ public class AuthCodeServiceImpl implements AuthCodeService{
 
         authCodeRedisRepository.delete(authCodeByAuthCode);
         sessionIdRedisRepository.deleteById(authCodeByAuthCode.getSessionId());
+        removeAllAttendanceInRedis(authCode);
 
     }
+
+    private void setAttendanceInRedis(String authCode, String attendanceName){
+        SetOperations<String, String> redisSetOps = redisTemplate.opsForSet();
+        redisSetOps.add(authCode, attendanceName);
+    }
+
+    private void removeAllAttendanceInRedis(String authCode){
+        redisTemplate.delete(authCode);
+    }
+
 }

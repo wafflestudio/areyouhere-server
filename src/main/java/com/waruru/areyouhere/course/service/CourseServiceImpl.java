@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
@@ -33,6 +34,7 @@ public class CourseServiceImpl implements CourseService {
     private final RandomIdentifierGenerator randomIdentifierGenerator;
     private final AttendeeBatchRepository attendeeBatchRepository;
     private final AttendeeRepository attendeeRepository;
+
 
     @Override
     @Transactional
@@ -71,10 +73,8 @@ public class CourseServiceImpl implements CourseService {
         List<Course> courses = courseRepository.findAllByManagerId(managerId);
         List<EachClassAttendeeCountInfo> eachClassAttendeeCountInfos = attendeeRepository.countAttendeesEachCourseByManagerId(
                 managerId);
-        log.info("eachClassAttendeeCountInfos: {}", eachClassAttendeeCountInfos);
         Map<Long, Long> courseAttendeeCountMap = eachClassAttendeeCountInfos.stream()
                 .collect(Collectors.toMap(EachClassAttendeeCountInfo::getCourseId, EachClassAttendeeCountInfo::getAttendeeCnt));
-        log.info("courseAttendeeCountMap: {}", courseAttendeeCountMap);
 
         return courses.stream()
                 .map(course -> CourseData.builder()
