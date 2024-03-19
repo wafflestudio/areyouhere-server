@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AttendanceServiceImpl implements AttendanceService{
 
     private final AttendanceRepository attendanceRepository;
@@ -52,7 +53,6 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Override
-    @Transactional
     public void setAbsentAfterDeactivation(long courseId, long sessionId){
 
         List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId, sessionId);
@@ -65,7 +65,6 @@ public class AttendanceServiceImpl implements AttendanceService{
         attendanceRepository.saveAll(attendances);
     }
 
-    @Transactional
     @Async
     public void setAttend(Long sessionId, String attendanceName){
         Session session = sessionRepository.findById(sessionId)
@@ -89,7 +88,6 @@ public class AttendanceServiceImpl implements AttendanceService{
 
     }
 
-    @Transactional
     public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances){
 
         for (UpdateAttendance updateAttendance : updateAttendances) {

@@ -78,8 +78,6 @@ public class AttendanceController {
         return ResponseEntity.ok().build();
     }
 
-
-    // TODO : 아예 바꿔
     @LoginRequired
     @GetMapping
     ResponseEntity<CurrentAttendanceCount> getCurrentAttendances(@RequestParam("courseId") Long courseId, @RequestParam("sessionId") Long sessionId){

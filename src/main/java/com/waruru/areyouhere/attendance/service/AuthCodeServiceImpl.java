@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthCodeServiceImpl implements AuthCodeService{
 
     private final AuthCodeRedisRepository authCodeRedisRepository;
@@ -37,7 +38,6 @@ public class AuthCodeServiceImpl implements AuthCodeService{
     private final RandomIdentifierGenerator randomIdentifierGenerator;
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Transactional
     public AuthCodeInfo checkAuthCodeAndGetSessionId(String authCode, String attendanceName){
 
         Set<String> alreadyAttendedMembers = redisTemplate.opsForSet().members(authCode);
@@ -65,7 +65,6 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 .build();
     }
 
-    @Transactional
     public String createAuthCode(Course course, Session session, LocalDateTime currentTime){
         String generatedAuthCode = "";
         while(true){
@@ -103,7 +102,6 @@ public class AuthCodeServiceImpl implements AuthCodeService{
         return generatedAuthCode;
     }
     // TODO : sessionId 검증, 해당 sessionId가 user 소유인지 검증.
-    @Transactional
     public void deactivate(String authCode){
         AuthCode authCodeByAuthCode = authCodeRedisRepository.findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);

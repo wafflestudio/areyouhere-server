@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AttendeeServiceImpl implements AttendeeService{
 
     private final AttendeeRepository attendeeRepository;
@@ -34,7 +35,6 @@ public class AttendeeServiceImpl implements AttendeeService{
     private final AttendeeBatchRepository attendeeBatchRepository;
     private final CourseRepository courseRepository;
 
-    @Transactional
     public void createAttendees(Long courseId, List<AttendeeData> newAttendees){
         log.info("createAttendees : courseId = {}, newAttendees = {}", courseId, newAttendees);
         Course course = courseRepository.findById(courseId)
@@ -70,7 +70,6 @@ public class AttendeeServiceImpl implements AttendeeService{
 
 
     // TODO : courseId 검증 -> 해당 course의 attendee인지.
-    @Transactional
     public void deleteAttendees(List<Long> deleteAttendees){
         attendanceRepository.deleteAllByAttendeeIds(deleteAttendees);
         attendeeRepository.deleteAllByIds(deleteAttendees);
@@ -123,7 +122,6 @@ public class AttendeeServiceImpl implements AttendeeService{
                 ).toList();
     }
 
-    @Transactional
     public int getAttendeeByCourseId(Long courseId){
         return attendeeRepository.findAttendeesByCourse_Id(courseId).size();
     }

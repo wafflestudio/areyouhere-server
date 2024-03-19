@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class SessionManagerService implements ManagerService {
 
     private final ManagerRepository managerRepository;
@@ -23,7 +24,6 @@ public class SessionManagerService implements ManagerService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Transactional
     public boolean login(String email, String password) {
         Manager findManager = managerRepository.findManagerByEmail(email)
                 .orElseThrow(UnAuthenticatedException::new);
@@ -34,13 +34,11 @@ public class SessionManagerService implements ManagerService {
         return false;
     }
     @Override
-    @Transactional
     public void logout() {
         sessionManager.removeSession();
     }
 
     @Override
-    @Transactional
     public void register(String email, String password, String nickname){
         boolean isEmailDuplicated = isDuplicatedEmail(email);
 
@@ -60,7 +58,7 @@ public class SessionManagerService implements ManagerService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Manager getLoginUser(){
         LoginUser loginUser = sessionManager.getSession();
 
@@ -72,7 +70,7 @@ public class SessionManagerService implements ManagerService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean isDuplicatedEmail(String email){
         return managerRepository.existsByEmail(email);
     }

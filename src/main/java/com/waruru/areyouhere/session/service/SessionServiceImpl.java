@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 //TODO : user 정보에 따른 course가 맞는지 확인하는 로직 추가. 보안.
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SessionServiceImpl implements SessionService {
 
     private final SessionRepository sessionRepository;
@@ -36,7 +37,6 @@ public class SessionServiceImpl implements SessionService {
     private final SessionIdRedisRepository sessionIdRedisRepository;
     private final AttendanceRepository attendanceRepository;
 
-    @Transactional
     public void create(Long courseId, String sessionName){
         // TODO : exception 수정
         Course course = courseRepository.findById(courseId)
@@ -50,7 +50,6 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.save(session);
     }
 
-    @Transactional
     public void delete(Long sessionId){
         attendanceRepository.deleteAllBySessionId(sessionId);
         sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
@@ -141,7 +140,8 @@ public class SessionServiceImpl implements SessionService {
                         .date(allSession.getdate())
                         .attendee(allSession.getattendee())
                         .absentee(allSession.getabsentee())
-                        .build()).toList();
+                        .build()
+                    ).toList();
     }
 
     @Transactional(readOnly = true)
@@ -178,7 +178,6 @@ public class SessionServiceImpl implements SessionService {
                 .orElseThrow(SessionIdNotFoundException::new);
     }
 
-    @Transactional
     @Override
     public void deactivate(Long sessionId){
         Session session = sessionRepository.findById(sessionId)
@@ -186,8 +185,7 @@ public class SessionServiceImpl implements SessionService {
         session.setDeactivated(true);
         sessionRepository.save(session);
     }
-
-    @Transactional
+    
     public void setSessionStartTime(Long sessionId, LocalDateTime currentTime){
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);

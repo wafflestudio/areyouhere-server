@@ -30,6 +30,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
@@ -41,7 +42,6 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    @Transactional
     public void create(Long managerId, String name, String description, List<String> attendees, boolean onlyListNameAllowed) {
         Manager manager = managerRepository.findManagerById(managerId).orElseThrow(() -> new IllegalArgumentException("Manager not found"));
 
@@ -90,7 +90,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    @Transactional
     public void update(Long managerId, Long courseId, String name, String description, boolean onlyListNameAllowed) {
         Course course = courseRepository.findById(courseId).
                 orElseThrow(() -> new IllegalArgumentException("Course not found"));
@@ -104,7 +103,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    @Transactional
     public void delete(Long managerId, Long courseId) {
         Course course = courseRepository.findById(courseId).
                 orElseThrow(() -> new IllegalArgumentException("Course not found"));
@@ -120,7 +118,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    @Transactional
     public Course getCourse(Long courseId) {
         return courseRepository.findById(courseId).
                 orElseThrow(() -> new IllegalArgumentException("Course not found"));
