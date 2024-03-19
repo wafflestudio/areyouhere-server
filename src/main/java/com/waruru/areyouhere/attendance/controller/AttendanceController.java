@@ -5,16 +5,27 @@ import com.waruru.areyouhere.attendance.dto.AttendResponseDto;
 import com.waruru.areyouhere.attendance.dto.CurrentAttendanceCount;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
+import com.waruru.areyouhere.attendance.exception.DuplicateAuthCodeAttendException;
 import com.waruru.areyouhere.attendance.service.AttendanceService;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
 import com.waruru.areyouhere.attendance.service.AuthCodeService;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,23 +45,31 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
     private final AttendeeService attendeeService;
 
+    private final String COOKIE_NAME = "SESSION_AUTH_CODE";
 
-    // FIXME 로직 문제. -> 출석 중복 체크.
+
     @PostMapping
-    public ResponseEntity<AttendResponseDto> attend(@RequestBody AttendRequestDto attendRequestDto){
+    public ResponseEntity<AttendResponseDto> attend(HttpServletRequest request, @RequestBody AttendRequestDto attendRequestDto){
         String attendeeName = attendRequestDto.getAttendeeName();
         String authCode = attendRequestDto.getAuthCode();
         LocalDateTime attendanceTime = LocalDateTime.now();
+
+        checkAuthCodeCookie(request.getCookies(), authCode);
+
         AuthCodeInfo authCodeInfo = authCodeService.checkAuthCodeAndGetSessionId(authCode, attendeeName);
         attendanceService.setAttend(authCodeInfo.getSessionId(), attendeeName);
 
-        return ResponseEntity.ok(
-                AttendResponseDto.builder()
-                        .attendanceName(attendeeName)
-                        .courseName(authCodeInfo.getCourseName())
-                        .sessionName(authCodeInfo.getSessionName())
-                        .attendanceTime(attendanceTime).build()
-        );
+        HttpCookie authCodeCookie = getAuthCodeCookie(authCode);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, authCodeCookie.toString())
+                .body(
+                    AttendResponseDto.builder()
+                    .attendanceName(attendeeName)
+                    .courseName(authCodeInfo.getCourseName())
+                    .sessionName(authCodeInfo.getSessionName())
+                    .attendanceTime(attendanceTime).build()
+                );
     }
 
     @LoginRequired
@@ -73,4 +92,24 @@ public class AttendanceController {
         return ResponseEntity.ok(new CurrentAttendanceCount(currentAttendance, total));
     }
 
+    private String encode(String string){
+        return Base64.getEncoder().encodeToString((string).getBytes());
+    }
+
+    private HttpCookie getAuthCodeCookie(String authCode){
+        return ResponseCookie.from(COOKIE_NAME, encode(authCode))
+                .maxAge(60 * 30)
+                .build();
+    }
+
+    private void checkAuthCodeCookie(Cookie[] cookies, String authCode){
+        Optional<Cookie> authCookie = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals(COOKIE_NAME))
+                .findFirst();
+
+        authCookie.ifPresent(cookie -> {
+            if(new String(Base64.getDecoder().decode(cookie.getValue())).equals(authCode))
+                throw new DuplicateAuthCodeAttendException();
+        });
+    }
 }

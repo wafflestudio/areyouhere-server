@@ -86,6 +86,7 @@ public class AttendanceServiceImpl implements AttendanceService{
                 .attendee(attendee)
                 .build();
         attendanceRepository.save(attendance);
+
     }
 
     @Transactional
