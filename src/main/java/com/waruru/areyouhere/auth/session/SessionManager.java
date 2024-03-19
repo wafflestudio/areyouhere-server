@@ -28,7 +28,7 @@ public class SessionManager {
                 Collections.emptyList()
                 : courses.stream().map(course -> course.getManager().getId()).toList();
 
-        LoginUser loginUser = new LoginUser(managerId, new HashSet<>(courseIds));
+        LoginUser loginUser = new LoginUser(managerId);
         httpSession.setAttribute(LOG_ID, loginUser);
     }
 
@@ -40,16 +40,5 @@ public class SessionManager {
         return (LoginUser) httpSession.getAttribute(LOG_ID);
     }
 
-    public void addCourseId(Long courseId){
-        LoginUser loginUser = getSession();
-        loginUser.addCourseId(courseId);
-        httpSession.setAttribute(LOG_ID, loginUser);
-    }
-
-    public void removeCourseId(Long courseId){
-        LoginUser loginUser = getSession();
-        loginUser.removeCourseId(courseId);
-        httpSession.setAttribute(LOG_ID, loginUser);
-    }
 
 }

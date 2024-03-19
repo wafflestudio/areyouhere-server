@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.session.service;
 
+import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.session.domain.entity.AuthCode;
@@ -33,6 +34,7 @@ public class SessionServiceImpl implements SessionService {
     private final CourseRepository courseRepository;
     private final AuthCodeRedisRepository authCodeRedisRepository;
     private final SessionIdRedisRepository sessionIdRedisRepository;
+    private final AttendanceRepository attendanceRepository;
 
     @Transactional
     public void create(Long courseId, String sessionName){
@@ -48,7 +50,9 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.save(session);
     }
 
+    @Transactional
     public void delete(Long sessionId){
+        attendanceRepository.deleteAllBySessionId(sessionId);
         sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
         sessionRepository.deleteById(sessionId);
     }

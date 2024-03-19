@@ -5,6 +5,7 @@ import com.waruru.areyouhere.session.domain.repository.dto.SessionInfo;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,6 +14,10 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
 
     @Query("SELECT s FROM session s WHERE s.course.id = :courseId")
     public List<Session> findAllByCourseId(@Param("courseId") Long courseId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("delete from session s where s.course.id = :courseId")
+    public void deleteAllByCourseId(@Param("courseId") Long courseId);
 
 
     @Query("SELECT s FROM session s WHERE s.course.id = :courseId order by s.createdAt desc limit 6")

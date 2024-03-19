@@ -53,8 +53,8 @@ public class SessionController {
     }
 
     @DeleteMapping
-    public ResponseEntity<HttpStatus> delete(@RequestBody DeleteSessionRequestDto deleteSessionRequestDto){
-        sessionService.delete(deleteSessionRequestDto.getSessionId());
+    public ResponseEntity<HttpStatus> delete(@RequestParam("sessionId") Long sessionId){
+        sessionService.delete(sessionId);
         return ResponseEntity.ok().build();
     }
 

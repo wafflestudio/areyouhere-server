@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.course.service;
 
+import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
@@ -12,6 +13,8 @@ import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.course.dto.CourseData;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
+import com.waruru.areyouhere.session.domain.entity.Session;
+import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,9 +34,10 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
     private final SessionManager sessionManager;
-    private final RandomIdentifierGenerator randomIdentifierGenerator;
     private final AttendeeBatchRepository attendeeBatchRepository;
     private final AttendeeRepository attendeeRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final SessionRepository sessionRepository;
 
 
     @Override
@@ -63,8 +67,6 @@ public class CourseServiceImpl implements CourseService {
                 .forEach(attendeesToSave::add);
 
         attendeeBatchRepository.insertAttendeesBatch(attendeesToSave);
-        sessionManager.addCourseId(course.getId());
-
     }
 
     @Override
@@ -110,10 +112,11 @@ public class CourseServiceImpl implements CourseService {
         if (!course.getManager().getId().equals(managerId)) {
             throw new IllegalArgumentException("Manager not authorized");
         }
-
+        List<Session> sessions = sessionRepository.findAllByCourseId(courseId);
+        attendanceRepository.deleteAllBySessionIds(sessions.stream().map(Session::getId).toList());
+        sessionRepository.deleteAllByCourseId(courseId);
+        attendeeRepository.deleteAllByCourseId(courseId);
         courseRepository.delete(course);
-
-        sessionManager.removeCourseId(courseId);
     }
 
     @Override

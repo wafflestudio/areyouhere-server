@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ManagerController {
 
     public static final String MANAGER_API_URL = "/api/auth";
-
     private final ManagerService managerService;
 
     @LoginRequired
