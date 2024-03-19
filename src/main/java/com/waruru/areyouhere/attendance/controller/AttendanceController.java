@@ -13,7 +13,6 @@ import com.waruru.areyouhere.attendance.service.AuthCodeService;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Base64;
@@ -25,9 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,8 +42,7 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
     private final AttendeeService attendeeService;
 
-    private final String COOKIE_NAME = "SESSION_AUTH_CODE";
-
+    private final String COOKIE_ENCODE = "SRCT";
 
     @PostMapping
     public ResponseEntity<AttendResponseDto> attend(HttpServletRequest request, @RequestBody AttendRequestDto attendRequestDto){
@@ -92,19 +88,28 @@ public class AttendanceController {
         return ResponseEntity.ok(new CurrentAttendanceCount(currentAttendance, total));
     }
 
-    private String encode(String string){
+    private String encodeCookieValue(String string){
         return Base64.getEncoder().encodeToString((string).getBytes());
     }
 
+    private String encodeCookieKey(String string){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for(char c : string.toCharArray()){
+            stringBuilder.append((c ^ COOKIE_ENCODE.charAt(0)));
+        }
+        return stringBuilder.toString();
+    }
+
     private HttpCookie getAuthCodeCookie(String authCode){
-        return ResponseCookie.from(COOKIE_NAME, encode(authCode))
+        return ResponseCookie.from(encodeCookieKey(authCode), encodeCookieValue(authCode))
                 .maxAge(60 * 30)
                 .build();
     }
 
     private void checkAuthCodeCookie(Cookie[] cookies, String authCode){
         Optional<Cookie> authCookie = Arrays.stream(cookies)
-                .filter(cookie -> cookie.getName().equals(COOKIE_NAME))
+                .filter(cookie -> cookie.getName().equals(encodeCookieKey(authCode)))
                 .findFirst();
 
         authCookie.ifPresent(cookie -> {
@@ -112,4 +117,6 @@ public class AttendanceController {
                 throw new DuplicateAuthCodeAttendException();
         });
     }
+
+
 }
