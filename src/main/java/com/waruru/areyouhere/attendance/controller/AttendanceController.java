@@ -104,6 +104,7 @@ public class AttendanceController {
     private HttpCookie getAuthCodeCookie(String authCode){
         return ResponseCookie.from(encodeCookieKey(authCode), encodeCookieValue(authCode))
                 .maxAge(60 * 30)
+                .httpOnly(true)
                 .build();
     }
 
