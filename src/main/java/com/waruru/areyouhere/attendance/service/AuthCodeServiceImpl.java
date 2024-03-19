@@ -40,11 +40,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
 
     public AuthCodeInfo checkAuthCodeAndGetSessionId(String authCode, String attendanceName){
 
-        Set<String> alreadyAttendedMembers = redisTemplate.opsForSet().members(authCode);
 
-        if(alreadyAttendedMembers != null && alreadyAttendedMembers.contains(attendanceName)){
-            throw new AlreadyAttendException();
-        }
 
         AuthCode authCodeData = authCodeRedisRepository
                 .findById(authCode)
@@ -54,6 +50,12 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 .filter(att -> att.equals(attendanceName))
                 .findAny()
                 .orElseThrow(StudentNameNotFoundException::new);
+
+        Set<String> alreadyAttendedMembers = redisTemplate.opsForSet().members(authCode);
+
+        if(alreadyAttendedMembers != null && alreadyAttendedMembers.contains(attendanceName)){
+            throw new AlreadyAttendException();
+        }
 
         setAttendanceInRedis(authCode, attendanceName);
 

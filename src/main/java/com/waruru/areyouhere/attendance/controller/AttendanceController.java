@@ -50,10 +50,12 @@ public class AttendanceController {
         String authCode = attendRequestDto.getAuthCode();
         LocalDateTime attendanceTime = LocalDateTime.now();
 
-        checkAuthCodeCookie(request.getCookies(), authCode);
+
 
         AuthCodeInfo authCodeInfo = authCodeService.checkAuthCodeAndGetSessionId(authCode, attendeeName);
         attendanceService.setAttend(authCodeInfo.getSessionId(), attendeeName);
+
+        checkAuthCodeCookie(request.getCookies(), authCode);
 
         HttpCookie authCodeCookie = getAuthCodeCookie(authCode);
 
