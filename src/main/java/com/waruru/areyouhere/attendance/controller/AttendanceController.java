@@ -105,6 +105,7 @@ public class AttendanceController {
         return ResponseCookie.from(encodeCookieKey(authCode), encodeCookieValue(authCode))
                 .maxAge(60 * 30)
                 .httpOnly(true)
+                .secure(true)
                 .build();
     }
 
