@@ -5,6 +5,7 @@ import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.domain.repository.dto.EachClassAttendeeCountInfo;
+import com.waruru.areyouhere.attendee.dto.AttendeeData;
 import com.waruru.areyouhere.auth.session.SessionManager;
 import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
 import com.waruru.areyouhere.course.domain.entity.Course;
@@ -42,7 +43,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public void create(Long managerId, String name, String description, List<String> attendees, boolean onlyListNameAllowed) {
+    public void create(Long managerId, String name, String description, List<AttendeeData> attendees, boolean onlyListNameAllowed) {
         Manager manager = managerRepository.findManagerById(managerId).orElseThrow(() -> new IllegalArgumentException("Manager not found"));
 
         Course course = Course.builder()
@@ -55,14 +56,16 @@ public class CourseServiceImpl implements CourseService {
 
         List<Attendee> attendeesToSave = new ArrayList<>();
 
-        if(!isAttendeesUnique(attendees)){
+        if(!isAttendeesUnique(attendees.stream().map(attendeeData -> attendeeData.getName()
+                + (attendeeData.getNote() == null ? "": attendeeData.getNote())).toList())) {
             throw new AttendeesNotUniqueException();
         }
 
         attendees.stream()
-                .map(attendeeName -> Attendee.builder()
+                .map(attendeeData -> Attendee.builder()
                         .course(course)
-                        .name(attendeeName)
+                        .name(attendeeData.getName())
+                        .note(attendeeData.getNote())
                         .build())
                 .forEach(attendeesToSave::add);
 

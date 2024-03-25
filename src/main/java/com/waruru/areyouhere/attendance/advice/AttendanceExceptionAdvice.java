@@ -7,7 +7,7 @@ import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPON
 
 import com.waruru.areyouhere.attendance.exception.AlreadyAttendException;
 import com.waruru.areyouhere.attendance.exception.DuplicateAuthCodeAttendException;
-import com.waruru.areyouhere.session.exception.AuthCodeNotFoundException;
+import com.waruru.areyouhere.attendance.exception.AuthCodeNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
 import org.springframework.http.HttpStatus;

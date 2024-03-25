@@ -6,5 +6,6 @@ import lombok.Data;
 public class AttendRequestDto {
     private String attendeeName;
 
+    private Long attendeeId;
     private String authCode;
 }

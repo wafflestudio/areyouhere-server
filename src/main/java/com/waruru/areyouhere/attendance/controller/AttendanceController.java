@@ -8,6 +8,7 @@ import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
 import com.waruru.areyouhere.attendance.exception.DuplicateAuthCodeAttendException;
 import com.waruru.areyouhere.attendance.service.AttendanceService;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
+import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
 import com.waruru.areyouhere.attendance.service.AuthCodeService;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
@@ -44,15 +45,26 @@ public class AttendanceController {
 
     private final String COOKIE_ENCODE = "SRCT";
 
+    //FIXME: 중복 인원인 경우 코드 중복이 생겨도 API 분리가 나아 보인다. 한 API에서 너무 많은 일을 하는 중.
     @PostMapping
     public ResponseEntity<AttendResponseDto> attend(HttpServletRequest request, @RequestBody AttendRequestDto attendRequestDto){
         String attendeeName = attendRequestDto.getAttendeeName();
         String authCode = attendRequestDto.getAuthCode();
+        Long attendeeId = attendRequestDto.getAttendeeId();
         LocalDateTime attendanceTime = LocalDateTime.now();
+        List<AttendeeInfo> attendeeInfos = authCodeService.hasNameSake(authCode, attendeeName);
+
+        // 동명이인 응답
+        if(attendeeInfos.size() > 1){
+            return ResponseEntity.status(HttpStatus.MULTIPLE_CHOICES).body(
+                    AttendResponseDto.builder()
+                            .attendeeNotes(attendeeInfos)
+                            .build()
+            );
+        }
 
 
-
-        AuthCodeInfo authCodeInfo = authCodeService.checkAuthCodeAndGetSessionId(authCode, attendeeName);
+        AuthCodeInfo authCodeInfo = authCodeService.isAttendPossible(authCode, attendeeName, attendeeId);
         attendanceService.setAttend(authCodeInfo.getSessionId(), attendeeName);
 
         checkAuthCodeCookie(request.getCookies(), authCode);
@@ -105,7 +117,6 @@ public class AttendanceController {
         return ResponseCookie.from(encodeCookieKey(authCode), encodeCookieValue(authCode))
                 .maxAge(60 * 30)
                 .httpOnly(true)
-                .secure(true)
                 .build();
     }
 

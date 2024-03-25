@@ -10,18 +10,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ClassAttendees {
 
-    private Long id;
-
-    private String name;
+    private AttendeeInfo attendeeInfo;
 
     private int attendance;
 
     private int absence;
 
     @Builder
-    public ClassAttendees(Long id, String name, int attendance, int absence) {
-        this.id = id;
-        this.name = name;
+    public ClassAttendees(Long id, String name, String note, int attendance, int absence) {
+        this.attendeeInfo = AttendeeInfo.builder()
+                .id(id)
+                .name(name)
+                .note(note)
+                .build();
         this.attendance = attendance;
         this.absence = absence;
     }

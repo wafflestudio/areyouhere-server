@@ -7,6 +7,8 @@ public interface SessionAttendeeInfo {
     public Long getAttendanceId();
     public String getAttendeeName();
 
+    public String getAttendeeNote();
+
     public Boolean getAttendanceStatus();
 
     public LocalDateTime getAttendanceTime();

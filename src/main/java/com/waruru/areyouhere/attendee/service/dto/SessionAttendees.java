@@ -9,10 +9,9 @@ import lombok.Getter;
 @Data
 @Getter
 public class SessionAttendees {
+    private AttendeeInfo attendeeInfo;
 
     private Long attendanceId;
-
-    private String attendeeName;
 
     private boolean attendanceStatus;
 
@@ -20,9 +19,12 @@ public class SessionAttendees {
 
 
     @Builder
-    public SessionAttendees(Long attendanceId, String attendeeName, boolean attendanceStatus, LocalDateTime attendanceTime) {
-        this.attendanceId = attendanceId;
-        this.attendeeName = attendeeName;
+    public SessionAttendees(Long id, String name, String note, boolean attendanceStatus, LocalDateTime attendanceTime) {
+        this.attendanceId = id;
+        this.attendeeInfo = AttendeeInfo.builder()
+                .name(name)
+                .note(note)
+                .build();
         this.attendanceStatus = attendanceStatus;
         this.attendanceTime = attendanceTime;
     }

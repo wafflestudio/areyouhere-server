@@ -1,6 +1,8 @@
 package com.waruru.areyouhere.attendance.dto;
 
+import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,12 +17,15 @@ public class AttendResponseDto {
     private String attendanceName;
     private LocalDateTime attendanceTime;
 
+    private List<AttendeeInfo> attendeeNotes;
+
     @Builder
     public AttendResponseDto(String courseName, String sessionName, String attendanceName,
-                             LocalDateTime attendanceTime) {
+                             LocalDateTime attendanceTime, List<AttendeeInfo> attendeeNotes) {
         this.courseName = courseName;
         this.sessionName = sessionName;
         this.attendanceName = attendanceName;
         this.attendanceTime = attendanceTime;
+        this.attendeeNotes = attendeeNotes;
     }
 }

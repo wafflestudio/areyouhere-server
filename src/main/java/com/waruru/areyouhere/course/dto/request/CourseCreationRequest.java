@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.course.dto.request;
 
+import com.waruru.areyouhere.attendee.dto.AttendeeData;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
@@ -17,7 +18,7 @@ public class CourseCreationRequest {
     @NotEmpty
     private String description;
 
-    private List<String> attendees;
+    private List<AttendeeData> attendees;
 
     @NotEmpty
     private boolean onlyListNameAllowed;

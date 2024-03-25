@@ -1,27 +1,25 @@
 package com.waruru.areyouhere.attendance.service;
 
+import com.waruru.areyouhere.attendance.domain.entity.AttendeeRedisData;
+import com.waruru.areyouhere.attendance.domain.repository.AttendanceRedisRepository;
 import com.waruru.areyouhere.attendance.exception.AlreadyAttendException;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
+import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
 import com.waruru.areyouhere.course.domain.entity.Course;
-import com.waruru.areyouhere.session.domain.entity.AuthCode;
+import com.waruru.areyouhere.attendance.domain.entity.AuthCode;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.entity.SessionId;
 import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionIdRedisRepository;
-import com.waruru.areyouhere.session.exception.AuthCodeNotFoundException;
+import com.waruru.areyouhere.attendance.exception.AuthCodeNotFoundException;
 import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,28 +34,48 @@ public class AuthCodeServiceImpl implements AuthCodeService{
     private final SessionIdRedisRepository sessionIdRedisRepository;
     private final AttendeeRepository attendeeRepository;
     private final RandomIdentifierGenerator randomIdentifierGenerator;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final AttendanceRedisRepository attendanceRedisRepository;
 
-    public AuthCodeInfo checkAuthCodeAndGetSessionId(String authCode, String attendanceName){
+    @Override
+    public List<AttendeeInfo> hasNameSake(String authCode, String attendeeName){
+        AuthCode authCodeData = authCodeRedisRepository
+                .findById(authCode)
+                .orElseThrow(AuthCodeNotFoundException::new);
 
-
+        List<AttendeeRedisData> attendees = authCodeData.getAttendees();
+        return attendees.stream()
+                .filter(att -> att.getName().equals(attendeeName))
+                .map(att -> AttendeeInfo.builder()
+                        .name(att.getName())
+                        .id(att.getId())
+                        .name(att.getName())
+                        .build())
+                .toList();
+    }
+    @Override
+    public AuthCodeInfo isAttendPossible(String authCode, String attendeeName, Long attendeeId){
 
         AuthCode authCodeData = authCodeRedisRepository
                 .findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
 
-        authCodeData.getAttendances().stream()
-                .filter(att -> att.equals(attendanceName))
+        AttendeeRedisData attendeeInfo = authCodeData.getAttendees().stream()
+                .filter(att -> att.getName().equals(attendeeName))
                 .findAny()
                 .orElseThrow(StudentNameNotFoundException::new);
 
-        Set<String> alreadyAttendedMembers = redisTemplate.opsForSet().members(authCode);
+        if(attendeeId != null){
+            attendeeInfo = authCodeData.getAttendees().stream()
+                    .filter(att -> att.getId().equals(attendeeId))
+                    .findAny()
+                    .orElseThrow(StudentNameNotFoundException::new);
+        }
 
-        if(alreadyAttendedMembers != null && alreadyAttendedMembers.contains(attendanceName)){
+        if(!attendanceRedisRepository.isAlreadyAttended(authCode, attendeeInfo)){
             throw new AlreadyAttendException();
         }
 
-        setAttendanceInRedis(authCode, attendanceName);
+        attendanceRedisRepository.setAttend(authCode, attendeeInfo);
 
 
         return AuthCodeInfo.builder()
@@ -67,6 +85,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 .build();
     }
 
+    @Override
     public String createAuthCode(Course course, Session session, LocalDateTime currentTime){
         String generatedAuthCode = "";
         while(true){
@@ -79,14 +98,11 @@ public class AuthCodeServiceImpl implements AuthCodeService{
         }
 
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(course.getId());
-        List<String> attendees = attendeesByCourseId.stream()
-                .map(Attendee::getName)
-                .toList();
 
         AuthCode authCode = AuthCode.builder()
                 .sessionId(session.getId())
                 .authCode(generatedAuthCode)
-                .attendances(attendees)
+                .attendees(attendeesByCourseId)
                 .sessionName(session.getName())
                 .courseName(course.getName())
                 .createdAt(currentTime.toString())
@@ -104,23 +120,15 @@ public class AuthCodeServiceImpl implements AuthCodeService{
         return generatedAuthCode;
     }
     // TODO : sessionId 검증, 해당 sessionId가 user 소유인지 검증.
+    @Override
     public void deactivate(String authCode){
         AuthCode authCodeByAuthCode = authCodeRedisRepository.findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
 
         authCodeRedisRepository.delete(authCodeByAuthCode);
         sessionIdRedisRepository.deleteById(authCodeByAuthCode.getSessionId());
-        removeAllAttendanceInRedis(authCode);
+        attendanceRedisRepository.deleteAllAttendanceInSession(authCode);
 
-    }
-
-    private void setAttendanceInRedis(String authCode, String attendanceName){
-        SetOperations<String, String> redisSetOps = redisTemplate.opsForSet();
-        redisSetOps.add(authCode, attendanceName);
-    }
-
-    private void removeAllAttendanceInRedis(String authCode){
-        redisTemplate.delete(authCode);
     }
 
 }

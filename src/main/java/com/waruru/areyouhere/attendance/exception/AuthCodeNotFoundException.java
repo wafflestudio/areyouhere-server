@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.session.exception;
+package com.waruru.areyouhere.attendance.exception;
 
 public class AuthCodeNotFoundException extends RuntimeException{
     public AuthCodeNotFoundException() {

@@ -4,13 +4,10 @@ import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPON
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_NOT_FOUND;
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_NO_CONTENT;
 
-import com.waruru.areyouhere.session.exception.AuthCodeNotFoundException;
 import com.waruru.areyouhere.session.exception.CourseIdNotFoundException;
 import com.waruru.areyouhere.session.exception.CurrentSessionDeactivatedException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
-import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

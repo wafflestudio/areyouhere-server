@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.session.domain.repository;
 
-import com.waruru.areyouhere.session.domain.entity.AuthCode;
+import com.waruru.areyouhere.attendance.domain.entity.AuthCode;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 
