@@ -48,7 +48,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 .map(att -> AttendeeInfo.builder()
                         .name(att.getName())
                         .id(att.getId())
-                        .name(att.getName())
+                        .note(att.getNote())
                         .build())
                 .toList();
     }
