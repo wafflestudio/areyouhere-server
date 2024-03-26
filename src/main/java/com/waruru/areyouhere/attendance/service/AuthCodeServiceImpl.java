@@ -71,7 +71,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                     .orElseThrow(StudentNameNotFoundException::new);
         }
 
-        if(!attendanceRedisRepository.isAlreadyAttended(authCode, attendeeInfo)){
+        if(attendanceRedisRepository.isAlreadyAttended(authCode, attendeeInfo)){
             throw new AlreadyAttendException();
         }
 

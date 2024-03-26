@@ -17,7 +17,7 @@ public class AttendanceRedisRepository {
 
     public boolean isAlreadyAttended(String authCode, AttendeeRedisData attendeeInfo){
         Set<Long> attendedMembers = redisTemplate.opsForSet().members(ATTENDANCE_KEY + authCode);
-        return attendedMembers == null || !attendedMembers.contains(attendeeInfo.getId());
+        return attendedMembers == null || attendedMembers.contains(attendeeInfo.getId());
     }
 
     public void setAttend(String authCode, AttendeeRedisData attendeeInfo){
