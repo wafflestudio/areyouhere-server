@@ -16,12 +16,13 @@ public class AttendeeBatchRepository {
     // TODO 설마 여기 courseId를 lazy로 여기서 가져오나 -> 실험
     @Modifying(clearAutomatically = true)
     public void insertAttendeesBatch(List<Attendee> attendees){
-        jdbcTemplate.batchUpdate("INSERT INTO attendee (name, course_id) VALUES (?, ?)",
+        jdbcTemplate.batchUpdate("INSERT INTO attendee (name, course_id, note) VALUES (?, ?, ?)",
                 attendees,
                 attendees.size(),
                 (ps, attendee) -> {
                     ps.setString(1, attendee.getName());
                     ps.setLong(2, attendee.getCourse().getId());
+                    ps.setString(3, attendee.getNote());
                 });
     }
 }

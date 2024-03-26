@@ -63,12 +63,22 @@ public class AttendeeServiceImpl implements AttendeeService{
 
     @Override
     public DuplicateAttendees getDuplicateAttendees(Long courseId, List<String> newAttendees){
+
         Set<String> uniqueAttendees = new HashSet<>();
+        Set<String> duplicated = new HashSet<>();
         DuplicateAttendees duplicateAttendees = new DuplicateAttendees(new LinkedList<>());
 
         newAttendees.stream()
-                .filter(newAttendee -> !uniqueAttendees.add(newAttendee))
+                .filter(newAttendee -> {
+                    if(!uniqueAttendees.add(newAttendee)){
+                        duplicated.add(newAttendee);
+                        return true;
+                    }
+                    return false;
+                })
                 .forEach(newAttendee -> duplicateAttendees.addDuplicateAttendee(null, newAttendee, null));
+
+        duplicated.forEach(newAttendee -> duplicateAttendees.addDuplicateAttendee(null, newAttendee, null));
 
         getAlreadyExistsAttendees(courseId, newAttendees, duplicateAttendees);
         return duplicateAttendees;
