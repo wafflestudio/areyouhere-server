@@ -16,6 +16,7 @@ import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.session.exception.CourseIdNotFoundException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,17 +47,18 @@ public class AttendeeServiceImpl implements AttendeeService{
                     attendeeData.getName() + (attendeeData.getNote() == null ? "" : attendeeData.getNote())
                 ).toList();
 
-        if(!isAttendeesUnique(attendeeUniqueCheck)){
+        if(!isAttendeesUnique(attendeeUniqueCheck, courseId)){
             throw new AttendeesNotUniqueException("참여자 이름이 중복되었습니다.");
         }
 
 
         List<Attendee> attendees = newAttendees.stream()
                 .map(newAttendee -> Attendee.builder()
-                        .course(course)
-                        .name(newAttendee.getName())
-                        .note(newAttendee.getNote()).build())
-                        .toList();
+                                        .course(course)
+                                        .name(newAttendee.getName())
+                                        .note(newAttendee.getNote())
+                                    .build())
+                .toList();
 
         attendeeBatchRepository.insertAttendeesBatch(attendees);
     }
@@ -77,6 +79,7 @@ public class AttendeeServiceImpl implements AttendeeService{
                     return false;
                 })
                 .forEach(newAttendee -> duplicateAttendees.addDuplicateAttendee(null, newAttendee, null));
+
 
         duplicated.forEach(newAttendee -> duplicateAttendees.addDuplicateAttendee(null, newAttendee, null));
 
@@ -159,9 +162,13 @@ public class AttendeeServiceImpl implements AttendeeService{
         return attendeeRepository.findAttendeesByCourse_Id(courseId).size();
     }
 
-    private boolean isAttendeesUnique(List<String> attendees) {
-        Set<String> uniqueAttendees = Set.copyOf(attendees);
-        return uniqueAttendees.size() == attendees.size();
+    private boolean isAttendeesUnique(List<String> attendees, Long courseId) {
+        Set<String> uniqueAttendees = new HashSet<>(Set.copyOf(attendees));
+        List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(courseId);
+        uniqueAttendees.addAll(attendeesByCourseId.stream().map(attendeeData ->
+                attendeeData.getName() + (attendeeData.getNote() == null ? "" : attendeeData.getNote())).toList());
+
+        return uniqueAttendees.size() == attendees.size() + attendeesByCourseId.size();
     }
 
 
