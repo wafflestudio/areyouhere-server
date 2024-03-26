@@ -52,13 +52,15 @@ public class AttendanceController {
         String authCode = attendRequestDto.getAuthCode();
         Long attendeeId = attendRequestDto.getAttendeeId();
         LocalDateTime attendanceTime = LocalDateTime.now();
-        List<AttendeeInfo> attendeeInfos = authCodeService.hasNameSake(authCode, attendeeName);
+
+
+        List<AttendeeInfo> nameSakeAttendees = authCodeService.hasNameSake(authCode, attendeeName);
 
         // 동명이인 응답
-        if(attendeeInfos.size() > 1){
+        if(attendeeId == null && nameSakeAttendees.size() > 1){
             return ResponseEntity.status(HttpStatus.MULTIPLE_CHOICES).body(
                     AttendResponseDto.builder()
-                            .attendeeNotes(attendeeInfos)
+                            .attendeeNotes(nameSakeAttendees)
                             .build()
             );
         }
