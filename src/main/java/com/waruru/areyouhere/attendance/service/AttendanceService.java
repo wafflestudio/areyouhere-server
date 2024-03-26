@@ -9,7 +9,7 @@ public interface AttendanceService {
     public AttendanceCount getAttendanceCount(long sessionId);
     public void setAbsentAfterDeactivation(long courseId, long sessionId);
 
-    public void setAttend(Long sessionId, String attendanceName);
+    public void setAttend(Long sessionId, String attendanceName, Long attendeeId);
 
     public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances);
     public int currentAttendance(Long sessionId);

@@ -65,11 +65,11 @@ public class AttendanceController {
             );
         }
 
-
         AuthCodeInfo authCodeInfo = authCodeService.isAttendPossible(authCode, attendeeName, attendeeId);
-        attendanceService.setAttend(authCodeInfo.getSessionId(), attendeeName);
-
         checkAuthCodeCookie(request.getCookies(), authCode);
+        attendanceService.setAttend(authCodeInfo.getSessionId(), attendeeName, attendeeId);
+
+
 
         HttpCookie authCodeCookie = getAuthCodeCookie(authCode);
 

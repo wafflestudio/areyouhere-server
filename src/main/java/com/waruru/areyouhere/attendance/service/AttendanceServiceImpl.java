@@ -66,14 +66,19 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Async
-    public void setAttend(Long sessionId, String attendanceName){
+    public void setAttend(Long sessionId, String attendanceName, Long attendeeId){
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         Long courseId = session.getCourse().getId(); // lazy loading?
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(courseId);
 
-        Attendee attendee = attendeesByCourseId.stream()
+        Attendee attendee = attendeeId == null ?
+            attendeesByCourseId.stream()
                 .filter(s -> s.getName().equals(attendanceName))
+                .findFirst()
+                .orElse(null) :
+            attendeesByCourseId.stream()
+                .filter(s -> s.getId().equals(attendeeId))
                 .findFirst()
                 .orElse(null);
 
