@@ -61,6 +61,7 @@ public class AttendeeServiceImpl implements AttendeeService{
         attendeeBatchRepository.insertAttendeesBatch(attendees);
     }
 
+    @Override
     public DuplicateAttendees getDuplicateAttendees(Long courseId, List<String> newAttendees){
         Set<String> uniqueAttendees = new HashSet<>();
         DuplicateAttendees duplicateAttendees = new DuplicateAttendees(new LinkedList<>());

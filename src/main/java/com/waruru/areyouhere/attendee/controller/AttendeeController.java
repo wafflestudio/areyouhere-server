@@ -2,9 +2,11 @@ package com.waruru.areyouhere.attendee.controller;
 
 import com.waruru.areyouhere.attendee.dto.ClassAttendeesDto;
 import com.waruru.areyouhere.attendee.dto.DeleteAttendeesDto;
+import com.waruru.areyouhere.attendee.dto.DuplicateCheckAttendeesDto;
 import com.waruru.areyouhere.attendee.dto.NewAttendeesDto;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
+import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -52,4 +54,11 @@ public class AttendeeController {
         attendeeService.deleteAttendees(deleteAttendeesDto.getAttendeeIds());
         return ResponseEntity.ok().build();
     }
+
+    @LoginRequired
+    @PostMapping("/duplicate")
+    public ResponseEntity<DuplicateAttendees> checkDuplicate(@RequestBody DuplicateCheckAttendeesDto duplicateCheckAttendeesDto){
+        return ResponseEntity.ok(attendeeService.getDuplicateAttendees(duplicateCheckAttendeesDto.getCourseId(), duplicateCheckAttendeesDto.getNewAttendees()));
+    }
 }
+

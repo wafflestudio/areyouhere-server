@@ -32,6 +32,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
@@ -128,6 +129,7 @@ public class CourseServiceImpl implements CourseService {
 
     private boolean isAttendeesUnique(List<String> attendees) {
         Set<String> uniqueAttendees = Set.copyOf(attendees);
+        log.debug("Attendees: {}", uniqueAttendees);
         return uniqueAttendees.size() == attendees.size();
     }
 
