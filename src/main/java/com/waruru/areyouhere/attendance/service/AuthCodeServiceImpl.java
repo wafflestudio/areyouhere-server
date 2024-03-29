@@ -3,6 +3,7 @@ package com.waruru.areyouhere.attendance.service;
 import com.waruru.areyouhere.attendance.domain.entity.AttendeeRedisData;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRedisRepository;
 import com.waruru.areyouhere.attendance.exception.AlreadyAttendException;
+import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
@@ -17,8 +18,10 @@ import com.waruru.areyouhere.attendance.exception.AuthCodeNotFoundException;
 import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,5 +133,27 @@ public class AuthCodeServiceImpl implements AuthCodeService{
         attendanceRedisRepository.deleteAllAttendanceInSession(authCode);
 
     }
+
+    public CurrentSessionAttendeeAttendance getCurrentSessionAttendanceInfo(String authCode){
+        AuthCode authCodeData = authCodeRedisRepository.findById(authCode)
+                .orElseThrow(AuthCodeNotFoundException::new);
+        List<AttendeeRedisData> attendees = new LinkedList<>();
+        List<AttendeeRedisData> absentees = new LinkedList<>();
+        Set<Long> attendeesChecker = attendanceRedisRepository.getAttendees(authCode);
+        authCodeData.getAttendees()
+                .forEach(att -> {
+                    if(attendeesChecker.contains(att.getId())){
+                        attendees.add(att);
+                    }else{
+                        absentees.add(att);
+                    }
+                });
+        return CurrentSessionAttendeeAttendance.builder()
+                .attendees(attendees)
+                .absentees(absentees)
+                .build();
+    }
+
+
 
 }

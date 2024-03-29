@@ -7,6 +7,7 @@ import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
 import com.waruru.areyouhere.attendance.exception.DuplicateAuthCodeAttendException;
 import com.waruru.areyouhere.attendance.service.AttendanceService;
+import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
@@ -100,6 +101,12 @@ public class AttendanceController {
         int currentAttendance = attendanceService.currentAttendance(sessionId);
         int total = attendeeService.getAttendeeByCourseId(courseId);
         return ResponseEntity.ok(new CurrentAttendanceCount(currentAttendance, total));
+    }
+
+    @LoginRequired
+    @GetMapping("/detail")
+    ResponseEntity<CurrentSessionAttendeeAttendance> getCurrentSessionAttendeeAttendance(@RequestParam("authCode") String authCode){
+        return ResponseEntity.ok(authCodeService.getCurrentSessionAttendanceInfo(authCode));
     }
 
 

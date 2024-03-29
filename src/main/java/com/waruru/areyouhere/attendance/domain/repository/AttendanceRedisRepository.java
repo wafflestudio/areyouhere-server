@@ -20,6 +20,10 @@ public class AttendanceRedisRepository {
         return attendedMembers == null || attendedMembers.contains(attendeeInfo.getId());
     }
 
+    public Set<Long> getAttendees(String authCode){
+        return redisTemplate.opsForSet().members(ATTENDANCE_KEY + authCode);
+    }
+
     public void setAttend(String authCode, AttendeeRedisData attendeeInfo){
         redisTemplate.opsForSet().add(ATTENDANCE_KEY + authCode, attendeeInfo.getId());
     }

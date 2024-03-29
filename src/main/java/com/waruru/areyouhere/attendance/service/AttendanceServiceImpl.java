@@ -4,19 +4,15 @@ package com.waruru.areyouhere.attendance.service;
 import com.waruru.areyouhere.attendance.domain.entity.Attendance;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
-import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
 import com.waruru.areyouhere.attendance.service.dto.AttendanceCount;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.session.domain.entity.Session;
-import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,5 +108,7 @@ public class AttendanceServiceImpl implements AttendanceService{
             return attendancesBySessionId.size();
         }
     }
+
+
 
 }

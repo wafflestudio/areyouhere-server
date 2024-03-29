@@ -1,7 +1,6 @@
 package com.waruru.areyouhere.attendance.service;
 
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
-import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
 import com.waruru.areyouhere.attendance.service.dto.AttendanceCount;
 import java.util.List;
 
@@ -13,7 +12,4 @@ public interface AttendanceService {
 
     public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances);
     public int currentAttendance(Long sessionId);
-
-
-
 }
