@@ -19,8 +19,8 @@ public class SessionAttendees {
 
 
     @Builder
-    public SessionAttendees(Long id, String name, String note, boolean attendanceStatus, LocalDateTime attendanceTime) {
-        this.attendanceId = id;
+    public SessionAttendees(Long attendanceId, String name, String note, boolean attendanceStatus, LocalDateTime attendanceTime) {
+        this.attendanceId = attendanceId;
         this.attendee = AttendeeInfo.builder()
                 .name(name)
                 .note(note)

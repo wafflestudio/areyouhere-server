@@ -4,11 +4,14 @@ import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
+import com.waruru.areyouhere.attendee.domain.repository.dto.AttendeeAttendDetailInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
 import com.waruru.areyouhere.attendee.dto.AttendeeData;
+import com.waruru.areyouhere.attendee.dto.AttendeeDetailDto;
 import com.waruru.areyouhere.attendee.exception.ClassAttendeesEmptyException;
 import com.waruru.areyouhere.attendee.exception.SessionAttendeesEmptyException;
+import com.waruru.areyouhere.attendee.service.dto.AttendeeAttendanceInfo;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
@@ -16,7 +19,6 @@ import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.session.exception.CourseIdNotFoundException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -115,7 +117,7 @@ public class AttendeeServiceImpl implements AttendeeService{
             throw new SessionAttendeesEmptyException();
 
         return sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
-                        .id(sessionAttendee.getAttendanceId())
+                        .attendanceId(sessionAttendee.getAttendanceId())
                         .name(sessionAttendee.getAttendeeName())
                         .note(sessionAttendee.getAttendeeNote())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
@@ -131,7 +133,7 @@ public class AttendeeServiceImpl implements AttendeeService{
             throw new SessionAttendeesEmptyException();
 
         return sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
-                        .id(sessionAttendee.getAttendanceId())
+                        .attendanceId(sessionAttendee.getAttendanceId())
                         .name(sessionAttendee.getAttendeeName())
                         .note(sessionAttendee.getAttendeeNote())
                         .attendanceStatus(sessionAttendee.getAttendanceStatus())
@@ -160,6 +162,31 @@ public class AttendeeServiceImpl implements AttendeeService{
     @Transactional(readOnly = true)
     public int getAttendeeByCourseId(Long courseId){
         return attendeeRepository.findAttendeesByCourse_Id(courseId).size();
+    }
+
+    @Transactional(readOnly = true)
+    public AttendeeDetailDto getAttendeeDetail(Long attendeeId){
+        Attendee attendee = attendeeRepository.findById(attendeeId)
+                .orElseThrow(() -> new IllegalArgumentException("참여자가 존재하지 않습니다."));
+
+        List<AttendeeAttendDetailInfo> attendanceInfoByAttendeeId = attendeeRepository.findAttendanceInfoByAttendeeId(
+                attendeeId);
+
+        int attendance = 0;
+        int absence = 0;
+
+        for(AttendeeAttendDetailInfo attendDetailInfo : attendanceInfoByAttendeeId){
+            if(attendDetailInfo.getAttendanceStatus()){
+                attendance++;
+            }else{
+                absence++;
+            }
+        }
+
+        return AttendeeDetailDto.builder()
+                .attendee(new AttendeeAttendanceInfo(attendee.getName(), attendee.getNote(), attendance, absence))
+                .attendanceInfo(attendanceInfoByAttendeeId)
+                .build();
     }
 
     private boolean isAttendeesUnique(List<String> attendees, Long courseId) {

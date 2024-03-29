@@ -1,6 +1,8 @@
 package com.waruru.areyouhere.attendee.service;
 
 import com.waruru.areyouhere.attendee.dto.AttendeeData;
+import com.waruru.areyouhere.attendee.dto.AttendeeDetailDto;
+import com.waruru.areyouhere.attendee.service.dto.AttendeeAttendanceInfo;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
@@ -21,4 +23,6 @@ public interface AttendeeService {
     public int getAttendeeByCourseId(Long courseId);
 
     public DuplicateAttendees getDuplicateAttendees(Long courseId, List<String> newAttendees);
+
+    public AttendeeDetailDto getAttendeeDetail(Long attendeeId);
 }

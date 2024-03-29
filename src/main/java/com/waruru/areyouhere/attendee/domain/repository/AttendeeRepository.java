@@ -1,6 +1,7 @@
 package com.waruru.areyouhere.attendee.domain.repository;
 
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
+import com.waruru.areyouhere.attendee.domain.repository.dto.AttendeeAttendDetailInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.EachClassAttendeeCountInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
@@ -47,6 +48,13 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
             + "WHERE c.manager_id = :managerId \n"
             + "GROUP BY a.course_id", nativeQuery = true)
     public List<EachClassAttendeeCountInfo> countAttendeesEachCourseByManagerId(@Param("managerId") Long managerId);
+
+    @Query(value = "SELECT atda.id as AttendanceId, sess.name as AttendeeName, atda.status as AttendanceStatus, atda.created_at as AttendanceTime\n"
+            + "from attendance atda\n"
+            + "INNER JOIN session as sess ON atd.id = session.attendance_id\n"
+            + "where atda.attendee_id = :attendeeId\n"
+            + "GROUP BY atda.id", nativeQuery = true)
+    public List<AttendeeAttendDetailInfo> findAttendanceInfoByAttendeeId(@Param("attendeeId") Long attendeeId);
 
     @Modifying(clearAutomatically = true)
     @Query("delete from attendee a where a.id in :ids")

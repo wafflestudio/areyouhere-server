@@ -1,10 +1,12 @@
 package com.waruru.areyouhere.attendee.controller;
 
+import com.waruru.areyouhere.attendee.dto.AttendeeDetailDto;
 import com.waruru.areyouhere.attendee.dto.ClassAttendeesDto;
 import com.waruru.areyouhere.attendee.dto.DeleteAttendeesDto;
 import com.waruru.areyouhere.attendee.dto.DuplicateCheckAttendeesDto;
 import com.waruru.areyouhere.attendee.dto.NewAttendeesDto;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
+import com.waruru.areyouhere.attendee.service.dto.AttendeeAttendanceInfo;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
@@ -13,9 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,6 +59,12 @@ public class AttendeeController {
     @PostMapping("/duplicate")
     public ResponseEntity<DuplicateAttendees> checkDuplicate(@RequestBody DuplicateCheckAttendeesDto duplicateCheckAttendeesDto){
         return ResponseEntity.ok(attendeeService.getDuplicateAttendees(duplicateCheckAttendeesDto.getCourseId(), duplicateCheckAttendeesDto.getNewAttendees()));
+    }
+
+    @LoginRequired
+    @GetMapping("/detail")
+    public ResponseEntity<AttendeeDetailDto> getAttendeeDetail(@RequestParam("attendeeId") Long attendeeId){
+        return ResponseEntity.ok(attendeeService.getAttendeeDetail(attendeeId));
     }
 }
 

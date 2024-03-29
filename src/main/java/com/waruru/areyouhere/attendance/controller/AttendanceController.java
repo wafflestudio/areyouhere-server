@@ -102,6 +102,7 @@ public class AttendanceController {
         return ResponseEntity.ok(new CurrentAttendanceCount(currentAttendance, total));
     }
 
+
     private String encodeCookieValue(String string){
         return Base64.getEncoder().encodeToString((string).getBytes());
     }

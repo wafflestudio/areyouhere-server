@@ -14,4 +14,6 @@ public interface AttendanceService {
     public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances);
     public int currentAttendance(Long sessionId);
 
+
+
 }
