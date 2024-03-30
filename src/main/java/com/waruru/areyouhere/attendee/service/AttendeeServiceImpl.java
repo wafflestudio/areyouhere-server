@@ -194,10 +194,21 @@ public class AttendeeServiceImpl implements AttendeeService{
                 .build();
     }
 
+    @Override
     public void updateAll(Long courseId, List<AttendeeInfo> updatedAttendees){
         List<Attendee> attendees = attendeeRepository.findAttendeesByCourse_Id(courseId);
         Map<Long, Attendee> attendeeMap = attendees.stream().collect(Collectors.toMap(Attendee::getId, attendee -> attendee));
         //TODO: duplicate 처리
+
+        List<String> attendeeUniqueCheck = updatedAttendees.stream()
+                .map(attendeeData ->
+                        attendeeData.getName() + (attendeeData.getNote() == null ? "" : attendeeData.getNote())
+                ).toList();
+
+        if(!isUnique(attendeeUniqueCheck, courseId)){
+            throw new AttendeesNotUniqueException("참여자 이름이 중복되었습니다.");
+        }
+
         updatedAttendees.stream()
                 .map(attendee ->
                     attendeeMap.get(attendee.getId())

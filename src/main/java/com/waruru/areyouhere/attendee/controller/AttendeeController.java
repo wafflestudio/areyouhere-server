@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.attendee.controller;
 
+import com.waruru.areyouhere.attendee.dto.request.UpdateAttendeesRequestDto;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeDetailDto;
 import com.waruru.areyouhere.attendee.dto.response.ClassAttendeesResponseDto;
 import com.waruru.areyouhere.attendee.dto.request.DeleteAttendeesRequestDto;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,6 +66,13 @@ public class AttendeeController {
     @GetMapping("/detail")
     public ResponseEntity<AttendeeDetailDto> getAttendeeDetail(@RequestParam("attendeeId") Long attendeeId){
         return ResponseEntity.ok(attendeeService.getAttendanceCount(attendeeId));
+    }
+
+    @LoginRequired
+    @PutMapping
+    public ResponseEntity<HttpStatus> update(@RequestBody UpdateAttendeesRequestDto UpdateAttendeesRequestDto){
+        attendeeService.updateAll(UpdateAttendeesRequestDto.getCourseId(), UpdateAttendeesRequestDto.getUpdatedAttendees());
+        return ResponseEntity.ok().build();
     }
 }
 
