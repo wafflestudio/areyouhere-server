@@ -31,4 +31,10 @@ public class Manager {
         this.password = password;
         this.name = name;
     }
+
+    public Manager update(String name, String password){
+        this.password = password;
+        this.name = name;
+        return this;
+    }
 }

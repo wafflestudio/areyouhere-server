@@ -13,4 +13,6 @@ public interface ManagerService {
     public Manager getLoginUser();
 
     public boolean isDuplicatedEmail(String email);
+
+    public void update(Long userId, String name, String password);
 }

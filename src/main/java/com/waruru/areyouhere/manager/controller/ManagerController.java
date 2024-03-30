@@ -10,6 +10,7 @@ import com.waruru.areyouhere.common.annotation.LoginRequired;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.dto.request.LoginRequestDto;
 import com.waruru.areyouhere.manager.dto.request.SignUpRequestDto;
+import com.waruru.areyouhere.manager.dto.request.UpdateRequestDto;
 import com.waruru.areyouhere.manager.dto.response.ManagerDto;
 import com.waruru.areyouhere.manager.service.ManagerService;
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -77,6 +79,14 @@ public class ManagerController {
     @GetMapping("/unauthorized")
     public ResponseEntity<HttpStatus> unauthorized(){
         return RESPONSE_FORBIDDEN;
+    }
+
+    @LoginRequired
+    @PutMapping
+    public ResponseEntity<HttpStatus> update(@RequestBody UpdateRequestDto updateRequestDto, @Login Manager manager){
+
+        managerService.update(manager.getId(), updateRequestDto.getName(), updateRequestDto.getPassword());
+        return RESPONSE_OK;
     }
 
 }

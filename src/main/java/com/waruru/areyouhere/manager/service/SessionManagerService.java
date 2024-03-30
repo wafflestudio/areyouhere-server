@@ -76,4 +76,12 @@ public class SessionManagerService implements ManagerService {
     public boolean isDuplicatedEmail(String email){
         return managerRepository.existsByEmail(email);
     }
+
+
+    @Override
+    @Transactional
+    public void update(Long userId, String name, String password){
+        Manager manager = managerRepository.findById(userId).orElseThrow(UnAuthenticatedException::new);
+        managerRepository.save(manager.update(name, passwordEncoder.encode(password)));
+    }
 }
