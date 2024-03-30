@@ -84,7 +84,6 @@ public class ManagerController {
     @LoginRequired
     @PutMapping
     public ResponseEntity<HttpStatus> update(@RequestBody UpdateRequestDto updateRequestDto, @Login Manager manager){
-
         managerService.update(manager.getId(), updateRequestDto.getName(), updateRequestDto.getPassword());
         return RESPONSE_OK;
     }

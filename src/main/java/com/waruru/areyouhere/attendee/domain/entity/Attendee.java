@@ -30,5 +30,10 @@ public class Attendee {
         this.note = note;
     }
 
+    public void update(String name, String note){
+        this.name = name;
+        this.note = note;
+    }
+
 
 }

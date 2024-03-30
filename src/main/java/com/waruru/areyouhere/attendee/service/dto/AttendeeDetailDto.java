@@ -1,6 +1,7 @@
 package com.waruru.areyouhere.attendee.service.dto;
 
 
+import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.dto.AttendeeAttendDetailInfo;
 import java.util.List;
 import lombok.AccessLevel;
@@ -11,13 +12,21 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AttendeeDetailDto {
-    private AttendeeAttendanceInfo attendee;
+    private AttendeeInfo attendee;
+    private int attendance;
+    private int absence;
 
     private List<AttendeeAttendeeDetail> attendanceInfo;
 
     @Builder
-    public AttendeeDetailDto(AttendeeAttendanceInfo attendee, List<AttendeeAttendDetailInfo> attendanceInfo) {
-        this.attendee = attendee;
+    public AttendeeDetailDto(Attendee attendee, int attendance, int absence, List<AttendeeAttendDetailInfo> attendanceInfo) {
+        this.attendee = AttendeeInfo.builder()
+                .id(attendee.getId())
+                .name(attendee.getName())
+                .note(attendee.getNote())
+                .build();
+        this.attendance = attendance;
+        this.absence = absence;
         this.attendanceInfo = attendanceInfo.stream()
                 .map(attendeeAttendDetailInfo -> new AttendeeAttendeeDetail(
                         attendeeAttendDetailInfo.getAttendanceId(),
