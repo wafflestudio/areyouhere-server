@@ -12,6 +12,7 @@ import com.waruru.areyouhere.attendee.service.dto.AttendeeDetailDto;
 import com.waruru.areyouhere.attendee.exception.ClassAttendeesEmptyException;
 import com.waruru.areyouhere.attendee.exception.SessionAttendeesEmptyException;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeAttendanceInfo;
+import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
@@ -22,7 +23,9 @@ import com.waruru.areyouhere.session.exception.CourseIdNotFoundException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -184,9 +187,27 @@ public class AttendeeServiceImpl implements AttendeeService{
         }
 
         return AttendeeDetailDto.builder()
-                .attendee(new AttendeeAttendanceInfo(attendee.getName(), attendee.getNote(), attendance, absence))
+                .attendee(attendee)
+                .attendance(attendance)
+                .absence(absence)
                 .attendanceInfo(attendanceInfoByAttendeeId)
                 .build();
+    }
+
+    public void updateAll(Long courseId, List<AttendeeInfo> updatedAttendees){
+        List<Attendee> attendees = attendeeRepository.findAttendeesByCourse_Id(courseId);
+        Map<Long, Attendee> attendeeMap = attendees.stream().collect(Collectors.toMap(Attendee::getId, attendee -> attendee));
+        //TODO: duplicate 처리
+        updatedAttendees.stream()
+                .map(attendee ->
+                    attendeeMap.get(attendee.getId())
+                )
+                .forEach(attendee -> {
+                    attendee.update(attendee.getName(), attendee.getNote());
+                    attendeeRepository.save(attendee);
+                });
+
+
     }
 
     private boolean isUnique(List<String> attendees, Long courseId) {
