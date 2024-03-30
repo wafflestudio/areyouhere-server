@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.session.dto;
+package com.waruru.areyouhere.session.dto.response;
 
 import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
 import java.util.List;

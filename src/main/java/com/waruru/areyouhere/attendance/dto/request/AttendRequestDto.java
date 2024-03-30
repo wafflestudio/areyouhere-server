@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.attendance.dto;
+package com.waruru.areyouhere.attendance.dto.request;
 
 import lombok.Data;
 

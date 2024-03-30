@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.attendance.dto;
+package com.waruru.areyouhere.attendance.dto.response;
 
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import java.time.LocalDateTime;

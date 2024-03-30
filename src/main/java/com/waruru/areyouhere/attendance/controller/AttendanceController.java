@@ -1,10 +1,10 @@
 package com.waruru.areyouhere.attendance.controller;
 
-import com.waruru.areyouhere.attendance.dto.AttendRequestDto;
-import com.waruru.areyouhere.attendance.dto.AttendResponseDto;
-import com.waruru.areyouhere.attendance.dto.CurrentAttendanceCount;
+import com.waruru.areyouhere.attendance.dto.request.AttendRequestDto;
+import com.waruru.areyouhere.attendance.dto.response.AttendResponseDto;
+import com.waruru.areyouhere.attendance.dto.response.CurrentAttendanceCountResponseDto;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
-import com.waruru.areyouhere.attendance.dto.UpdateAttendanceRequestDto;
+import com.waruru.areyouhere.attendance.dto.request.UpdateAttendanceRequestDto;
 import com.waruru.areyouhere.attendance.exception.DuplicateAuthCodeAttendException;
 import com.waruru.areyouhere.attendance.service.AttendanceService;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
@@ -97,10 +97,10 @@ public class AttendanceController {
 
     @LoginRequired
     @GetMapping
-    ResponseEntity<CurrentAttendanceCount> getCurrentAttendances(@RequestParam("courseId") Long courseId, @RequestParam("sessionId") Long sessionId){
+    ResponseEntity<CurrentAttendanceCountResponseDto> getCurrentAttendances(@RequestParam("courseId") Long courseId, @RequestParam("sessionId") Long sessionId){
         int currentAttendance = attendanceService.currentAttendance(sessionId);
         int total = attendeeService.getAttendeeByCourseId(courseId);
-        return ResponseEntity.ok(new CurrentAttendanceCount(currentAttendance, total));
+        return ResponseEntity.ok(new CurrentAttendanceCountResponseDto(currentAttendance, total));
     }
 
     @LoginRequired

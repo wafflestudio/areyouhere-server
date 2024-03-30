@@ -1,8 +1,7 @@
-package com.waruru.areyouhere.attendee.dto;
+package com.waruru.areyouhere.attendee.service.dto;
 
 
 import com.waruru.areyouhere.attendee.domain.repository.dto.AttendeeAttendDetailInfo;
-import com.waruru.areyouhere.attendee.service.dto.AttendeeAttendanceInfo;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;

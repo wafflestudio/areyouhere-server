@@ -1,12 +1,11 @@
 package com.waruru.areyouhere.attendee.controller;
 
-import com.waruru.areyouhere.attendee.dto.AttendeeDetailDto;
-import com.waruru.areyouhere.attendee.dto.ClassAttendeesDto;
-import com.waruru.areyouhere.attendee.dto.DeleteAttendeesDto;
-import com.waruru.areyouhere.attendee.dto.DuplicateCheckAttendeesDto;
-import com.waruru.areyouhere.attendee.dto.NewAttendeesDto;
+import com.waruru.areyouhere.attendee.service.dto.AttendeeDetailDto;
+import com.waruru.areyouhere.attendee.dto.response.ClassAttendeesResponseDto;
+import com.waruru.areyouhere.attendee.dto.request.DeleteAttendeesRequestDto;
+import com.waruru.areyouhere.attendee.dto.request.DuplicateCheckAttendeesRequestDto;
+import com.waruru.areyouhere.attendee.dto.request.NewAttendeesRequestDto;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
-import com.waruru.areyouhere.attendee.service.dto.AttendeeAttendanceInfo;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
@@ -33,32 +32,32 @@ public class AttendeeController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<ClassAttendeesDto> getClassAttendees(@RequestParam("courseId") Long courseId){
+    public ResponseEntity<ClassAttendeesResponseDto> getClassAttendees(@RequestParam("courseId") Long courseId){
         List<ClassAttendees> classAttendees = attendeeService.getClassAttendeesIfExistsOrEmpty(courseId);
 
-        return ResponseEntity.ok(ClassAttendeesDto.builder()
+        return ResponseEntity.ok(ClassAttendeesResponseDto.builder()
                 .classAttendees(classAttendees)
                 .build());
     }
 
     @LoginRequired
     @PostMapping
-    public ResponseEntity<HttpStatus> create(@RequestBody NewAttendeesDto newAttendeesDto){
-        attendeeService.createAttendees(newAttendeesDto.getCourseId(), newAttendeesDto.getNewAttendees());
+    public ResponseEntity<HttpStatus> create(@RequestBody NewAttendeesRequestDto newAttendeesRequestDto){
+        attendeeService.createAttendees(newAttendeesRequestDto.getCourseId(), newAttendeesRequestDto.getNewAttendees());
         return ResponseEntity.ok().build();
     }
 
     @LoginRequired
     @PostMapping("/delete")
-    public ResponseEntity<HttpStatus> delete(@RequestBody DeleteAttendeesDto deleteAttendeesDto){
-        attendeeService.deleteAttendees(deleteAttendeesDto.getAttendeeIds());
+    public ResponseEntity<HttpStatus> delete(@RequestBody DeleteAttendeesRequestDto deleteAttendeesRequestDto){
+        attendeeService.deleteAttendees(deleteAttendeesRequestDto.getAttendeeIds());
         return ResponseEntity.ok().build();
     }
 
     @LoginRequired
     @PostMapping("/duplicate")
-    public ResponseEntity<DuplicateAttendees> checkDuplicate(@RequestBody DuplicateCheckAttendeesDto duplicateCheckAttendeesDto){
-        return ResponseEntity.ok(attendeeService.getDuplicateAttendees(duplicateCheckAttendeesDto.getCourseId(), duplicateCheckAttendeesDto.getNewAttendees()));
+    public ResponseEntity<DuplicateAttendees> checkDuplicate(@RequestBody DuplicateCheckAttendeesRequestDto duplicateCheckAttendeesRequestDto){
+        return ResponseEntity.ok(attendeeService.getDuplicateAttendees(duplicateCheckAttendeesRequestDto.getCourseId(), duplicateCheckAttendeesRequestDto.getNewAttendees()));
     }
 
     @LoginRequired

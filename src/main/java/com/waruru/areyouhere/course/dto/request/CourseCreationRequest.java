@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.course.dto.request;
 
-import com.waruru.areyouhere.attendee.dto.AttendeeData;
+import com.waruru.areyouhere.attendee.service.dto.AttendeeData;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 

@@ -3,9 +3,8 @@ package com.waruru.areyouhere.session.controller;
 
 import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
-import com.waruru.areyouhere.session.dto.CreateSessionRequestDto;
-import com.waruru.areyouhere.session.dto.DeleteSessionRequestDto;
-import com.waruru.areyouhere.session.dto.SessionAttendeesDto;
+import com.waruru.areyouhere.session.dto.request.CreateSessionRequestDto;
+import com.waruru.areyouhere.session.dto.response.SessionAttendeesResponseDto;
 import com.waruru.areyouhere.session.service.SessionService;
 import com.waruru.areyouhere.session.service.dto.AllSessionAttendanceInfo;
 import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
@@ -64,21 +63,21 @@ public class SessionController {
     }
 
     @GetMapping("/{sessionId}/attendee")
-    public ResponseEntity<SessionAttendeesDto> getSessionAllAttendees(@PathVariable("sessionId") Long sessionId){
+    public ResponseEntity<SessionAttendeesResponseDto> getSessionAllAttendees(@PathVariable("sessionId") Long sessionId){
         List<SessionAttendees> sessionAttendees = attendeeService.getSessionAttendeesIfExistsOrEmpty(
                 sessionId);
 
-        return ResponseEntity.ok(SessionAttendeesDto.builder()
+        return ResponseEntity.ok(SessionAttendeesResponseDto.builder()
                 .sessionAttendees(sessionAttendees)
                 .build());
     }
 
     @GetMapping("/{sessionId}/absentee")
-    public ResponseEntity<SessionAttendeesDto> getSessionAbsenteeOnly(@PathVariable("sessionId") Long sessionId){
+    public ResponseEntity<SessionAttendeesResponseDto> getSessionAbsenteeOnly(@PathVariable("sessionId") Long sessionId){
         List<SessionAttendees> sessionAttendees = attendeeService.getSessionAbsenteesIfExistsOrEmpty(
                 sessionId);
 
-        return ResponseEntity.ok(SessionAttendeesDto.builder()
+        return ResponseEntity.ok(SessionAttendeesResponseDto.builder()
                 .sessionAttendees(sessionAttendees)
                 .build());
     }

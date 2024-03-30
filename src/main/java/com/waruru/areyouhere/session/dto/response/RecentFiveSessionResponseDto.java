@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.session.dto;
+package com.waruru.areyouhere.session.dto.response;
 
 
 import java.time.LocalDateTime;

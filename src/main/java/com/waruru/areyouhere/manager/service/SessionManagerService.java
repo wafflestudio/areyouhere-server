@@ -84,4 +84,8 @@ public class SessionManagerService implements ManagerService {
         Manager manager = managerRepository.findById(userId).orElseThrow(UnAuthenticatedException::new);
         managerRepository.save(manager.update(name, passwordEncoder.encode(password)));
     }
+
+    public void delete(Long userId){
+        managerRepository.deleteById(userId);
+    }
 }

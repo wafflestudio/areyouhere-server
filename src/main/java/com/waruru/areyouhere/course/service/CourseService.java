@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.course.service;
 
-import com.waruru.areyouhere.attendee.dto.AttendeeData;
+import com.waruru.areyouhere.attendee.service.dto.AttendeeData;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.dto.CourseData;
 import org.springframework.web.bind.annotation.RestController;

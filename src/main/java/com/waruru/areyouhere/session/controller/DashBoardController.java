@@ -2,15 +2,14 @@ package com.waruru.areyouhere.session.controller;
 
 
 import com.waruru.areyouhere.common.annotation.LoginRequired;
-import com.waruru.areyouhere.session.dto.CurrentSessionResponseDto;
-import com.waruru.areyouhere.session.dto.PreviousFiveSessionResponseDto;
+import com.waruru.areyouhere.session.dto.response.CurrentSessionResponseDto;
+import com.waruru.areyouhere.session.dto.response.PreviousFiveSessionResponseDto;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.service.SessionService;
 import com.waruru.areyouhere.session.service.dto.CurrentSessionDto;
 import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
