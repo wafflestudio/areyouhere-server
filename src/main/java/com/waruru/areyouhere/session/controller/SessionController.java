@@ -35,7 +35,7 @@ public class SessionController {
     @GetMapping
     public ResponseEntity<AllSessionAttendanceInfo> getAllSession(@RequestParam("courseId") Long courseId){
 
-        List<SessionAttendanceInfo> allSessions = sessionService.getAllSessions(courseId);
+        List<SessionAttendanceInfo> allSessions = sessionService.getAll(courseId);
         if(allSessions.isEmpty()){
             return ResponseEntity.noContent().build();
         }
@@ -59,7 +59,7 @@ public class SessionController {
 
     @GetMapping("/{sessionId}")
     public ResponseEntity<SessionAttendanceInfo> getSessionBasicInfo(@PathVariable("sessionId") Long sessionId){
-        return ResponseEntity.ok(sessionService.getSessionInfo(sessionId));
+        return ResponseEntity.ok(sessionService.getSessionAttendanceInfo(sessionId));
     }
 
     @GetMapping("/{sessionId}/attendee")

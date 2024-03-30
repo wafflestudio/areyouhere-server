@@ -40,7 +40,7 @@ public class AttendeeServiceImpl implements AttendeeService{
     private final AttendeeBatchRepository attendeeBatchRepository;
     private final CourseRepository courseRepository;
 
-    public void createAttendees(Long courseId, List<AttendeeData> newAttendees){
+    public void createAll(Long courseId, List<AttendeeData> newAttendees){
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseIdNotFoundException::new);
 
@@ -49,7 +49,7 @@ public class AttendeeServiceImpl implements AttendeeService{
                     attendeeData.getName() + (attendeeData.getNote() == null ? "" : attendeeData.getNote())
                 ).toList();
 
-        if(!isAttendeesUnique(attendeeUniqueCheck, courseId)){
+        if(!isUnique(attendeeUniqueCheck, courseId)){
             throw new AttendeesNotUniqueException("참여자 이름이 중복되었습니다.");
         }
 
@@ -66,7 +66,7 @@ public class AttendeeServiceImpl implements AttendeeService{
     }
 
     @Override
-    public DuplicateAttendees getDuplicateAttendees(Long courseId, List<String> newAttendees){
+    public DuplicateAttendees getDuplicatesAll(Long courseId, List<String> newAttendees){
 
         Set<String> uniqueAttendees = new HashSet<>();
         Set<String> duplicated = new HashSet<>();
@@ -85,12 +85,12 @@ public class AttendeeServiceImpl implements AttendeeService{
 
         duplicated.forEach(newAttendee -> duplicateAttendees.addDuplicateAttendee(null, newAttendee, null));
 
-        getAlreadyExistsAttendees(courseId, newAttendees, duplicateAttendees);
+        getAlreadyExists(courseId, newAttendees, duplicateAttendees);
         return duplicateAttendees;
     }
 
     @Transactional(readOnly = true)
-    public DuplicateAttendees getAlreadyExistsAttendees(Long courseId, List<String> newAttendees, DuplicateAttendees duplicateAttendees){
+    public DuplicateAttendees getAlreadyExists(Long courseId, List<String> newAttendees, DuplicateAttendees duplicateAttendees){
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(courseId);
 
         Set<String> attendeesAlreadyExists = Set.copyOf(newAttendees);
@@ -104,7 +104,7 @@ public class AttendeeServiceImpl implements AttendeeService{
 
 
     // TODO : courseId 검증 -> 해당 course의 attendee인지.
-    public void deleteAttendees(List<Long> deleteAttendees){
+    public void deleteAll(List<Long> deleteAttendees){
         attendanceRepository.deleteAllByAttendeeIds(deleteAttendees);
         attendeeRepository.deleteAllByIds(deleteAttendees);
     }
@@ -160,12 +160,12 @@ public class AttendeeServiceImpl implements AttendeeService{
     }
 
     @Transactional(readOnly = true)
-    public int getAttendeeByCourseId(Long courseId){
+    public int getAllByCourseId(Long courseId){
         return attendeeRepository.findAttendeesByCourse_Id(courseId).size();
     }
 
     @Transactional(readOnly = true)
-    public AttendeeDetailDto getAttendeeDetail(Long attendeeId){
+    public AttendeeDetailDto getAttendanceCount(Long attendeeId){
         Attendee attendee = attendeeRepository.findById(attendeeId)
                 .orElseThrow(() -> new IllegalArgumentException("참여자가 존재하지 않습니다."));
 
@@ -189,7 +189,7 @@ public class AttendeeServiceImpl implements AttendeeService{
                 .build();
     }
 
-    private boolean isAttendeesUnique(List<String> attendees, Long courseId) {
+    private boolean isUnique(List<String> attendees, Long courseId) {
         Set<String> uniqueAttendees = new HashSet<>(Set.copyOf(attendees));
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(courseId);
         uniqueAttendees.addAll(attendeesByCourseId.stream().map(attendeeData ->

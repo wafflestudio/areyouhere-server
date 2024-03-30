@@ -87,7 +87,7 @@ public class AttendanceController {
 
     @LoginRequired
     @PutMapping
-    ResponseEntity<HttpStatus> updateAttendances(@RequestBody UpdateAttendanceRequestDto updateAttendanceRequestDto){
+    ResponseEntity<HttpStatus> update(@RequestBody UpdateAttendanceRequestDto updateAttendanceRequestDto){
         Long sessionId = updateAttendanceRequestDto.getSessionId();
         List<UpdateAttendance> updateAttendance = updateAttendanceRequestDto.getUpdateAttendances();
 
@@ -97,9 +97,9 @@ public class AttendanceController {
 
     @LoginRequired
     @GetMapping
-    ResponseEntity<CurrentAttendanceCountResponseDto> getCurrentAttendances(@RequestParam("courseId") Long courseId, @RequestParam("sessionId") Long sessionId){
+    ResponseEntity<CurrentAttendanceCountResponseDto> getCurrentAttendancesCount(@RequestParam("courseId") Long courseId, @RequestParam("sessionId") Long sessionId){
         int currentAttendance = attendanceService.currentAttendance(sessionId);
-        int total = attendeeService.getAttendeeByCourseId(courseId);
+        int total = attendeeService.getAllByCourseId(courseId);
         return ResponseEntity.ok(new CurrentAttendanceCountResponseDto(currentAttendance, total));
     }
 

@@ -43,7 +43,7 @@ public class DashBoardController {
     @GetMapping("/session")
     public ResponseEntity<PreviousFiveSessionResponseDto> getRecentFiveSessionInfo(@PathVariable Long courseId){
 
-        List<SessionAttendanceInfo> recentFiveSessions = sessionService.getRecentFiveSessions(courseId);
+        List<SessionAttendanceInfo> recentFiveSessions = sessionService.getRecentFive(courseId);
         if(recentFiveSessions.isEmpty()){
             throw new CurrentSessionNotFoundException();
         }

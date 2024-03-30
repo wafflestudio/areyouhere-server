@@ -43,27 +43,27 @@ public class AttendeeController {
     @LoginRequired
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody NewAttendeesRequestDto newAttendeesRequestDto){
-        attendeeService.createAttendees(newAttendeesRequestDto.getCourseId(), newAttendeesRequestDto.getNewAttendees());
+        attendeeService.createAll(newAttendeesRequestDto.getCourseId(), newAttendeesRequestDto.getNewAttendees());
         return ResponseEntity.ok().build();
     }
 
     @LoginRequired
     @PostMapping("/delete")
     public ResponseEntity<HttpStatus> delete(@RequestBody DeleteAttendeesRequestDto deleteAttendeesRequestDto){
-        attendeeService.deleteAttendees(deleteAttendeesRequestDto.getAttendeeIds());
+        attendeeService.deleteAll(deleteAttendeesRequestDto.getAttendeeIds());
         return ResponseEntity.ok().build();
     }
 
     @LoginRequired
     @PostMapping("/duplicate")
     public ResponseEntity<DuplicateAttendees> checkDuplicate(@RequestBody DuplicateCheckAttendeesRequestDto duplicateCheckAttendeesRequestDto){
-        return ResponseEntity.ok(attendeeService.getDuplicateAttendees(duplicateCheckAttendeesRequestDto.getCourseId(), duplicateCheckAttendeesRequestDto.getNewAttendees()));
+        return ResponseEntity.ok(attendeeService.getDuplicatesAll(duplicateCheckAttendeesRequestDto.getCourseId(), duplicateCheckAttendeesRequestDto.getNewAttendees()));
     }
 
     @LoginRequired
     @GetMapping("/detail")
     public ResponseEntity<AttendeeDetailDto> getAttendeeDetail(@RequestParam("attendeeId") Long attendeeId){
-        return ResponseEntity.ok(attendeeService.getAttendeeDetail(attendeeId));
+        return ResponseEntity.ok(attendeeService.getAttendanceCount(attendeeId));
     }
 }
 

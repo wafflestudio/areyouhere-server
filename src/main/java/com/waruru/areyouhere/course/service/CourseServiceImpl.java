@@ -117,7 +117,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course getCourse(Long courseId) {
+    public Course get(Long courseId) {
         return courseRepository.findById(courseId).
                 orElseThrow(() -> new IllegalArgumentException("Course not found"));
     }

@@ -94,7 +94,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<SessionAttendanceInfo> getRecentFiveSessions(Long courseId){
+    public List<SessionAttendanceInfo> getRecentFive(Long courseId){
         List<Session> recentFiveSessions = sessionRepository.findTOP6BySessionByCourseId(courseId);
         if(recentFiveSessions == null || recentFiveSessions.isEmpty()){
             return Collections.emptyList();
@@ -128,7 +128,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<SessionAttendanceInfo> getAllSessions(Long courseId){
+    public List<SessionAttendanceInfo> getAll(Long courseId){
         List<SessionInfo> allSessions = sessionRepository.findSessionsWithAttendance(courseId);
         return allSessions == null || allSessions.isEmpty()
                 ? Collections.emptyList()
@@ -144,7 +144,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public SessionAttendanceInfo getSessionInfo(Long sessionId){
+    public SessionAttendanceInfo getSessionAttendanceInfo(Long sessionId){
         SessionInfo sessionWithAttendance = sessionRepository
                 .findSessionWithAttendance(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
@@ -161,7 +161,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public void checkSessionNotDeactivated(Long sessionId){
+    public void checkNotDeactivated(Long sessionId){
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         if(session.isDeactivated()){
@@ -171,7 +171,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public Session getSession(Long sessionId) {
+    public Session get(Long sessionId) {
         return sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
     }
@@ -184,7 +184,7 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.save(session);
     }
     
-    public void setSessionStartTime(Long sessionId, LocalDateTime currentTime){
+    public void setStartTime(Long sessionId, LocalDateTime currentTime){
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         session.setAuthCodeCreatedAt(currentTime);

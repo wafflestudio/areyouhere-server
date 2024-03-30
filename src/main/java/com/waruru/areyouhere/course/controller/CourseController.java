@@ -11,7 +11,6 @@ import com.waruru.areyouhere.course.service.CourseService;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +26,7 @@ public class CourseController {
     @LoginRequired
     @GetMapping("/{courseId}")
     ResponseEntity<CourseGetResponse> getCourse(@PathVariable Long courseId) {
-        Course course = courseService.getCourse(courseId);
+        Course course = courseService.get(courseId);
         return ResponseEntity.ok(CourseGetResponse.from(course));
     }
 

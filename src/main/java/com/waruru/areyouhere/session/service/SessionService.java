@@ -11,20 +11,20 @@ public interface SessionService {
     public void create(Long courseId, String sessionName);
 
     public CurrentSessionDto getCurrentSessionInfo(Long courseId);
-    public List<SessionAttendanceInfo> getRecentFiveSessions(Long courseId);
+    public List<SessionAttendanceInfo> getRecentFive(Long courseId);
 
-    public List<SessionAttendanceInfo> getAllSessions(Long courseId);
+    public List<SessionAttendanceInfo> getAll(Long courseId);
 
-    public SessionAttendanceInfo getSessionInfo(Long sessionId);
+    public SessionAttendanceInfo getSessionAttendanceInfo(Long sessionId);
 
-    public Session getSession(Long sessionId);
+    public Session get(Long sessionId);
 
     public void delete(Long sessionId);
 
-    public void checkSessionNotDeactivated(Long sessionId);
+    public void checkNotDeactivated(Long sessionId);
 
     public void deactivate(Long sessionId);
 
-    public void setSessionStartTime(Long sessionId, LocalDateTime currentTime);
+    public void setStartTime(Long sessionId, LocalDateTime currentTime);
 
 }

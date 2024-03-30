@@ -36,9 +36,9 @@ public class AuthCodeController {
         LocalDateTime currentTime = LocalDateTime.now();
         Long sessionId = authCodeRequestDto.getSessionId();
         Long courseId = authCodeRequestDto.getCourseId();
-        Course course = courseService.getCourse(courseId);
-        Session session = sessionService.getSession(sessionId);
-        sessionService.setSessionStartTime(sessionId, currentTime);
+        Course course = courseService.get(courseId);
+        Session session = sessionService.get(sessionId);
+        sessionService.setStartTime(sessionId, currentTime);
         return ResponseEntity.ok(authCodeService.createAuthCode(course, session, currentTime));
     }
 
@@ -49,7 +49,7 @@ public class AuthCodeController {
 
         String authCode = authCodeDeactivationRequestDto.getAuthCode();
 
-        sessionService.checkSessionNotDeactivated(sessionId);
+        sessionService.checkNotDeactivated(sessionId);
         sessionService.deactivate(sessionId);
         authCodeService.deactivate(authCode);
         attendanceService.setAbsentAfterDeactivation(courseId, sessionId);

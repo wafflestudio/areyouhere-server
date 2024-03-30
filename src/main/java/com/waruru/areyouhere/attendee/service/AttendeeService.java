@@ -15,13 +15,13 @@ public interface AttendeeService {
 
     public List<ClassAttendees> getClassAttendeesIfExistsOrEmpty(Long courseId);
 
-    public void createAttendees(Long courseId, List<AttendeeData> newAttendees);
+    public void createAll(Long courseId, List<AttendeeData> newAttendees);
 
-    public void deleteAttendees(List<Long> deleteAttendees);
+    public void deleteAll(List<Long> deleteAttendees);
 
-    public int getAttendeeByCourseId(Long courseId);
+    public int getAllByCourseId(Long courseId);
 
-    public DuplicateAttendees getDuplicateAttendees(Long courseId, List<String> newAttendees);
+    public DuplicateAttendees getDuplicatesAll(Long courseId, List<String> newAttendees);
 
-    public AttendeeDetailDto getAttendeeDetail(Long attendeeId);
+    public AttendeeDetailDto getAttendanceCount(Long attendeeId);
 }
