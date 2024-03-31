@@ -15,7 +15,7 @@ import com.waruru.areyouhere.session.domain.entity.SessionId;
 import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionIdRedisRepository;
 import com.waruru.areyouhere.attendance.exception.AuthCodeNotFoundException;
-import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
+import com.waruru.areyouhere.attendee.exception.AttendeeNotFoundException;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -65,13 +65,13 @@ public class AuthCodeServiceImpl implements AuthCodeService{
         AttendeeRedisData attendeeInfo = authCodeData.getAttendees().stream()
                 .filter(att -> att.getName().equals(attendeeName))
                 .findAny()
-                .orElseThrow(StudentNameNotFoundException::new);
+                .orElseThrow(AttendeeNotFoundException::new);
 
         if(attendeeId != null){
             attendeeInfo = authCodeData.getAttendees().stream()
                     .filter(att -> att.getId().equals(attendeeId))
                     .findAny()
-                    .orElseThrow(StudentNameNotFoundException::new);
+                    .orElseThrow(AttendeeNotFoundException::new);
         }
 
         if(attendanceRedisRepository.isAlreadyAttended(authCode, attendeeInfo)){

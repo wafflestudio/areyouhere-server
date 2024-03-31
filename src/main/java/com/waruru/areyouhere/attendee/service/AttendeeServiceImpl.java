@@ -17,7 +17,7 @@ import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
-import com.waruru.areyouhere.session.exception.CourseIdNotFoundException;
+import com.waruru.areyouhere.course.exception.CourseNotFoundException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class AttendeeServiceImpl implements AttendeeService{
 
     public void createAll(Long courseId, List<AttendeeInfo> newAttendees){
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(CourseIdNotFoundException::new);
+                .orElseThrow(CourseNotFoundException::new);
 
         throwIfNameAndNoteNotUnique(newAttendees, courseId);
 

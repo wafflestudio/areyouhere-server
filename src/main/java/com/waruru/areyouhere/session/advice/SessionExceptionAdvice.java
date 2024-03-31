@@ -4,7 +4,7 @@ import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPON
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_NOT_FOUND;
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_NO_CONTENT;
 
-import com.waruru.areyouhere.session.exception.CourseIdNotFoundException;
+import com.waruru.areyouhere.course.exception.CourseNotFoundException;
 import com.waruru.areyouhere.session.exception.CurrentSessionDeactivatedException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
@@ -33,7 +33,7 @@ public class SessionExceptionAdvice {
         return RESPONSE_NO_CONTENT;
     }
 
-    @ExceptionHandler(CourseIdNotFoundException.class)
+    @ExceptionHandler(CourseNotFoundException.class)
     public ResponseEntity<HttpStatus> courseIdNotFoundFoundHandler() {
         return RESPONSE_NO_CONTENT;
     }

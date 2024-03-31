@@ -9,7 +9,7 @@ import com.waruru.areyouhere.attendance.exception.AlreadyAttendException;
 import com.waruru.areyouhere.attendance.exception.DuplicateAuthCodeAttendException;
 import com.waruru.areyouhere.attendance.exception.AuthCodeNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
-import com.waruru.areyouhere.session.exception.StudentNameNotFoundException;
+import com.waruru.areyouhere.attendee.exception.AttendeeNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,7 +23,7 @@ public class AttendanceExceptionAdvice {
         return RESPONSE_NOT_FOUND;
     }
 
-    @ExceptionHandler(StudentNameNotFoundException.class)
+    @ExceptionHandler(AttendeeNotFoundException.class)
     public ResponseEntity<HttpStatus> studentNameNotFoundHandler() {
         return RESPONSE_NO_CONTENT;
     }

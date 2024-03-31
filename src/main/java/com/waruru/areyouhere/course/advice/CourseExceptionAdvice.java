@@ -4,7 +4,7 @@ import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPON
 
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
-import com.waruru.areyouhere.course.exception.ManagerNotFoundException;
+import com.waruru.areyouhere.manager.exception.ManagerNotFoundException;
 import com.waruru.areyouhere.course.exception.UnauthorizedManagerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
