@@ -22,13 +22,18 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+// TODO: AttendeeService가 너무 방대해지고 있다. 사실 기능 분리도 함수마다 안한 편인데도 이미 크다.
+// TODO: AttendeeService를 분리하고 두 layer를 두는 것이 좋을 것 같다.
 
 @Service
 @RequiredArgsConstructor
@@ -45,14 +50,7 @@ public class AttendeeServiceImpl implements AttendeeService{
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseIdNotFoundException::new);
 
-        List<String> attendeeUniqueCheck = newAttendees.stream()
-                .map(attendeeData ->
-                    attendeeData.getName() + (attendeeData.getNote() == null ? "" : attendeeData.getNote())
-                ).toList();
-
-        if(!isUnique(attendeeUniqueCheck, courseId)){
-            throw new AttendeesNotUniqueException("참여자 이름이 중복되었습니다.");
-        }
+        throwIfNameAndNoteNotUnique(newAttendees, courseId);
 
         List<Attendee> attendeeToUpdate = new LinkedList<>();
         List<Attendee> attendeesToSave = new LinkedList<>();
@@ -206,39 +204,78 @@ public class AttendeeServiceImpl implements AttendeeService{
 
     @Override
     public void updateAll(Long courseId, List<AttendeeInfo> updatedAttendees){
-        List<Attendee> attendees = attendeeRepository.findAttendeesByCourse_Id(courseId);
-        Map<Long, Attendee> attendeeMap = attendees.stream().collect(Collectors.toMap(Attendee::getId, attendee -> attendee));
-        //TODO: duplicate 처리
 
-        List<String> attendeeUniqueCheck = updatedAttendees.stream()
-                .map(attendeeData ->
-                        attendeeData.getName() + (attendeeData.getNote() == null ? "" : attendeeData.getNote())
-                ).toList();
-
-        if(!isUnique(attendeeUniqueCheck, courseId)){
-            throw new AttendeesNotUniqueException("참여자 이름이 중복되었습니다.");
-        }
+        throwIfNameAndNoteNotUnique(updatedAttendees, courseId);
 
         updatedAttendees.stream()
-                .map(attendee ->
-                    attendeeMap.get(attendee.getId())
-                )
-                .forEach(attendee -> {
-                    attendee.update(attendee.getName(), attendee.getNote());
-                    attendeeRepository.save(attendee);
+                        .map(attendee ->
+                                Attendee.builder()
+                                        .id(attendee.getId())
+                                        .course(Course.builder().id(courseId).build())
+                                        .name(attendee.getName())
+                                        .note(attendee.getNote())
+                                        .build())
+                        .forEach(attendeeRepository::save);
+
+    }
+
+    // Name에 index가 없다면 위에 비해 그리 빠를 지 모르겠다.
+    private void throwIfNameAndNoteNotUnique(List<AttendeeInfo> newAttendees, Long courseId) {
+        List<String> newAttendeeNames = getAttendeeNames(newAttendees);
+        Map<Long, Attendee> existingAttendees = getExistingAttendeesMap(courseId, newAttendeeNames);
+        Set<String> uniqueAttendees = checkNewAttendees(newAttendees, existingAttendees);
+        checkExistingAttendees(existingAttendees, uniqueAttendees);
+    }
+
+    private List<String> getAttendeeNames(List<AttendeeInfo> attendees) {
+        return attendees.stream()
+                .map(AttendeeInfo::getName)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private Map<Long, Attendee> getExistingAttendeesMap(Long courseId, List<String> attendeeNames) {
+        return attendeeRepository.findAttendeesByCourseIdAndNameIn(courseId, attendeeNames)
+                .stream()
+                .collect(Collectors.toMap(Attendee::getId, Function.identity()));
+    }
+
+    private Set<String> checkNewAttendees(List<AttendeeInfo> newAttendees, Map<Long, Attendee> existingAttendees) {
+        Set<String> uniqueAttendees = new HashSet<>();
+        newAttendees.forEach(attendeeInfo -> {
+            String key = concatNameAndNote(attendeeInfo);
+            if (attendeeInfo.getId() != null) {
+
+                existingAttendees.computeIfAbsent(attendeeInfo.getId(), id -> {
+                    throw new IllegalArgumentException("Attendee not found");
+                }).update(attendeeInfo.getName(), attendeeInfo.getNote());
+
+            } else if (!uniqueAttendees.add(key)) {
+                throw new AttendeesNotUniqueException();
+            }
+        });
+        return uniqueAttendees;
+    }
+
+    private void checkExistingAttendees(Map<Long, Attendee> existingAttendees, Set<String> uniqueAttendees) {
+        existingAttendees.values()
+                .stream()
+                .filter(attendee -> !uniqueAttendees.add(concatNameAndNote(attendee)))
+                .findAny()
+                .ifPresent(attendee -> {
+                    throw new AttendeesNotUniqueException();
                 });
-
-
     }
 
-    private boolean isUnique(List<String> attendees, Long courseId) {
-        Set<String> uniqueAttendees = new HashSet<>(Set.copyOf(attendees));
-        List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(courseId);
-        uniqueAttendees.addAll(attendeesByCourseId.stream().map(attendeeData ->
-                attendeeData.getName() + (attendeeData.getNote() == null ? "" : attendeeData.getNote())).toList());
-
-        return uniqueAttendees.size() == attendees.size() + attendeesByCourseId.size();
+    private String concatNameAndNote(AttendeeInfo attendeeInfo) {
+        return attendeeInfo.getName() + Optional.ofNullable(attendeeInfo.getNote()).orElse("");
     }
+
+    private String concatNameAndNote(Attendee attendee) {
+        return attendee.getName() + Optional.ofNullable(attendee.getNote()).orElse("");
+    }
+
+
 
 
 

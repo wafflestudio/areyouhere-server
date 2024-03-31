@@ -26,7 +26,8 @@ public class Course {
     private Boolean allowOnlyRegistered;
 
     @Builder
-    public Course(Manager manager, String name, String description, Boolean allowOnlyRegistered){
+    public Course(Long id, Manager manager, String name, String description, Boolean allowOnlyRegistered){
+        this.id = id;
         this.manager = manager;
         this.name = name;
         this.description = description;

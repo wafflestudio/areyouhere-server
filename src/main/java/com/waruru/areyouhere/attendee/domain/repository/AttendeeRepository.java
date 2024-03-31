@@ -64,4 +64,8 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
     @Query("delete from attendee a where a.course.id = :courseId")
     public void deleteAllByCourseId(@Param("courseId") Long courseId);
 
+
+    @Query(value = "SELECT * FROM attendee a WHERE a.course_id = :courseId AND a.name IN :names", nativeQuery = true)
+    public List<Attendee> findAttendeesByCourseIdAndNameIn( @Param("courseId") Long courseId, @Param("names") List<String> names);
+
 }
