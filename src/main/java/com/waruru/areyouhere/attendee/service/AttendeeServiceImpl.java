@@ -7,11 +7,9 @@ import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.domain.repository.dto.AttendeeAttendDetailInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.ClassAttendeeInfo;
 import com.waruru.areyouhere.attendee.domain.repository.dto.SessionAttendeeInfo;
-import com.waruru.areyouhere.attendee.service.dto.AttendeeData;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeDetailDto;
 import com.waruru.areyouhere.attendee.exception.ClassAttendeesEmptyException;
 import com.waruru.areyouhere.attendee.exception.SessionAttendeesEmptyException;
-import com.waruru.areyouhere.attendee.service.dto.AttendeeAttendanceInfo;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
@@ -43,7 +41,7 @@ public class AttendeeServiceImpl implements AttendeeService{
     private final AttendeeBatchRepository attendeeBatchRepository;
     private final CourseRepository courseRepository;
 
-    public void createAll(Long courseId, List<AttendeeData> newAttendees){
+    public void createAll(Long courseId, List<AttendeeInfo> newAttendees){
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseIdNotFoundException::new);
 
@@ -56,16 +54,28 @@ public class AttendeeServiceImpl implements AttendeeService{
             throw new AttendeesNotUniqueException("참여자 이름이 중복되었습니다.");
         }
 
+        List<Attendee> attendeeToUpdate = new LinkedList<>();
+        List<Attendee> attendeesToSave = new LinkedList<>();
 
-        List<Attendee> attendees = newAttendees.stream()
-                .map(newAttendee -> Attendee.builder()
-                                        .course(course)
-                                        .name(newAttendee.getName())
-                                        .note(newAttendee.getNote())
-                                    .build())
-                .toList();
+        newAttendees.forEach(attendeeInfo -> {
+            if(attendeeInfo.getId() != null){
+                attendeeToUpdate.add(Attendee.builder()
+                        .id(attendeeInfo.getId())
+                        .course(course)
+                        .name(attendeeInfo.getName())
+                        .note(attendeeInfo.getNote())
+                        .build());
+            }else{
+                attendeesToSave.add(Attendee.builder()
+                        .course(course)
+                        .name(attendeeInfo.getName())
+                        .note(attendeeInfo.getNote())
+                        .build());
+            }
+        });
 
-        attendeeBatchRepository.insertAttendeesBatch(attendees);
+        attendeeRepository.saveAll(attendeeToUpdate);
+        attendeeBatchRepository.insertAttendeesBatch(attendeesToSave);
     }
 
     @Override

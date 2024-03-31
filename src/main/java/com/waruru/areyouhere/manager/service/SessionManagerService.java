@@ -86,6 +86,7 @@ public class SessionManagerService implements ManagerService {
     }
 
     public void delete(Long userId){
+        
         managerRepository.deleteById(userId);
     }
 }

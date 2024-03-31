@@ -24,7 +24,8 @@ public class Attendee {
     private String note;
 
     @Builder
-    public Attendee(Course course, String name, String note){
+    public Attendee(Long id, Course course, String name, String note){
+        this.id = id;
         this.course = course;
         this.name = name;
         this.note = note;
