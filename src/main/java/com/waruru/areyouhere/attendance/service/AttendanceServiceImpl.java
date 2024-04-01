@@ -69,15 +69,8 @@ public class AttendanceServiceImpl implements AttendanceService{
         Long courseId = session.getCourse().getId(); // lazy loading?
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(courseId);
 
-        Attendee attendee = attendeeId == null ?
-            attendeesByCourseId.stream()
-                .filter(s -> s.getName().equals(attendanceName))
-                .findFirst()
-                .orElse(null) :
-            attendeesByCourseId.stream()
-                .filter(s -> s.getId().equals(attendeeId))
-                .findFirst()
-                .orElse(null);
+        Attendee attendee = getAttendee(attendanceName, attendeeId,
+                attendeesByCourseId);
 
         // TODO : attendeesByCourseId null 및 empty 체크
 
@@ -90,6 +83,7 @@ public class AttendanceServiceImpl implements AttendanceService{
 
     }
 
+    
     public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances){
         List<Attendance> attendancesToUpdate = updateAttendances.stream()
                 .map(updateAttendance -> {
@@ -112,6 +106,20 @@ public class AttendanceServiceImpl implements AttendanceService{
         }else{
             return attendancesBySessionId.size();
         }
+    }
+
+
+    private Attendee getAttendee(String attendanceName, Long attendeeId, List<Attendee> attendeesByCourseId) {
+        Attendee attendee = attendeeId == null ?
+                attendeesByCourseId.stream()
+                        .filter(s -> s.getName().equals(attendanceName))
+                        .findFirst()
+                        .orElse(null) :
+                attendeesByCourseId.stream()
+                        .filter(s -> s.getId().equals(attendeeId))
+                        .findFirst()
+                        .orElse(null);
+        return attendee;
     }
 
 

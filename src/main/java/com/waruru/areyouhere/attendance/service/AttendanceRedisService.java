@@ -8,9 +8,9 @@ import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface AuthCodeService {
+public interface AttendanceRedisService {
 
-    public List<AttendeeInfo> hasNameSake(String authCode, String attendeeName);
+    public List<AttendeeInfo> getNameSakeInfos(String authCode, String attendeeName);
     public AuthCodeInfo isAttendPossible(String authCode, String attendanceName, Long attendeeId);
 
 

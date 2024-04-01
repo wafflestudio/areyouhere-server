@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AuthCodeServiceImpl implements AuthCodeService{
+public class AttendanceRedisServiceImpl implements AttendanceRedisService {
 
     private final AuthCodeRedisRepository authCodeRedisRepository;
     private final SessionIdRedisRepository sessionIdRedisRepository;
@@ -40,7 +40,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
     private final AttendanceRedisRepository attendanceRedisRepository;
 
     @Override
-    public List<AttendeeInfo> hasNameSake(String authCode, String attendeeName){
+    public List<AttendeeInfo> getNameSakeInfos(String authCode, String attendeeName){
         AuthCode authCodeData = authCodeRedisRepository
                 .findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
@@ -62,17 +62,7 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 .findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
 
-        AttendeeRedisData attendeeInfo = authCodeData.getAttendees().stream()
-                .filter(att -> att.getName().equals(attendeeName))
-                .findAny()
-                .orElseThrow(AttendeeNotFoundException::new);
-
-        if(attendeeId != null){
-            attendeeInfo = authCodeData.getAttendees().stream()
-                    .filter(att -> att.getId().equals(attendeeId))
-                    .findAny()
-                    .orElseThrow(AttendeeNotFoundException::new);
-        }
+        AttendeeRedisData attendeeInfo = getAttendeeInSession(attendeeName, attendeeId, authCodeData);
 
         if(attendanceRedisRepository.isAlreadyAttended(authCode, attendeeInfo)){
             throw new AlreadyAttendException();
@@ -88,17 +78,11 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 .build();
     }
 
+
+
     @Override
     public String createAuthCode(Course course, Session session, LocalDateTime currentTime){
-        String generatedAuthCode = "";
-        while(true){
-            generatedAuthCode = randomIdentifierGenerator.generateRandomIdentifier(4);
-            Optional<AuthCode> authCodeData = authCodeRedisRepository
-                    .findById(generatedAuthCode);
-
-            if(authCodeData.isEmpty())
-                break;
-        }
+        String generatedAuthCode = generateAuthCode();
 
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(course.getId());
 
@@ -122,6 +106,9 @@ public class AuthCodeServiceImpl implements AuthCodeService{
 
         return generatedAuthCode;
     }
+
+
+
     // TODO : sessionId 검증, 해당 sessionId가 user 소유인지 검증.
     @Override
     public void deactivate(String authCode){
@@ -152,6 +139,34 @@ public class AuthCodeServiceImpl implements AuthCodeService{
                 .attendees(attendees)
                 .absentees(absentees)
                 .build();
+    }
+
+    private AttendeeRedisData getAttendeeInSession(String attendeeName, Long attendeeId, AuthCode authCodeData) {
+        AttendeeRedisData attendeeInfo = authCodeData.getAttendees().stream()
+                .filter(att -> att.getName().equals(attendeeName))
+                .findAny()
+                .orElseThrow(AttendeeNotFoundException::new);
+
+        if(attendeeId != null){
+            attendeeInfo = authCodeData.getAttendees().stream()
+                    .filter(att -> att.getId().equals(attendeeId))
+                    .findAny()
+                    .orElseThrow(AttendeeNotFoundException::new);
+        }
+        return attendeeInfo;
+    }
+
+    private String generateAuthCode() {
+        String generatedAuthCode = "";
+        while(true){
+            generatedAuthCode = randomIdentifierGenerator.generateRandomIdentifier(4);
+            Optional<AuthCode> authCodeData = authCodeRedisRepository
+                    .findById(generatedAuthCode);
+
+            if(authCodeData.isEmpty())
+                break;
+        }
+        return generatedAuthCode;
     }
 
 

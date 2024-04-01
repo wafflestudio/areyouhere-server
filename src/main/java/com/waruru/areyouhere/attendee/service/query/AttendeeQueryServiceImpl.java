@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.attendance.service.query;
+package com.waruru.areyouhere.attendee.service.query;
 
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;

@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.attendance.service.command;
+package com.waruru.areyouhere.attendee.service.command;
 
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import java.util.List;
