@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.session.service;
+package com.waruru.areyouhere.session.service.command;
 
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.course.domain.entity.Course;

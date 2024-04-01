@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.session.service;
+package com.waruru.areyouhere.session.service.command;
 
 import java.time.LocalDateTime;
 import java.util.List;

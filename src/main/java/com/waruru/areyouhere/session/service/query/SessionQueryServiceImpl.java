@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.session.service;
+package com.waruru.areyouhere.session.service.query;
 
 import com.waruru.areyouhere.attendance.domain.entity.AuthCode;
 import com.waruru.areyouhere.session.domain.entity.Session;
