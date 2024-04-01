@@ -1,8 +1,9 @@
 package com.waruru.areyouhere.session.dto.request;
 
+import java.util.List;
 import lombok.Data;
 
 @Data
 public class DeleteSessionRequestDto {
-    private Long sessionId;
+    private List<Long> sessionIds;
 }

@@ -48,10 +48,14 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.save(session);
     }
 
-    public void delete(Long sessionId){
-        attendanceRepository.deleteAllBySessionId(sessionId);
-        sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
-        sessionRepository.deleteById(sessionId);
+    @Override
+    public void delete(List<Long> sessionIds){
+        sessionIds.forEach(sessionId -> {
+            attendanceRepository.deleteAllBySessionId(sessionId);
+            sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
+            sessionRepository.deleteById(sessionId);
+        });
+
     }
     // TODO : 리팩토링 노타임..
     @Transactional(readOnly = true)

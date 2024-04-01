@@ -19,7 +19,7 @@ public interface SessionService {
 
     public Session get(Long sessionId);
 
-    public void delete(Long sessionId);
+    public void delete(List<Long> sessionId);
 
     public void checkNotDeactivated(Long sessionId);
 

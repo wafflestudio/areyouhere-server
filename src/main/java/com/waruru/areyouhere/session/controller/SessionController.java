@@ -4,6 +4,7 @@ package com.waruru.areyouhere.session.controller;
 import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
 import com.waruru.areyouhere.session.dto.request.CreateSessionRequestDto;
+import com.waruru.areyouhere.session.dto.request.DeleteSessionRequestDto;
 import com.waruru.areyouhere.session.dto.response.SessionAttendeesResponseDto;
 import com.waruru.areyouhere.session.service.SessionService;
 import com.waruru.areyouhere.session.service.dto.AllSessionAttendanceInfo;
@@ -51,9 +52,9 @@ public class SessionController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping
-    public ResponseEntity<HttpStatus> delete(@RequestParam("sessionId") Long sessionId){
-        sessionService.delete(sessionId);
+    @PostMapping
+    public ResponseEntity<HttpStatus> delete(@RequestBody DeleteSessionRequestDto sessionIds){
+        sessionService.delete(sessionIds.getSessionIds());
         return ResponseEntity.ok().build();
     }
 
