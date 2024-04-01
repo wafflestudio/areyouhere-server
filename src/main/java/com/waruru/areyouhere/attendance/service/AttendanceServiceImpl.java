@@ -11,6 +11,7 @@ import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -90,13 +91,17 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances){
+        List<Attendance> attendancesToUpdate = updateAttendances.stream()
+                .map(updateAttendance -> {
+                    Attendance attendance = attendanceRepository.findById(updateAttendance.getAttendanceId())
+                            .orElseThrow(SessionIdNotFoundException::new);
+                    attendance.setAttended(updateAttendance.isAttendanceStatus());
 
-        for (UpdateAttendance updateAttendance : updateAttendances) {
-            Attendance attendance = attendanceRepository.findById(updateAttendance.getAttendanceId())
-                    .orElseThrow(SessionIdNotFoundException::new);
-            attendance.setAttended(updateAttendance.isAttendanceStatus());
-            attendanceRepository.save(attendance);
-        }
+                    return attendance;
+                })
+                .collect(Collectors.toList());
+
+        attendanceRepository.saveAll(attendancesToUpdate);
     }
 
     @Transactional(readOnly = true)
