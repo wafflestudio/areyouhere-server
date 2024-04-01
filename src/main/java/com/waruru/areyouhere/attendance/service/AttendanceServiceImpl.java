@@ -83,7 +83,7 @@ public class AttendanceServiceImpl implements AttendanceService{
 
     }
 
-    
+
     public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances){
         List<Attendance> attendancesToUpdate = updateAttendances.stream()
                 .map(updateAttendance -> {
@@ -109,6 +109,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
 
+    // AttendeeId가 null이 아니라는 것은 duplicatedAttendee가 발생하여 Id 기준으로 찾아야 한다는 것.
     private Attendee getAttendee(String attendanceName, Long attendeeId, List<Attendee> attendeesByCourseId) {
         Attendee attendee = attendeeId == null ?
                 attendeesByCourseId.stream()
