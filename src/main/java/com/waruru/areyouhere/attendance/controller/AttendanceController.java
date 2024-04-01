@@ -132,6 +132,8 @@ public class AttendanceController {
     }
 
     private void checkAuthCodeCookie(Cookie[] cookies, String authCode){
+        if(cookies == null)
+            return;
         Optional<Cookie> authCookie = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals(encodeCookieKey(authCode)))
                 .findFirst();
