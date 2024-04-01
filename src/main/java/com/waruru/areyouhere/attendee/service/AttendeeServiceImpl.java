@@ -18,6 +18,7 @@ import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +28,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class AttendeeServiceImpl implements AttendeeService{
 
@@ -50,7 +49,7 @@ public class AttendeeServiceImpl implements AttendeeService{
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseNotFoundException::new);
 
-        throwIfNameAndNoteNotUnique(newAttendees, courseId);
+        throwIfAttendeesNameAndNoteNotUnique(newAttendees, courseId);
 
         List<Attendee> attendeeToUpdate = new LinkedList<>();
         List<Attendee> attendeesToSave = new LinkedList<>();
@@ -205,7 +204,7 @@ public class AttendeeServiceImpl implements AttendeeService{
     @Override
     public void updateAll(Long courseId, List<AttendeeInfo> updatedAttendees){
 
-        throwIfNameAndNoteNotUnique(updatedAttendees, courseId);
+        throwIfAttendeesNameAndNoteNotUnique(updatedAttendees, courseId);
 
         updatedAttendees.stream()
                         .map(attendee ->
@@ -219,15 +218,15 @@ public class AttendeeServiceImpl implements AttendeeService{
 
     }
 
-    // Name에 index가 없다면 위에 비해 그리 빠를 지 모르겠다.
-    private void throwIfNameAndNoteNotUnique(List<AttendeeInfo> newAttendees, Long courseId) {
-        List<String> newAttendeeNames = getAttendeeNames(newAttendees);
+    // TODO: Name에 index가 없다면 위에 비해 그리 빠를 지 모르겠다.
+    // FIXME: Map<String, Set<String>> 같은 것 대신 그냥 class 선언해서 쓰는게
+    private void throwIfAttendeesNameAndNoteNotUnique(List<AttendeeInfo> newAttendees, Long courseId) {
+        List<String> newAttendeeNames = getAttendeeUniqueNames(newAttendees);
         Map<Long, Attendee> existingAttendees = getExistingAttendeesMap(courseId, newAttendeeNames);
-        Set<String> uniqueAttendees = checkNewAttendees(newAttendees, existingAttendees);
-        checkExistingAttendees(existingAttendees, uniqueAttendees);
+        checkNameSake(newAttendees, existingAttendees);
     }
 
-    private List<String> getAttendeeNames(List<AttendeeInfo> attendees) {
+    private List<String> getAttendeeUniqueNames(List<AttendeeInfo> attendees) {
         return attendees.stream()
                 .map(AttendeeInfo::getName)
                 .distinct()
@@ -240,43 +239,37 @@ public class AttendeeServiceImpl implements AttendeeService{
                 .collect(Collectors.toMap(Attendee::getId, Function.identity()));
     }
 
-    private Set<String> checkNewAttendees(List<AttendeeInfo> newAttendees, Map<Long, Attendee> existingAttendees) {
-        Set<String> uniqueAttendees = new HashSet<>();
-        newAttendees.forEach(attendeeInfo -> {
-            String key = concatNameAndNote(attendeeInfo);
-            if (attendeeInfo.getId() != null) {
+    private void checkNameSake(List<AttendeeInfo> newAttendees, Map<Long, Attendee> existingAttendees) {
+        Map<String, Set<String>> uniqueAttendees = new HashMap<>();
 
+        newAttendees.forEach(attendeeInfo -> uniqueAttendees.put(attendeeInfo.getName(), new HashSet<>()));
+
+        newAttendees.forEach(attendeeInfo -> {
+            if (attendeeInfo.getId() != null) {
                 existingAttendees.computeIfAbsent(attendeeInfo.getId(), id -> {
                     throw new IllegalArgumentException("Attendee not found");
                 }).update(attendeeInfo.getName(), attendeeInfo.getNote());
 
-            } else if (!uniqueAttendees.add(key)) {
+            } else if (!checkOneAttendeeUnique(attendeeInfo, uniqueAttendees)) {
                 throw new AttendeesNotUniqueException();
             }
         });
-        return uniqueAttendees;
-    }
 
-    private void checkExistingAttendees(Map<Long, Attendee> existingAttendees, Set<String> uniqueAttendees) {
         existingAttendees.values()
                 .stream()
-                .filter(attendee -> !uniqueAttendees.add(concatNameAndNote(attendee)))
+                .filter(attendee -> !checkOneAttendeeUnique(attendee, uniqueAttendees))
                 .findAny()
                 .ifPresent(attendee -> {
                     throw new AttendeesNotUniqueException();
                 });
     }
 
-    private String concatNameAndNote(AttendeeInfo attendeeInfo) {
-        return attendeeInfo.getName() + Optional.ofNullable(attendeeInfo.getNote()).orElse("");
+    private boolean checkOneAttendeeUnique(AttendeeInfo attendeeInfo, Map<String, Set<String>> uniqueAttendees) {
+        return uniqueAttendees.get(attendeeInfo.getName()).add(Optional.ofNullable(attendeeInfo.getNote()).orElse(""));
     }
 
-    private String concatNameAndNote(Attendee attendee) {
-        return attendee.getName() + Optional.ofNullable(attendee.getNote()).orElse("");
+    private boolean checkOneAttendeeUnique(Attendee attendee, Map<String, Set<String>> uniqueAttendees) {
+        return uniqueAttendees.get(attendee.getName()).add(Optional.ofNullable(attendee.getNote()).orElse(""));
     }
-
-
-
-
 
 }
