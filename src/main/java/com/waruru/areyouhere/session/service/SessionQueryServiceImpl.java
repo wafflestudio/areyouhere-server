@@ -1,8 +1,5 @@
 package com.waruru.areyouhere.session.service;
 
-import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
-import com.waruru.areyouhere.course.domain.entity.Course;
-import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.attendance.domain.entity.AuthCode;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.entity.SessionId;
@@ -23,41 +20,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//TODO : user 정보에 따른 course가 맞는지 확인하는 로직 추가. 보안.
 @Service
 @RequiredArgsConstructor
-@Transactional
-public class SessionServiceImpl implements SessionService {
+@Transactional(readOnly = true)
+public class SessionQueryServiceImpl implements SessionQueryService{
 
     private final SessionRepository sessionRepository;
-    private final CourseRepository courseRepository;
     private final AuthCodeRedisRepository authCodeRedisRepository;
     private final SessionIdRedisRepository sessionIdRedisRepository;
-    private final AttendanceRepository attendanceRepository;
 
-    public void create(Long courseId, String sessionName){
-        // TODO : exception 수정
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(SessionIdNotFoundException::new);
-
-        Session session = Session.builder()
-                .name(sessionName)
-                .course(course)
-                .isDeactivated(false)
-                .build();
-        sessionRepository.save(session);
-    }
-
-    @Override
-    public void delete(List<Long> sessionIds){
-        sessionIds.forEach(sessionId -> {
-            attendanceRepository.deleteAllBySessionId(sessionId);
-            sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
-        });
-        sessionRepository.deleteAllByIds(sessionIds);
-    }
-    // TODO : 리팩토링 노타임..
-    @Transactional(readOnly = true)
     @Override
     public CurrentSessionDto getCurrentSessionInfo(Long courseId){
         Session mostRecentSession = sessionRepository
@@ -74,11 +45,11 @@ public class SessionServiceImpl implements SessionService {
 
         if(sessionId == null){
             return  CurrentSessionDto.builder()
-                            .authCode(null)
-                            .sessionTime(null)
-                            .sessionName(mostRecentSession.getName())
-                            .id(mostRecentSession.getId())
-                            .build();
+                    .authCode(null)
+                    .sessionTime(null)
+                    .sessionName(mostRecentSession.getName())
+                    .id(mostRecentSession.getId())
+                    .build();
         }
         // 제일 최근 세션이 출석 코드를 만들었다면.
         // warning! 널 익셉션이 발생한다면 authCode를 redis에 삽입하는 과정에서 어느 쪽이 빠져있는 것이다.
@@ -95,7 +66,6 @@ public class SessionServiceImpl implements SessionService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<SessionAttendanceInfo> getRecentFive(Long courseId){
         List<Session> recentFiveSessions = sessionRepository.findTOP6BySessionByCourseId(courseId);
@@ -114,7 +84,7 @@ public class SessionServiceImpl implements SessionService {
         List<SessionAttendanceInfo> list = new ArrayList<>();
         for (Session recentFiveSession : recentFiveSessions) {
             SessionInfo sessionWithAttendance = sessionRepository.findSessionWithAttendance(
-                    recentFiveSession.getId())
+                            recentFiveSession.getId())
                     .orElseThrow(SessionIdNotFoundException::new);
 
             list.add(SessionAttendanceInfo.builder()
@@ -129,7 +99,6 @@ public class SessionServiceImpl implements SessionService {
         return list;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<SessionAttendanceInfo> getAll(Long courseId){
         List<SessionInfo> allSessions = sessionRepository.findSessionsWithAttendance(courseId);
@@ -142,10 +111,9 @@ public class SessionServiceImpl implements SessionService {
                         .attendee(allSession.getattendee())
                         .absentee(allSession.getabsentee())
                         .build()
-                    ).toList();
+                ).toList();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public SessionAttendanceInfo getSessionAttendanceInfo(Long sessionId){
         SessionInfo sessionWithAttendance = sessionRepository
@@ -162,7 +130,6 @@ public class SessionServiceImpl implements SessionService {
 
     }
 
-    @Transactional(readOnly = true)
     @Override
     public void checkNotDeactivated(Long sessionId){
         Session session = sessionRepository.findById(sessionId)
@@ -172,27 +139,10 @@ public class SessionServiceImpl implements SessionService {
         }
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Session get(Long sessionId) {
         return sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
     }
-
-    @Override
-    public void deactivate(Long sessionId){
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(SessionIdNotFoundException::new);
-        session.setDeactivated(true);
-        sessionRepository.save(session);
-    }
-    
-    public void setStartTime(Long sessionId, LocalDateTime currentTime){
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(SessionIdNotFoundException::new);
-        session.setAuthCodeCreatedAt(currentTime);
-        sessionRepository.save(session);
-    }
-
 
 }
