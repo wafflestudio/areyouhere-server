@@ -53,8 +53,8 @@ public class SessionServiceImpl implements SessionService {
         sessionIds.forEach(sessionId -> {
             attendanceRepository.deleteAllBySessionId(sessionId);
             sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
-            sessionRepository.deleteById(sessionId);
         });
+        sessionRepository.deleteAllByIds(sessionIds);
 
     }
     // TODO : 리팩토링 노타임..

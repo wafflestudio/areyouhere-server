@@ -52,7 +52,7 @@ public class SessionController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping
+    @PostMapping("/delete")
     public ResponseEntity<HttpStatus> delete(@RequestBody DeleteSessionRequestDto sessionIds){
         sessionService.delete(sessionIds.getSessionIds());
         return ResponseEntity.ok().build();

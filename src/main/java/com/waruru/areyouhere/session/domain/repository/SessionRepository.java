@@ -56,4 +56,8 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
             + "GROUP BY session.id", nativeQuery = true )
     public Optional<SessionInfo> findSessionWithAttendance(@Param("sessionId") Long sessionId);
 
+    @Modifying(clearAutomatically = true)
+    @Query("delete from session s where s.id in :ids")
+    public void deleteAllByIds(@Param("ids") List<Long> ids);
+
 }
