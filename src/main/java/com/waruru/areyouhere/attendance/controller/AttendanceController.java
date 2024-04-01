@@ -11,7 +11,7 @@ import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttend
 import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
-import com.waruru.areyouhere.attendance.service.AuthCodeService;
+import com.waruru.areyouhere.attendance.service.AttendanceRedisService;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AttendanceController {
     public static final String ATTENDANCE_API_URL = "/api/attendance";
 
-    private final AuthCodeService authCodeService;
+    private final AttendanceRedisService attendanceRedisService;
     private final AttendanceService attendanceService;
     private final AttendeeService attendeeService;
 
@@ -56,7 +56,7 @@ public class AttendanceController {
         LocalDateTime attendanceTime = LocalDateTime.now();
 
 
-        List<AttendeeInfo> nameSakeAttendees = authCodeService.hasNameSake(authCode, attendeeName);
+        List<AttendeeInfo> nameSakeAttendees = attendanceRedisService.getNameSakeInfos(authCode, attendeeName);
 
         // 동명이인 응답
         if(attendeeId == null && nameSakeAttendees.size() > 1){
@@ -67,7 +67,7 @@ public class AttendanceController {
             );
         }
 
-        AuthCodeInfo authCodeInfo = authCodeService.isAttendPossible(authCode, attendeeName, attendeeId);
+        AuthCodeInfo authCodeInfo = attendanceRedisService.isAttendPossible(authCode, attendeeName, attendeeId);
         checkAuthCodeCookie(request.getCookies(), authCode);
         attendanceService.setAttend(authCodeInfo.getSessionId(), attendeeName, attendeeId);
 
@@ -107,7 +107,7 @@ public class AttendanceController {
     @LoginRequired
     @GetMapping("/detail")
     ResponseEntity<CurrentSessionAttendeeAttendance> getCurrentSessionAttendeeAttendance(@RequestParam("authCode") String authCode){
-        return ResponseEntity.ok(authCodeService.getCurrentSessionAttendanceInfo(authCode));
+        return ResponseEntity.ok(attendanceRedisService.getCurrentSessionAttendanceInfo(authCode));
     }
 
 

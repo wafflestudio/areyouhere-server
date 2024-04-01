@@ -69,15 +69,8 @@ public class AttendanceServiceImpl implements AttendanceService{
         Long courseId = session.getCourse().getId(); // lazy loading?
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(courseId);
 
-        Attendee attendee = attendeeId == null ?
-            attendeesByCourseId.stream()
-                .filter(s -> s.getName().equals(attendanceName))
-                .findFirst()
-                .orElse(null) :
-            attendeesByCourseId.stream()
-                .filter(s -> s.getId().equals(attendeeId))
-                .findFirst()
-                .orElse(null);
+        Attendee attendee = getAttendee(attendanceName, attendeeId,
+                attendeesByCourseId);
 
         // TODO : attendeesByCourseId null 및 empty 체크
 
@@ -89,6 +82,7 @@ public class AttendanceServiceImpl implements AttendanceService{
         attendanceRepository.save(attendance);
 
     }
+
 
     public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances){
         List<Attendance> attendancesToUpdate = updateAttendances.stream()
@@ -112,6 +106,21 @@ public class AttendanceServiceImpl implements AttendanceService{
         }else{
             return attendancesBySessionId.size();
         }
+    }
+
+
+    // AttendeeId가 null이 아니라는 것은 duplicatedAttendee가 발생하여 Id 기준으로 찾아야 한다는 것.
+    private Attendee getAttendee(String attendanceName, Long attendeeId, List<Attendee> attendeesByCourseId) {
+        Attendee attendee = attendeeId == null ?
+                attendeesByCourseId.stream()
+                        .filter(s -> s.getName().equals(attendanceName))
+                        .findFirst()
+                        .orElse(null) :
+                attendeesByCourseId.stream()
+                        .filter(s -> s.getId().equals(attendeeId))
+                        .findFirst()
+                        .orElse(null);
+        return attendee;
     }
 
 

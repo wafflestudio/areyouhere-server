@@ -7,7 +7,7 @@ import com.waruru.areyouhere.course.service.CourseService;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.attendance.dto.request.AuthCodeDeactivationRequestDto;
 import com.waruru.areyouhere.attendance.dto.request.AuthCodeRequestDto;
-import com.waruru.areyouhere.attendance.service.AuthCodeService;
+import com.waruru.areyouhere.attendance.service.AttendanceRedisService;
 import com.waruru.areyouhere.session.service.SessionService;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class AuthCodeController {
 
     public static final String AUTH_CODE_API_URL = "/api/auth-code";
 
-    private final AuthCodeService authCodeService;
+    private final AttendanceRedisService attendanceRedisService;
     private final AttendanceService attendanceService;
     private final SessionService sessionService;
     private final CourseService courseService;
@@ -39,7 +39,7 @@ public class AuthCodeController {
         Course course = courseService.get(courseId);
         Session session = sessionService.get(sessionId);
         sessionService.setStartTime(sessionId, currentTime);
-        return ResponseEntity.ok(authCodeService.createAuthCode(course, session, currentTime));
+        return ResponseEntity.ok(attendanceRedisService.createAuthCode(course, session, currentTime));
     }
 
     @PostMapping("/deactivate")
@@ -51,7 +51,7 @@ public class AuthCodeController {
 
         sessionService.checkNotDeactivated(sessionId);
         sessionService.deactivate(sessionId);
-        authCodeService.deactivate(authCode);
+        attendanceRedisService.deactivate(authCode);
         attendanceService.setAbsentAfterDeactivation(courseId, sessionId);
         return ResponseEntity.ok().build();
     }
