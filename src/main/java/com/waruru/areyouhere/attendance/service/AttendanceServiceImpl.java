@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class AttendanceServiceImpl implements AttendanceService{
+public class AttendanceServiceImpl implements AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
     private final AttendeeRepository attendeeRepository;
@@ -33,16 +33,16 @@ public class AttendanceServiceImpl implements AttendanceService{
     public AttendanceCount getAttendanceCount(long sessionId) {
         List<Attendance> attendancesBySessionId = attendanceRepository.findAttendancesBySession_Id(sessionId);
 
-        if(attendancesBySessionId.isEmpty()){
+        if (attendancesBySessionId.isEmpty()) {
             return new AttendanceCount(0, 0);
         }
         int attendanceCount = 0;
         int absenceCount = 0;
 
         for (Attendance attendance : attendancesBySessionId) {
-            if(attendance.isAttended()){
+            if (attendance.isAttended()) {
                 attendanceCount++;
-            }else{
+            } else {
                 absenceCount++;
             }
         }
@@ -50,9 +50,10 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Override
-    public void setAbsentAfterDeactivation(long courseId, long sessionId){
+    public void setAbsentAfterDeactivation(long courseId, long sessionId) {
 
-        List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId, sessionId);
+        List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId,
+                sessionId);
         Session session = sessionRepository.findById(sessionId).orElseThrow(SessionIdNotFoundException::new);
         List<Attendance> attendances = absenteeBySessionId.stream().map(attendee -> Attendance.builder()
                 .attendee((attendee))
@@ -63,7 +64,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Async
-    public void setAttend(Long sessionId, String attendanceName, Long attendeeId){
+    public void setAttend(Long sessionId, String attendanceName, Long attendeeId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         Long courseId = session.getCourse().getId(); // lazy loading?
@@ -84,7 +85,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
 
-    public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances){
+    public void setAttendanceStatuses(Long sessionId, List<UpdateAttendance> updateAttendances) {
         List<Attendance> attendancesToUpdate = updateAttendances.stream()
                 .map(updateAttendance -> {
                     Attendance attendance = attendanceRepository.findById(updateAttendance.getAttendanceId())
@@ -99,11 +100,11 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Transactional(readOnly = true)
-    public int currentAttendance(Long sessionId){
+    public int currentAttendance(Long sessionId) {
         List<Attendance> attendancesBySessionId = attendanceRepository.findAttendancesBySession_Id(sessionId);
-        if(attendancesBySessionId == null || attendancesBySessionId.isEmpty()){
+        if (attendancesBySessionId == null || attendancesBySessionId.isEmpty()) {
             return 0;
-        }else{
+        } else {
             return attendancesBySessionId.size();
         }
     }
@@ -111,7 +112,7 @@ public class AttendanceServiceImpl implements AttendanceService{
 
     // AttendeeId가 null이 아니라는 것은 duplicatedAttendee가 발생하여 Id 기준으로 찾아야 한다는 것.
     private Attendee getAttendee(String attendanceName, Long attendeeId, List<Attendee> attendeesByCourseId) {
-        Attendee attendee = attendeeId == null ?
+        return attendeeId == null ?
                 attendeesByCourseId.stream()
                         .filter(s -> s.getName().equals(attendanceName))
                         .findFirst()
@@ -120,9 +121,7 @@ public class AttendanceServiceImpl implements AttendanceService{
                         .filter(s -> s.getId().equals(attendeeId))
                         .findFirst()
                         .orElse(null);
-        return attendee;
     }
-
 
 
 }

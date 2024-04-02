@@ -3,7 +3,7 @@ package com.waruru.areyouhere.session.service;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
-import com.waruru.areyouhere.attendance.domain.entity.AuthCode;
+import com.waruru.areyouhere.attendance.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.entity.SessionId;
 import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
@@ -83,13 +83,13 @@ public class SessionServiceImpl implements SessionService {
         // 제일 최근 세션이 출석 코드를 만들었다면.
         // warning! 널 익셉션이 발생한다면 authCode를 redis에 삽입하는 과정에서 어느 쪽이 빠져있는 것이다.
 
-        AuthCode authCode = authCodeRedisRepository
+        CurrentSessionAttendanceInfo currentSessionAttendanceInfo = authCodeRedisRepository
                 .findById(sessionId.getAuthCode())
                 .orElse(null);
 
         return CurrentSessionDto.builder()
-                .authCode(authCode.getAuthCode())
-                .sessionTime(LocalDateTime.parse(authCode.getCreatedAt()))
+                .authCode(currentSessionAttendanceInfo.getAuthCode())
+                .sessionTime(currentSessionAttendanceInfo.getCreatedAt())
                 .sessionName(mostRecentSession.getName())
                 .id(mostRecentSession.getId())
                 .build();

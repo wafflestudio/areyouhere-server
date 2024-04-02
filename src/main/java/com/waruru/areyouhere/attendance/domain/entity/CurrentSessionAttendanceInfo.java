@@ -2,18 +2,23 @@ package com.waruru.areyouhere.attendance.domain.entity;
 
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @RedisHash(value = "auth_code")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AuthCode {
+public class CurrentSessionAttendanceInfo {
     @Id
     @NotNull
     private String authCode;
@@ -29,22 +34,23 @@ public class AuthCode {
     @NotNull
     private String sessionName;
 
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     @Builder
-    public AuthCode(String authCode, long sessionId, List<Attendee> attendees, String courseName, String sessionName,
-                    String createdAt) {
+    public CurrentSessionAttendanceInfo(String authCode, long sessionId, List<Attendee> attendees, String courseName, String sessionName) {
         this.authCode = authCode;
         this.sessionId = sessionId;
-        this.attendees = attendees.stream().map(attendee ->
-                AttendeeRedisData.builder()
+        this.attendees = Optional.ofNullable(attendees)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(attendee -> AttendeeRedisData.builder()
                         .id(attendee.getId())
                         .name(attendee.getName())
                         .note(attendee.getNote())
-                        .build()
-        ).toList();
+                        .build())
+                .collect(Collectors.toList());
         this.courseName = courseName;
         this.sessionName = sessionName;
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now();
     }
 }
