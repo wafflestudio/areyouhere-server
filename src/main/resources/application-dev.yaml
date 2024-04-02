@@ -29,3 +29,6 @@ logging:
 
 cors:
   allowed-origins: http://localhost:5173
+
+cookie:
+  encode: TEMP

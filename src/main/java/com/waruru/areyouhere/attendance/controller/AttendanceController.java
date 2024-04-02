@@ -21,6 +21,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,7 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
     private final AttendeeService attendeeService;
 
+    @Value("${cookie.encode}")
     private final String COOKIE_ENCODE = "SRCT";
 
     //FIXME: 중복 인원인 경우 코드 중복이 생겨도 API 분리가 나아 보인다. 한 API에서 너무 많은 일을 하는 중이다.
