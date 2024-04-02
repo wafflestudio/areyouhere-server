@@ -1,4 +1,4 @@
-spring.config.activate.on-profile: temp
+spring.config.activate.on-profile: release
 
 spring:
   datasource:

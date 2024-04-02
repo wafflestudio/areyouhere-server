@@ -243,7 +243,7 @@ public class AttendeeServiceImpl implements AttendeeService{
         Map<String, Set<String>> uniqueAttendees = new HashMap<>();
 
         newAttendees.forEach(attendeeInfo -> uniqueAttendees.put(attendeeInfo.getName(), new HashSet<>()));
-
+        //FIXME: 이름도 바꾸는 경우 여기 Attendee가 없을 수 있다. 기존 db에 없는 이름인 경우.
         newAttendees.forEach(attendeeInfo -> {
             if (attendeeInfo.getId() != null) {
                 existingAttendees.computeIfAbsent(attendeeInfo.getId(), id -> {

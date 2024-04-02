@@ -5,10 +5,10 @@ server:
       timeout: 1800
 spring:
   profiles:
-    active: dev
+    active: local
   config:
     import:
-      - application-dev.yaml
+      - application-local.yaml
       - application-prod.yaml
-      - application-temp.yaml
+      - application-release.yaml
 

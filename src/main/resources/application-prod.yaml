@@ -11,3 +11,6 @@ spring:
       host: ${AWS_ELASTICACHE_HOST}
       database: ${AWS_ELASTICACHE_DATABASE}
       port: 6379
+
+cookie:
+  encode: TEMP
