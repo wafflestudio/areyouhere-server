@@ -4,6 +4,7 @@ import com.waruru.areyouhere.auth.interceptor.LoginInterceptor;
 import com.waruru.areyouhere.auth.resolver.LoginArgumentResolver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -17,6 +18,9 @@ public class WebConfig implements WebMvcConfigurer {
     private final LoginInterceptor loginInterceptor;
     private final LoginArgumentResolver loginArgumentResolver;
 
+    @Value("${cors.allowed-origins}")
+    private String[] allowedOrigins;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor);
@@ -29,8 +33,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+
+
+
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173")
+                .allowedOrigins(allowedOrigins)
                 .allowedMethods("GET","POST", "PUT", "DELETE", "OPTIONS", "HEAD")
                 .allowCredentials(true)
                 .maxAge(10000);

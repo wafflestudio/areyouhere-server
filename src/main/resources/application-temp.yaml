@@ -3,9 +3,9 @@ spring.config.activate.on-profile: temp
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/areyouhere?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Seoul&CharacterEncoding=UTF-8
-    username: root
-    password: temporary
+    url: ${MYSQL_DATASOURCE_URL}
+    username: ${MYSQL_DATASOURCE_USERNAME}
+    password: ${ MYSQL_DATASOURCE_PASSWORD }
   jpa:
     show-sql: true
     hibernate:
@@ -16,5 +16,10 @@ spring:
     database: mysql
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${ REDIS_DATASOURCE_HOST }
+      port: ${ REDIS_DATASOURCE_PORT }
+
+
+cors:
+  allowed-origins: https://areyouhere.today, https://www.areyouhere.today
+
