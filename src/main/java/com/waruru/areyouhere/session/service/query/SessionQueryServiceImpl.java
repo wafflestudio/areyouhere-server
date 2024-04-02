@@ -65,6 +65,7 @@ public class SessionQueryServiceImpl implements SessionQueryService{
     @Override
     public List<SessionAttendanceInfo> getAll(Long courseId){
         List<SessionInfo> allSessions = sessionRepository.findSessionsWithAttendance(courseId);
+
         return allSessions == null || allSessions.isEmpty()
                 ? Collections.emptyList()
                 : allSessions.stream().map(allSession -> SessionAttendanceInfo.builder()

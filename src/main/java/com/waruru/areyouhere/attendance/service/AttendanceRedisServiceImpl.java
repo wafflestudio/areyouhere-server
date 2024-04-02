@@ -133,6 +133,7 @@ public class AttendanceRedisServiceImpl implements AttendanceRedisService {
                         absentees.add(att);
                     }
                 });
+
         return CurrentSessionAttendeeAttendance.builder()
                 .attendees(attendees)
                 .absentees(absentees)

@@ -26,3 +26,6 @@ spring:
 logging:
   level:
     root: info
+
+cors:
+  allowed-origins: http://localhost:5173
