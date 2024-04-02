@@ -1,8 +1,12 @@
 package com.waruru.areyouhere.session.service.command;
 
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
+import com.waruru.areyouhere.attendee.domain.entity.Attendee;
+import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
+import com.waruru.areyouhere.attendee.exception.AttendeeNotFoundException;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
+import com.waruru.areyouhere.course.exception.CourseNotFoundException;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
@@ -21,10 +25,17 @@ public class SessionCommandServiceImpl implements SessionCommandService{
     private final SessionRepository sessionRepository;
     private final CourseRepository courseRepository;
     private final AttendanceRepository attendanceRepository;
+    private final AttendeeRepository attendeeRepository;
     public void create(Long courseId, String sessionName){
         // TODO : exception 수정
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(SessionIdNotFoundException::new);
+                .orElseThrow(CourseNotFoundException::new);
+
+        if(attendeeRepository.findAttendeesByCourse_Id(courseId).isEmpty()){
+            throw new AttendeeNotFoundException();
+        }
+
+
 
         Session session = Session.builder()
                 .name(sessionName)

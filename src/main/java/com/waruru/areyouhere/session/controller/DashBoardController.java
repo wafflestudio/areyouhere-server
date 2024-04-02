@@ -5,9 +5,10 @@ import com.waruru.areyouhere.common.annotation.LoginRequired;
 import com.waruru.areyouhere.session.dto.response.CurrentSessionResponseDto;
 import com.waruru.areyouhere.session.dto.response.PreviousFiveSessionResponseDto;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
-import com.waruru.areyouhere.session.service.SessionService;
+import com.waruru.areyouhere.session.service.command.SessionCommandService;
 import com.waruru.areyouhere.session.service.dto.CurrentSessionDto;
 import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
+import com.waruru.areyouhere.session.service.query.SessionQueryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +24,13 @@ public class DashBoardController {
 
     public static final String DASHBOARD = "/api/course/{courseId}/dashboard";
 
-    private final SessionService sessionService;
+    private final SessionQueryService sessionQueryService;
+    private final SessionCommandService sessionCommandService;
 
     @LoginRequired
     @GetMapping
     public ResponseEntity<CurrentSessionResponseDto> getCurrentSessionInfo(@PathVariable Long courseId) {
-        CurrentSessionDto currentSessionInfo = sessionService.getCurrentSessionInfo(courseId);
+        CurrentSessionDto currentSessionInfo = sessionQueryService.getCurrentSessionInfo(courseId);
         CurrentSessionResponseDto currentSessionResponseDto = CurrentSessionResponseDto.builder()
                 .authCode(currentSessionInfo.getAuthCode())
                 .sessionName(currentSessionInfo.getSessionName())
@@ -43,7 +45,7 @@ public class DashBoardController {
     @GetMapping("/session")
     public ResponseEntity<PreviousFiveSessionResponseDto> getRecentFiveSessionInfo(@PathVariable Long courseId){
 
-        List<SessionAttendanceInfo> recentFiveSessions = sessionService.getRecentFive(courseId);
+        List<SessionAttendanceInfo> recentFiveSessions = sessionQueryService.getRecentFive(courseId);
         if(recentFiveSessions.isEmpty()){
             throw new CurrentSessionNotFoundException();
         }

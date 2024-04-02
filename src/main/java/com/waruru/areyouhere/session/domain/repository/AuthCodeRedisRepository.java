@@ -1,12 +1,12 @@
 package com.waruru.areyouhere.session.domain.repository;
 
-import com.waruru.areyouhere.attendance.domain.entity.AuthCode;
+import com.waruru.areyouhere.attendance.domain.entity.CurrentSessionAttendanceInfo;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 
-public interface AuthCodeRedisRepository extends CrudRepository<AuthCode, String>{
+public interface AuthCodeRedisRepository extends CrudRepository<CurrentSessionAttendanceInfo, String>{
 
-    public Optional<AuthCode> findAuthCodeByAuthCode(String authCode);
+    public Optional<CurrentSessionAttendanceInfo> findAuthCodeByAuthCode(String authCode);
 
     public void deleteAuthCodeByAuthCode(String authCode);
 

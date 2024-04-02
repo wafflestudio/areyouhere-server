@@ -9,7 +9,7 @@ import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
 import com.waruru.areyouhere.course.domain.entity.Course;
-import com.waruru.areyouhere.attendance.domain.entity.AuthCode;
+import com.waruru.areyouhere.attendance.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.entity.SessionId;
 import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
@@ -40,12 +40,12 @@ public class AttendanceRedisServiceImpl implements AttendanceRedisService {
     private final AttendanceRedisRepository attendanceRedisRepository;
 
     @Override
-    public List<AttendeeInfo> getNameSakeInfos(String authCode, String attendeeName){
-        AuthCode authCodeData = authCodeRedisRepository
+    public List<AttendeeInfo> getNameSakeInfos(String authCode, String attendeeName) {
+        CurrentSessionAttendanceInfo currentSessionAttendanceInfoData = authCodeRedisRepository
                 .findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
 
-        List<AttendeeRedisData> attendees = authCodeData.getAttendees();
+        List<AttendeeRedisData> attendees = currentSessionAttendanceInfoData.getAttendees();
         return attendees.stream()
                 .filter(att -> att.getName().equals(attendeeName))
                 .map(att -> AttendeeInfo.builder()
@@ -55,50 +55,49 @@ public class AttendanceRedisServiceImpl implements AttendanceRedisService {
                         .build())
                 .toList();
     }
-    @Override
-    public AuthCodeInfo isAttendPossible(String authCode, String attendeeName, Long attendeeId){
 
-        AuthCode authCodeData = authCodeRedisRepository
+    @Override
+    public AuthCodeInfo isAttendPossible(String authCode, String attendeeName, Long attendeeId) {
+
+        CurrentSessionAttendanceInfo currentSessionAttendanceInfoData = authCodeRedisRepository
                 .findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
 
-        AttendeeRedisData attendeeInfo = getAttendeeInSession(attendeeName, attendeeId, authCodeData);
+        AttendeeRedisData attendeeInfo = getAttendeeInSession(attendeeName, attendeeId,
+                currentSessionAttendanceInfoData);
 
-        if(attendanceRedisRepository.isAlreadyAttended(authCode, attendeeInfo)){
+        if (attendanceRedisRepository.isAlreadyAttended(authCode, attendeeInfo)) {
             throw new AlreadyAttendException();
         }
 
         attendanceRedisRepository.setAttend(authCode, attendeeInfo);
 
-
         return AuthCodeInfo.builder()
-                .courseName(authCodeData.getCourseName())
-                .sessionName(authCodeData.getSessionName())
-                .sessionId(authCodeData.getSessionId())
+                .courseName(currentSessionAttendanceInfoData.getCourseName())
+                .sessionName(currentSessionAttendanceInfoData.getSessionName())
+                .sessionId(currentSessionAttendanceInfoData.getSessionId())
                 .build();
     }
 
 
-
     @Override
-    public String createAuthCode(Course course, Session session, LocalDateTime currentTime){
+    public String createAuthCode(Course course, Session session, LocalDateTime currentTime) {
         String generatedAuthCode = generateAuthCode();
 
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(course.getId());
 
-        AuthCode authCode = AuthCode.builder()
+        CurrentSessionAttendanceInfo currentSessionAttendanceInfo = CurrentSessionAttendanceInfo.builder()
                 .sessionId(session.getId())
                 .authCode(generatedAuthCode)
                 .attendees(attendeesByCourseId)
                 .sessionName(session.getName())
                 .courseName(course.getName())
-                .createdAt(currentTime.toString())
                 .build();
 
-        authCodeRedisRepository.save(authCode);
+        authCodeRedisRepository.save(currentSessionAttendanceInfo);
 
         SessionId newsessionId = SessionId.builder()
-                .authCode(authCode.getAuthCode())
+                .authCode(currentSessionAttendanceInfo.getAuthCode())
                 .sessionId(session.getId())
                 .build();
 
@@ -108,30 +107,29 @@ public class AttendanceRedisServiceImpl implements AttendanceRedisService {
     }
 
 
-
     // TODO : sessionId 검증, 해당 sessionId가 user 소유인지 검증.
     @Override
-    public void deactivate(String authCode){
-        AuthCode authCodeByAuthCode = authCodeRedisRepository.findById(authCode)
+    public void deactivate(String authCode) {
+        CurrentSessionAttendanceInfo authCodeByCurrentSessionAttendanceInfo = authCodeRedisRepository.findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
 
-        authCodeRedisRepository.delete(authCodeByAuthCode);
-        sessionIdRedisRepository.deleteById(authCodeByAuthCode.getSessionId());
+        authCodeRedisRepository.delete(authCodeByCurrentSessionAttendanceInfo);
+        sessionIdRedisRepository.deleteById(authCodeByCurrentSessionAttendanceInfo.getSessionId());
         attendanceRedisRepository.deleteAllAttendanceInSession(authCode);
 
     }
 
-    public CurrentSessionAttendeeAttendance getCurrentSessionAttendanceInfo(String authCode){
-        AuthCode authCodeData = authCodeRedisRepository.findById(authCode)
+    public CurrentSessionAttendeeAttendance getCurrentSessionAttendanceInfo(String authCode) {
+        CurrentSessionAttendanceInfo currentSessionAttendanceInfoData = authCodeRedisRepository.findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
         List<AttendeeRedisData> attendees = new LinkedList<>();
         List<AttendeeRedisData> absentees = new LinkedList<>();
         Set<Long> attendeesChecker = attendanceRedisRepository.getAttendees(authCode);
-        authCodeData.getAttendees()
+        currentSessionAttendanceInfoData.getAttendees()
                 .forEach(att -> {
-                    if(attendeesChecker.contains(att.getId())){
+                    if (attendeesChecker.contains(att.getId())) {
                         attendees.add(att);
-                    }else{
+                    } else {
                         absentees.add(att);
                     }
                 });
@@ -141,14 +139,15 @@ public class AttendanceRedisServiceImpl implements AttendanceRedisService {
                 .build();
     }
 
-    private AttendeeRedisData getAttendeeInSession(String attendeeName, Long attendeeId, AuthCode authCodeData) {
-        AttendeeRedisData attendeeInfo = authCodeData.getAttendees().stream()
+    private AttendeeRedisData getAttendeeInSession(String attendeeName, Long attendeeId,
+                                                   CurrentSessionAttendanceInfo currentSessionAttendanceInfoData) {
+        AttendeeRedisData attendeeInfo = currentSessionAttendanceInfoData.getAttendees().stream()
                 .filter(att -> att.getName().equals(attendeeName))
                 .findAny()
                 .orElseThrow(AttendeeNotFoundException::new);
 
-        if(attendeeId != null){
-            attendeeInfo = authCodeData.getAttendees().stream()
+        if (attendeeId != null) {
+            attendeeInfo = currentSessionAttendanceInfoData.getAttendees().stream()
                     .filter(att -> att.getId().equals(attendeeId))
                     .findAny()
                     .orElseThrow(AttendeeNotFoundException::new);
@@ -158,17 +157,17 @@ public class AttendanceRedisServiceImpl implements AttendanceRedisService {
 
     private String generateAuthCode() {
         String generatedAuthCode = "";
-        while(true){
+        while (true) {
             generatedAuthCode = randomIdentifierGenerator.generateRandomIdentifier(4);
-            Optional<AuthCode> authCodeData = authCodeRedisRepository
+            Optional<CurrentSessionAttendanceInfo> authCodeData = authCodeRedisRepository
                     .findById(generatedAuthCode);
 
-            if(authCodeData.isEmpty())
+            if (authCodeData.isEmpty()) {
                 break;
+            }
         }
         return generatedAuthCode;
     }
-
 
 
 }

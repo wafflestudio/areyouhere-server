@@ -9,6 +9,8 @@ import com.waruru.areyouhere.attendance.dto.request.AuthCodeDeactivationRequestD
 import com.waruru.areyouhere.attendance.dto.request.AuthCodeRequestDto;
 import com.waruru.areyouhere.attendance.service.AttendanceRedisService;
 import com.waruru.areyouhere.session.service.SessionService;
+import com.waruru.areyouhere.session.service.command.SessionCommandService;
+import com.waruru.areyouhere.session.service.query.SessionQueryService;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +29,8 @@ public class AuthCodeController {
 
     private final AttendanceRedisService attendanceRedisService;
     private final AttendanceService attendanceService;
-    private final SessionService sessionService;
+    private final SessionCommandService sessionCommandService;
+    private final SessionQueryService sessionQueryService;
     private final CourseService courseService;
 
 
@@ -37,8 +40,8 @@ public class AuthCodeController {
         Long sessionId = authCodeRequestDto.getSessionId();
         Long courseId = authCodeRequestDto.getCourseId();
         Course course = courseService.get(courseId);
-        Session session = sessionService.get(sessionId);
-        sessionService.setStartTime(sessionId, currentTime);
+        Session session = sessionQueryService.get(sessionId);
+        sessionCommandService.setStartTime(sessionId, currentTime);
         return ResponseEntity.ok(attendanceRedisService.createAuthCode(course, session, currentTime));
     }
 
@@ -49,8 +52,8 @@ public class AuthCodeController {
 
         String authCode = authCodeDeactivationRequestDto.getAuthCode();
 
-        sessionService.checkNotDeactivated(sessionId);
-        sessionService.deactivate(sessionId);
+        sessionQueryService.checkNotDeactivated(sessionId);
+        sessionCommandService.deactivate(sessionId);
         attendanceRedisService.deactivate(authCode);
         attendanceService.setAbsentAfterDeactivation(courseId, sessionId);
         return ResponseEntity.ok().build();
