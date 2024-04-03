@@ -11,6 +11,7 @@ import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
+import com.waruru.areyouhere.session.service.dto.UpdateSession;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -62,11 +63,19 @@ public class SessionCommandServiceImpl implements SessionCommandService{
         sessionRepository.save(session);
     }
 
+    @Override
     public void setStartTime(Long sessionId, LocalDateTime currentTime){
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         session.setAuthCodeCreatedAt(currentTime);
         sessionRepository.save(session);
+    }
+
+    @Override
+    public void updateAll(List<UpdateSession> sessions){
+        sessions.forEach(session -> {
+            sessionRepository.setSessionNameById(session.getName(), session.getId());
+        });
     }
 
 

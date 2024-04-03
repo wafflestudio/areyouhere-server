@@ -60,4 +60,8 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
     @Query("delete from session s where s.id in :ids")
     public void deleteAllByIds(@Param("ids") List<Long> ids);
 
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE session s SET s.name= :name WHERE s.id = :sessionId")
+    void setSessionNameById(@Param("name") String name, @Param("sessionId") Long sessionId);
+
 }
