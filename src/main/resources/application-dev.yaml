@@ -21,7 +21,7 @@ spring:
 
 
 cors:
-  allowed-origins: http://dev.areyouhere.today, http://dev.www.areyouhere.today
+  allowed-origins: https://dev.areyouhere.today, https://dev.www.areyouhere.today
 
 cookie:
   encode: ${SECRET_KEY}
