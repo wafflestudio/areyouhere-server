@@ -90,6 +90,7 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
     private void throwIfAttendeesNameAndNoteNotUnique(List<AttendeeInfo> newAttendees, Long courseId) {
         List<String> newAttendeeNames = getAttendeeUniqueNames(newAttendees);
         Map<Long, Attendee> existingAttendees = getExistingAttendeesMap(courseId, newAttendeeNames);
+        setUpdatedNameAttendees(existingAttendees, newAttendees);
         checkNameSake(newAttendees, existingAttendees);
     }
 
@@ -99,11 +100,25 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
                 .distinct()
                 .collect(Collectors.toList());
     }
-
     private Map<Long, Attendee> getExistingAttendeesMap(Long courseId, List<String> attendeeNames) {
         return attendeeRepository.findAttendeesByCourseIdAndNameIn(courseId, attendeeNames)
                 .stream()
                 .collect(Collectors.toMap(Attendee::getId, Function.identity()));
+    }
+
+    private void setUpdatedNameAttendees(Map<Long, Attendee> existingAttendees, List<AttendeeInfo> newAttendees) {
+        newAttendees.forEach(attendeeInfo -> {
+            if (attendeeInfo.getId() != null) {
+                if(!existingAttendees.containsKey(attendeeInfo.getId())){
+                    existingAttendees.put(attendeeInfo.getId(), Attendee.builder()
+                            .id(attendeeInfo.getId())
+                            .name(attendeeInfo.getName())
+                            .note(attendeeInfo.getNote())
+                            .build());
+                }
+            }
+        });
+
     }
 
     private void checkNameSake(List<AttendeeInfo> newAttendees, Map<Long, Attendee> existingAttendees) {
@@ -117,25 +132,29 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
                     throw new IllegalArgumentException("Attendee not found");
                 }).update(attendeeInfo.getName(), attendeeInfo.getNote());
 
-            } else if (!checkOneAttendeeUnique(attendeeInfo, uniqueAttendees)) {
+            } else if (!addUniqueNameAndNote(attendeeInfo, uniqueAttendees)) {
                 throw new AttendeesNotUniqueException();
             }
         });
 
         existingAttendees.values()
                 .stream()
-                .filter(attendee -> !checkOneAttendeeUnique(attendee, uniqueAttendees))
+                .filter(attendee -> !addUniqueNameAndNote(attendee, uniqueAttendees))
                 .findAny()
                 .ifPresent(attendee -> {
                     throw new AttendeesNotUniqueException();
                 });
     }
 
-    private boolean checkOneAttendeeUnique(AttendeeInfo attendeeInfo, Map<String, Set<String>> uniqueAttendees) {
-        return uniqueAttendees.get(attendeeInfo.getName()).add(Optional.ofNullable(attendeeInfo.getNote()).orElse(""));
+    private boolean addUniqueNameAndNote(AttendeeInfo attendeeInfo, Map<String, Set<String>> uniqueAttendees) {
+        return uniqueAttendees
+                .get(attendeeInfo.getName())
+                .add(Optional.ofNullable(attendeeInfo.getNote()).orElse(""));
     }
 
-    private boolean checkOneAttendeeUnique(Attendee attendee, Map<String, Set<String>> uniqueAttendees) {
-        return uniqueAttendees.get(attendee.getName()).add(Optional.ofNullable(attendee.getNote()).orElse(""));
+    private boolean addUniqueNameAndNote(Attendee attendee, Map<String, Set<String>> uniqueAttendees) {
+        return uniqueAttendees
+                .get(attendee.getName())
+                .add(Optional.ofNullable(attendee.getNote()).orElse(""));
     }
 }
