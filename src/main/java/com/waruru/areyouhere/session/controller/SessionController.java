@@ -5,6 +5,7 @@ import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
 import com.waruru.areyouhere.attendee.service.query.AttendeeQueryService;
 import com.waruru.areyouhere.session.dto.request.CreateSessionRequestDto;
 import com.waruru.areyouhere.session.dto.request.DeleteSessionRequestDto;
+import com.waruru.areyouhere.session.dto.request.UpdateSessionsRequestDto;
 import com.waruru.areyouhere.session.dto.response.SessionAttendeesResponseDto;
 import com.waruru.areyouhere.session.service.command.SessionCommandService;
 import com.waruru.areyouhere.session.service.dto.AllSessionAttendanceInfo;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -82,6 +84,12 @@ public class SessionController {
         return ResponseEntity.ok(SessionAttendeesResponseDto.builder()
                 .sessionAttendees(sessionAttendees)
                 .build());
+    }
+
+    @PutMapping
+    public ResponseEntity<HttpStatus> updateAll(@RequestBody UpdateSessionsRequestDto updateSessionsRequestDto){
+        sessionCommandService.updateAll(updateSessionsRequestDto.getSessions());
+        return ResponseEntity.ok().build();
     }
 
 }
