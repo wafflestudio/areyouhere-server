@@ -1,0 +1,28 @@
+spring.config.activate.on-profile: develop
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_DATASOURCE_URL}
+    username: ${MYSQL_DATASOURCE_USERNAME}
+    password: ${MYSQL_DATASOURCE_PASSWORD}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    database: mysql
+  data:
+    redis:
+      host: ${REDIS_DATASOURCE_HOST}
+      port: ${REDIS_DATASOURCE_PORT}
+
+
+cors:
+  allowed-origins: http://dev.areyouhere.today, http://dev.www.areyouhere.today
+
+cookie:
+  encode: ${SECRET_KEY}
+

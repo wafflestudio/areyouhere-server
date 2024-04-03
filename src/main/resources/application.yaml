@@ -11,4 +11,5 @@ spring:
       - application-local.yaml
       - application-prod.yaml
       - application-release.yaml
+      - application-dev.yaml
 
