@@ -29,27 +29,6 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final SessionRepository sessionRepository;
 
     @Override
-    @Transactional(readOnly = true)
-    public AttendanceCount getAttendanceCount(long sessionId) {
-        List<Attendance> attendancesBySessionId = attendanceRepository.findAttendancesBySession_Id(sessionId);
-
-        if (attendancesBySessionId.isEmpty()) {
-            return new AttendanceCount(0, 0);
-        }
-        int attendanceCount = 0;
-        int absenceCount = 0;
-
-        for (Attendance attendance : attendancesBySessionId) {
-            if (attendance.isAttended()) {
-                attendanceCount++;
-            } else {
-                absenceCount++;
-            }
-        }
-        return new AttendanceCount(attendanceCount, absenceCount);
-    }
-
-    @Override
     public void setAbsentAfterDeactivation(long courseId, long sessionId) {
 
         List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId,
