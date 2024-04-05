@@ -28,26 +28,20 @@ public class AttendeeQueryServiceImpl implements AttendeeQueryService{
     @Override
     public AttendeeDetailDto getAttendanceCount(Long attendeeId) {
         Attendee attendee = attendeeRepository.findById(attendeeId)
-                .orElseThrow(() -> new IllegalArgumentException("참여자가 존재하지 않습니다."));
+                .orElseThrow(IllegalArgumentException::new);
 
-        List<AttendeeAttendDetailInfo> attendanceInfoByAttendeeId = attendeeRepository.findAttendanceInfoByAttendeeId(
-                attendeeId);
+        List<AttendeeAttendDetailInfo> attendanceInfoByAttendeeId = attendeeRepository.findAttendanceInfoByAttendeeId(attendeeId);
 
-        int attendance = 0;
-        int absence = 0;
+        long attendance = attendanceInfoByAttendeeId.stream()
+                .filter(AttendeeAttendDetailInfo::getAttendanceStatus)
+                .count();
 
-        for(AttendeeAttendDetailInfo attendDetailInfo : attendanceInfoByAttendeeId){
-            if(attendDetailInfo.getAttendanceStatus()){
-                attendance++;
-            }else{
-                absence++;
-            }
-        }
+        long absence = attendanceInfoByAttendeeId.size() - attendance;
 
         return AttendeeDetailDto.builder()
                 .attendee(attendee)
-                .attendance(attendance)
-                .absence(absence)
+                .attendance((int) attendance)
+                .absence((int) absence)
                 .attendanceInfo(attendanceInfoByAttendeeId)
                 .build();
     }
@@ -59,13 +53,8 @@ public class AttendeeQueryServiceImpl implements AttendeeQueryService{
         DuplicateAttendees duplicateAttendees = new DuplicateAttendees(new LinkedList<>());
 
         newAttendees.stream()
-                .filter(newAttendee -> {
-                    if(!uniqueAttendees.add(newAttendee)){
-                        duplicated.add(newAttendee);
-                        return true;
-                    }
-                    return false;
-                })
+                .filter(newAttendee -> !uniqueAttendees.add(newAttendee))
+                .peek(duplicated::add)
                 .forEach(newAttendee -> duplicateAttendees.addDuplicateAttendee(null, newAttendee, null));
 
 
@@ -98,6 +87,7 @@ public class AttendeeQueryServiceImpl implements AttendeeQueryService{
 
         return sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
                 .attendanceId(sessionAttendee.getAttendanceId())
+                .attendeeId(sessionAttendee.getAttendeeId())
                 .name(sessionAttendee.getAttendeeName())
                 .note(sessionAttendee.getAttendeeNote())
                 .attendanceStatus(sessionAttendee.getAttendanceStatus())
@@ -114,6 +104,7 @@ public class AttendeeQueryServiceImpl implements AttendeeQueryService{
 
         return sessionAttendees.stream().map(sessionAttendee -> SessionAttendees.builder()
                 .attendanceId(sessionAttendee.getAttendanceId())
+                .attendeeId(sessionAttendee.getAttendeeId())
                 .name(sessionAttendee.getAttendeeName())
                 .note(sessionAttendee.getAttendeeNote())
                 .attendanceStatus(sessionAttendee.getAttendanceStatus())

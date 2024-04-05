@@ -5,7 +5,6 @@ import com.waruru.areyouhere.attendance.service.dto.AttendanceCount;
 import java.util.List;
 
 public interface AttendanceService {
-    public AttendanceCount getAttendanceCount(long sessionId);
     public void setAbsentAfterDeactivation(long courseId, long sessionId);
 
     public void setAttend(Long sessionId, String attendanceName, Long attendeeId);
