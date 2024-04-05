@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.attendance.controller;
 
+import com.waruru.areyouhere.attendance.domain.entity.AttendeeRedisData;
 import com.waruru.areyouhere.attendance.dto.request.AttendRequestDto;
 import com.waruru.areyouhere.attendance.dto.response.AttendResponseDto;
 import com.waruru.areyouhere.attendance.dto.response.CurrentAttendanceCountResponseDto;
@@ -72,6 +73,9 @@ public class AttendanceController {
         AuthCodeInfo authCodeInfo = attendanceRedisService.isAttendPossible(authCode, attendeeName, attendeeId);
         checkAuthCodeCookie(request.getCookies(), authCode);
         attendanceService.setAttend(authCodeInfo.getSessionId(), attendeeName, attendeeId);
+        AttendeeRedisData attendeeInSession = attendanceRedisService.getAttendeeInSession(attendeeName, attendeeId,
+                attendanceRedisService.getSessionAttendanceInfo(authCode));
+        attendanceRedisService.setAttendInRedis(authCode, attendeeInSession);
 
 
 

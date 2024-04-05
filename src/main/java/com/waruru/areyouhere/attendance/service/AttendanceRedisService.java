@@ -1,5 +1,7 @@
 package com.waruru.areyouhere.attendance.service;
 
+import com.waruru.areyouhere.attendance.domain.entity.AttendeeRedisData;
+import com.waruru.areyouhere.attendance.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.course.domain.entity.Course;
@@ -19,4 +21,11 @@ public interface AttendanceRedisService {
     public void deactivate(String authCode);
 
     public CurrentSessionAttendeeAttendance getCurrentSessionAttendanceInfo(String authCode);
+
+    public void setAttendInRedis(String authCode, AttendeeRedisData attendeeInfo);
+
+    public AttendeeRedisData getAttendeeInSession(String attendeeName, Long attendeeId,
+                                                  CurrentSessionAttendanceInfo currentSessionAttendanceInfoData);
+
+    public CurrentSessionAttendanceInfo getSessionAttendanceInfo(String authCode);
 }
