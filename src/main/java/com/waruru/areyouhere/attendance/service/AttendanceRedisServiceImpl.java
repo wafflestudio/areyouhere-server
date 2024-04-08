@@ -82,7 +82,7 @@ public class AttendanceRedisServiceImpl implements AttendanceRedisService {
     }
 
     @Override
-    public void setAttendInRedis(String authCode, AttendeeRedisData attendeeInfo){
+    public void setAttendInRedis(String authCode, AttendeeRedisData attendeeInfo) {
         attendanceRedisRepository.setAttend(authCode, attendeeInfo);
     }
 
@@ -164,18 +164,18 @@ public class AttendanceRedisServiceImpl implements AttendanceRedisService {
         return attendeeInfo;
     }
 
-    public String findAuthCodeBySessionId(Long sessionId){
+    public String findAuthCodeBySessionId(Long sessionId) {
         return sessionIdRedisRepository.findById(sessionId)
                 .orElseThrow(AuthCodeNotFoundException::new).getAuthCode();
     }
 
 
-    public int getTotalAttendees(String authCode){
+    public int getTotalAttendees(String authCode) {
         return authCodeRedisRepository.findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new).getAttendees().size();
     }
 
-    public int getAttendCount(String authCode){
+    public int getAttendCount(String authCode) {
         return attendanceRedisRepository.getAttendees(authCode).size();
     }
 

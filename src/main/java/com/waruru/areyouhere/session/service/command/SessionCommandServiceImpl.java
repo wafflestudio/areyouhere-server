@@ -21,22 +21,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class SessionCommandServiceImpl implements SessionCommandService{
+public class SessionCommandServiceImpl implements SessionCommandService {
 
     private final SessionRepository sessionRepository;
     private final CourseRepository courseRepository;
     private final AttendanceRepository attendanceRepository;
     private final AttendeeRepository attendeeRepository;
-    public void create(Long courseId, String sessionName){
+
+    public void create(Long courseId, String sessionName) {
         // TODO : exception 수정
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseNotFoundException::new);
 
-        if(attendeeRepository.findAttendeesByCourse_Id(courseId).isEmpty()){
+        if (attendeeRepository.findAttendeesByCourse_Id(courseId).isEmpty()) {
             throw new AttendeeNotFoundException();
         }
-
-
 
         Session session = Session.builder()
                 .name(sessionName)
@@ -47,7 +46,7 @@ public class SessionCommandServiceImpl implements SessionCommandService{
     }
 
     @Override
-    public void delete(List<Long> sessionIds){
+    public void delete(List<Long> sessionIds) {
         sessionIds.forEach(sessionId -> {
             attendanceRepository.deleteAllBySessionId(sessionId);
             sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
@@ -56,7 +55,7 @@ public class SessionCommandServiceImpl implements SessionCommandService{
     }
 
     @Override
-    public void deactivate(Long sessionId){
+    public void deactivate(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         session.setDeactivated(true);
@@ -64,7 +63,7 @@ public class SessionCommandServiceImpl implements SessionCommandService{
     }
 
     @Override
-    public void setStartTime(Long sessionId, LocalDateTime currentTime){
+    public void setStartTime(Long sessionId, LocalDateTime currentTime) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         session.setAuthCodeCreatedAt(currentTime);
@@ -72,7 +71,7 @@ public class SessionCommandServiceImpl implements SessionCommandService{
     }
 
     @Override
-    public void updateAll(List<UpdateSession> sessions){
+    public void updateAll(List<UpdateSession> sessions) {
         sessions.forEach(session -> {
             sessionRepository.setSessionNameById(session.getName(), session.getId());
         });

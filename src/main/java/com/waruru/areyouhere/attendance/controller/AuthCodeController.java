@@ -34,7 +34,7 @@ public class AuthCodeController {
 
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody AuthCodeRequestDto authCodeRequestDto){
+    public ResponseEntity<String> create(@RequestBody AuthCodeRequestDto authCodeRequestDto) {
         LocalDateTime currentTime = LocalDateTime.now();
         Long sessionId = authCodeRequestDto.getSessionId();
         Long courseId = authCodeRequestDto.getCourseId();
@@ -45,7 +45,8 @@ public class AuthCodeController {
     }
 
     @PostMapping("/deactivate")
-    public ResponseEntity<HttpStatus> deactivate(@RequestBody AuthCodeDeactivationRequestDto authCodeDeactivationRequestDto){
+    public ResponseEntity<HttpStatus> deactivate(
+            @RequestBody AuthCodeDeactivationRequestDto authCodeDeactivationRequestDto) {
         Long sessionId = authCodeDeactivationRequestDto.getSessionId();
         Long courseId = authCodeDeactivationRequestDto.getCourseId();
 

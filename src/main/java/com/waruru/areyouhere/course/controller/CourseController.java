@@ -35,7 +35,8 @@ public class CourseController {
     public ResponseEntity<Void> createCourse(
             @Login Manager manager,
             @RequestBody CourseCreationRequest request) {
-        courseService.create(manager.getId(), request.getName(), request.getDescription(), request.getAttendees(), request.isOnlyListNameAllowed());
+        courseService.create(manager.getId(), request.getName(), request.getDescription(), request.getAttendees(),
+                request.isOnlyListNameAllowed());
         return ResponseEntity.ok().build();
     }
 
@@ -52,14 +53,15 @@ public class CourseController {
     @PutMapping("/{courseId}")
     public ResponseEntity<Void> updateCourse(@Login Manager manager, @PathVariable Long courseId,
                                              @RequestBody CourseUpdateRequest request) {
-        courseService.update(manager.getId(), courseId, request.getName(), request.getDescription(), request.isOnlyListNameAllowed());
+        courseService.update(manager.getId(), courseId, request.getName(), request.getDescription(),
+                request.isOnlyListNameAllowed());
         return ResponseEntity.ok().build();
     }
 
     @LoginRequired
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Void> deleteCourse(@Login Manager manager
-                                             , @PathVariable Long courseId) {
+            , @PathVariable Long courseId) {
         courseService.delete(manager.getId(), courseId);
         return ResponseEntity.ok().build();
     }

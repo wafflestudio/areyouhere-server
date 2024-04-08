@@ -11,6 +11,7 @@ public interface SessionService {
     public void create(Long courseId, String sessionName);
 
     public CurrentSessionDto getCurrentSessionInfo(Long courseId);
+
     public List<SessionAttendanceInfo> getRecentFive(Long courseId);
 
     public List<SessionAttendanceInfo> getAll(Long courseId);

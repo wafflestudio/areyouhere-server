@@ -18,18 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 // TODO: 그 외엔 필요가 없어보인다..
 @Service
 @RequiredArgsConstructor
-public class AttendanceServiceImpl implements AttendanceService{
+public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceRDBService attendanceRDBService;
     private final AttendanceRedisService attendanceRedisService;
 
     @Override
     @Transactional
-    public AttendResponseDto attend(String attendeeName, String authCode, Long attendeeId){
+    public AttendResponseDto attend(String attendeeName, String authCode, Long attendeeId) {
         LocalDateTime attendanceTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         List<AttendeeInfo> nameSakeAttendees = attendanceRedisService.getNameSakeInfos(authCode, attendeeName);
 
         // 동명이인 응답
-        if(attendeeId == null && nameSakeAttendees.size() > 1){
+        if (attendeeId == null && nameSakeAttendees.size() > 1) {
             return AttendResponseDto.builder()
                     .attendeeNotes(nameSakeAttendees)
                     .build();
@@ -37,11 +37,12 @@ public class AttendanceServiceImpl implements AttendanceService{
 
         AuthCodeInfo authCodeInfo = attendanceRedisService.isAttendPossible(authCode, attendeeName, attendeeId);
         attendanceRDBService.setAttend(authCodeInfo.getSessionId(), attendeeName, attendeeId);
-        AttendeeRedisData attendeeInSession = attendanceRedisService.findByNameIfNotDuplicatedOrId(attendeeName, attendeeId,
+        AttendeeRedisData attendeeInSession = attendanceRedisService.findByNameIfNotDuplicatedOrId(attendeeName,
+                attendeeId,
                 attendanceRedisService.getSessionAttendanceInfoOrThrow(authCode));
         attendanceRedisService.setAttendInRedis(authCode, attendeeInSession);
 
-        return  AttendResponseDto.builder()
+        return AttendResponseDto.builder()
                 .attendanceName(attendeeName)
                 .courseName(authCodeInfo.getCourseName())
                 .sessionName(authCodeInfo.getSessionName())
@@ -51,13 +52,13 @@ public class AttendanceServiceImpl implements AttendanceService{
 
     @Override
     @Transactional
-    public void updateAllStatuses(Long sessionId , List<UpdateAttendance> updateAttendances){
+    public void updateAllStatuses(Long sessionId, List<UpdateAttendance> updateAttendances) {
         attendanceRDBService.setAttendanceStatuses(sessionId, updateAttendances);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public CurrentSessionAttendCount getCurrentSessionAttendCount(Long sessionId){
+    public CurrentSessionAttendCount getCurrentSessionAttendCount(Long sessionId) {
         String authCode = attendanceRedisService.findAuthCodeBySessionId(sessionId);
         int total = attendanceRedisService.getTotalAttendees(authCode);
         int attendeeCount = attendanceRedisService.getAttendCount(authCode);
@@ -66,13 +67,9 @@ public class AttendanceServiceImpl implements AttendanceService{
 
     @Override
     @Transactional(readOnly = true)
-    public CurrentSessionAttendeeAttendance getCurrentSessionAttendeesAndAbsentees(String authCode){
+    public CurrentSessionAttendeeAttendance getCurrentSessionAttendeesAndAbsentees(String authCode) {
         return attendanceRedisService.getCurrentSessionAttendees(authCode);
     }
-
-
-
-
 
 
 }

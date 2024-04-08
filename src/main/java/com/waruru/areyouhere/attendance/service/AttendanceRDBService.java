@@ -8,7 +8,7 @@ public interface AttendanceRDBService {
 
     public void setAttend(Long sessionId, String attendanceName, Long attendeeId);
 
-    public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances);
+    public void setAttendanceStatuses(Long sessionId, List<UpdateAttendance> updateAttendances);
 
     public int currentAttendance(Long sessionId);
 }

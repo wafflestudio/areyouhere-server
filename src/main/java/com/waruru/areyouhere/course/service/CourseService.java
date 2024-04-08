@@ -9,9 +9,13 @@ import java.util.List;
 
 @RestController
 public interface CourseService {
-    void create(Long managerId, String name, String description, List<AttendeeData> attendees, boolean onlyListNameAllowed);
+    void create(Long managerId, String name, String description, List<AttendeeData> attendees,
+                boolean onlyListNameAllowed);
+
     List<CourseData> getAll(Long managerId);
+
     void update(Long managerId, Long courseId, String name, String description, boolean onlyListNameAllowed);
+
     void delete(Long managerId, Long courseId);
 
     public Course get(Long courseId);
