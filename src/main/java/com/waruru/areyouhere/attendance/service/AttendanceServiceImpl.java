@@ -1,10 +1,12 @@
 package com.waruru.areyouhere.attendance.service;
 
-import com.waruru.areyouhere.attendance.domain.entity.AttendeeRedisData;
+import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
 import com.waruru.areyouhere.attendance.dto.response.AttendResponseDto;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendCount;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
+import com.waruru.areyouhere.attendance.service.rdb.AttendanceRDBService;
+import com.waruru.areyouhere.active.attendance.AttendanceRedisService;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;

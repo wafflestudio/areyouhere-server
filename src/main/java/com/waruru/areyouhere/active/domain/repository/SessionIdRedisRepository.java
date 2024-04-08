@@ -1,6 +1,6 @@
-package com.waruru.areyouhere.session.domain.repository;
+package com.waruru.areyouhere.active.domain.repository;
 
-import com.waruru.areyouhere.session.domain.entity.SessionId;
+import com.waruru.areyouhere.active.domain.entity.SessionId;
 import org.springframework.data.repository.CrudRepository;
 
 public interface SessionIdRedisRepository extends CrudRepository<SessionId, Long> {

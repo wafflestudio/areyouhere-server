@@ -42,7 +42,7 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
 
-    //FIXME: 1. 중복 인원인 경우 코드 중복이 생겨도 API 분리가 나아 보인다. 한 API에서 너무 많은 일을 하는 중이다.
+    // FIXME: 1. 중복 인원인 경우 코드 중복이 생겨도 API 분리가 나아 보인다. 한 API에서 너무 많은 일을 하는 중이다.
     // FIXME: 2. 사실상 다른 형태의 response를 억지로 하나의 controller에서 반환한다고 봐도 무방하다. -> 프론트와 합의 후 변경.
     @PostMapping
     public ResponseEntity<AttendResponseDto> attend(HttpServletRequest request,

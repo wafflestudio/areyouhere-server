@@ -1,5 +1,6 @@
-package com.waruru.areyouhere.attendance.domain.entity;
+package com.waruru.areyouhere.active.domain.entity;
 
+import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -11,7 +12,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 

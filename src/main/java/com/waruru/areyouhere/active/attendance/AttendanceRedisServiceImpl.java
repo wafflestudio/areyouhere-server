@@ -1,7 +1,7 @@
-package com.waruru.areyouhere.attendance.service;
+package com.waruru.areyouhere.active.attendance;
 
-import com.waruru.areyouhere.attendance.domain.entity.AttendeeRedisData;
-import com.waruru.areyouhere.attendance.domain.repository.AttendanceRedisRepository;
+import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
+import com.waruru.areyouhere.active.domain.repository.AttendanceRedisRepository;
 import com.waruru.areyouhere.attendance.exception.AlreadyAttendException;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
@@ -9,11 +9,11 @@ import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
 import com.waruru.areyouhere.course.domain.entity.Course;
-import com.waruru.areyouhere.attendance.domain.entity.CurrentSessionAttendanceInfo;
+import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.session.domain.entity.Session;
-import com.waruru.areyouhere.session.domain.entity.SessionId;
-import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
-import com.waruru.areyouhere.session.domain.repository.SessionIdRedisRepository;
+import com.waruru.areyouhere.active.domain.entity.SessionId;
+import com.waruru.areyouhere.active.domain.repository.AuthCodeRedisRepository;
+import com.waruru.areyouhere.active.domain.repository.SessionIdRedisRepository;
 import com.waruru.areyouhere.attendance.exception.AuthCodeNotFoundException;
 import com.waruru.areyouhere.attendee.exception.AttendeeNotFoundException;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 //TODO : 일관성있는 메소드명
 

@@ -1,7 +1,7 @@
-package com.waruru.areyouhere.attendance.service;
+package com.waruru.areyouhere.active.attendance;
 
-import com.waruru.areyouhere.attendance.domain.entity.AttendeeRedisData;
-import com.waruru.areyouhere.attendance.domain.entity.CurrentSessionAttendanceInfo;
+import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
+import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.course.domain.entity.Course;

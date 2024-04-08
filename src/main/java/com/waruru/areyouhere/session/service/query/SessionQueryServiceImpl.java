@@ -1,10 +1,10 @@
 package com.waruru.areyouhere.session.service.query;
 
-import com.waruru.areyouhere.attendance.domain.entity.CurrentSessionAttendanceInfo;
+import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.session.domain.entity.Session;
-import com.waruru.areyouhere.session.domain.entity.SessionId;
-import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
-import com.waruru.areyouhere.session.domain.repository.SessionIdRedisRepository;
+import com.waruru.areyouhere.active.domain.entity.SessionId;
+import com.waruru.areyouhere.active.domain.repository.AuthCodeRedisRepository;
+import com.waruru.areyouhere.active.domain.repository.SessionIdRedisRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.domain.repository.dto.SessionInfo;
 import com.waruru.areyouhere.session.exception.CurrentSessionDeactivatedException;
@@ -12,7 +12,6 @@ import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.service.dto.CurrentSessionDto;
 import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

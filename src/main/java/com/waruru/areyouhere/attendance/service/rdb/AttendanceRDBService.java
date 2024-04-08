@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.attendance.service;
+package com.waruru.areyouhere.attendance.service.rdb;
 
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
 import java.util.List;

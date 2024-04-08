@@ -1,13 +1,13 @@
 package com.waruru.areyouhere.attendance.controller;
 
 
-import com.waruru.areyouhere.attendance.service.AttendanceRDBService;
+import com.waruru.areyouhere.attendance.service.rdb.AttendanceRDBService;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.service.CourseService;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.attendance.dto.request.AuthCodeDeactivationRequestDto;
 import com.waruru.areyouhere.attendance.dto.request.AuthCodeRequestDto;
-import com.waruru.areyouhere.attendance.service.AttendanceRedisService;
+import com.waruru.areyouhere.active.attendance.AttendanceRedisService;
 import com.waruru.areyouhere.session.service.command.SessionCommandService;
 import com.waruru.areyouhere.session.service.query.SessionQueryService;
 import java.time.LocalDateTime;

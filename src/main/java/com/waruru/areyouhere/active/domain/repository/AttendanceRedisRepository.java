@@ -1,12 +1,10 @@
-package com.waruru.areyouhere.attendance.domain.repository;
+package com.waruru.areyouhere.active.domain.repository;
 
-import com.waruru.areyouhere.attendance.domain.entity.AttendeeRedisData;
+import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 @Component
 @RequiredArgsConstructor
