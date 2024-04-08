@@ -6,9 +6,4 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface AuthCodeRedisRepository extends CrudRepository<CurrentSessionAttendanceInfo, String>{
 
-    public Optional<CurrentSessionAttendanceInfo> findAuthCodeByAuthCode(String authCode);
-
-    public void deleteAuthCodeByAuthCode(String authCode);
-
-
 }

@@ -144,7 +144,7 @@ public class SessionQueryServiceImpl implements SessionQueryService{
             recentFiveSessions.remove(5);
         }
     }
-
+    //FIXME : 404 발생
     private List<SessionAttendanceInfo> getSessionAttendanceInfoList(List<Session> recentFiveSessions) {
         return recentFiveSessions.stream()
                 .map(Session::getId)

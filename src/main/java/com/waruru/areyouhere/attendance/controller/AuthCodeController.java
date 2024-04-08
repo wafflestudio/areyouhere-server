@@ -1,14 +1,13 @@
 package com.waruru.areyouhere.attendance.controller;
 
 
-import com.waruru.areyouhere.attendance.service.AttendanceService;
+import com.waruru.areyouhere.attendance.service.AttendanceRDBService;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.service.CourseService;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.attendance.dto.request.AuthCodeDeactivationRequestDto;
 import com.waruru.areyouhere.attendance.dto.request.AuthCodeRequestDto;
 import com.waruru.areyouhere.attendance.service.AttendanceRedisService;
-import com.waruru.areyouhere.session.service.SessionService;
 import com.waruru.areyouhere.session.service.command.SessionCommandService;
 import com.waruru.areyouhere.session.service.query.SessionQueryService;
 import java.time.LocalDateTime;
@@ -28,7 +27,7 @@ public class AuthCodeController {
     public static final String AUTH_CODE_API_URL = "/api/auth-code";
 
     private final AttendanceRedisService attendanceRedisService;
-    private final AttendanceService attendanceService;
+    private final AttendanceRDBService attendanceRDBService;
     private final SessionCommandService sessionCommandService;
     private final SessionQueryService sessionQueryService;
     private final CourseService courseService;
@@ -55,7 +54,7 @@ public class AuthCodeController {
         sessionQueryService.checkNotDeactivated(sessionId);
         sessionCommandService.deactivate(sessionId);
         attendanceRedisService.deactivate(authCode);
-        attendanceService.setAbsentAfterDeactivation(courseId, sessionId);
+        attendanceRDBService.setAbsentAfterDeactivation(courseId, sessionId);
         return ResponseEntity.ok().build();
     }
 

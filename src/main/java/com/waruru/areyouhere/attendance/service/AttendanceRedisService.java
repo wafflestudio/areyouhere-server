@@ -15,17 +15,24 @@ public interface AttendanceRedisService {
     public List<AttendeeInfo> getNameSakeInfos(String authCode, String attendeeName);
     public AuthCodeInfo isAttendPossible(String authCode, String attendanceName, Long attendeeId);
 
-
     public String createAuthCode(Course course, Session sessionId, LocalDateTime currentTime);
 
     public void deactivate(String authCode);
 
-    public CurrentSessionAttendeeAttendance getCurrentSessionAttendanceInfo(String authCode);
+    public CurrentSessionAttendeeAttendance getCurrentSessionAttendees(String authCode);
 
     public void setAttendInRedis(String authCode, AttendeeRedisData attendeeInfo);
 
-    public AttendeeRedisData getAttendeeInSession(String attendeeName, Long attendeeId,
-                                                  CurrentSessionAttendanceInfo currentSessionAttendanceInfoData);
+    public AttendeeRedisData findByNameIfNotDuplicatedOrId(String attendeeName, Long attendeeId,
+                                                           CurrentSessionAttendanceInfo currentSessionAttendanceInfoData);
 
-    public CurrentSessionAttendanceInfo getSessionAttendanceInfo(String authCode);
+    public CurrentSessionAttendanceInfo getSessionAttendanceInfoOrThrow(String authCode);
+
+    public String findAuthCodeBySessionId(Long sessionId);
+
+    public int getTotalAttendees(String authCode);
+
+    public int getAttendCount(String authCode);
+
+
 }
