@@ -35,7 +35,7 @@ public class SessionServiceImpl implements SessionService {
     private final SessionIdRedisRepository sessionIdRedisRepository;
     private final AttendanceRepository attendanceRepository;
 
-    public void create(Long courseId, String sessionName){
+    public void create(Long courseId, String sessionName) {
         // TODO : exception 수정
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(SessionIdNotFoundException::new);
@@ -49,22 +49,23 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void delete(List<Long> sessionIds){
+    public void delete(List<Long> sessionIds) {
         sessionIds.forEach(sessionId -> {
             attendanceRepository.deleteAllBySessionId(sessionId);
             sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
         });
         sessionRepository.deleteAllByIds(sessionIds);
     }
+
     // TODO : 리팩토링 노타임..
     @Transactional(readOnly = true)
     @Override
-    public CurrentSessionDto getCurrentSessionInfo(Long courseId){
+    public CurrentSessionDto getCurrentSessionInfo(Long courseId) {
         Session mostRecentSession = sessionRepository
                 .findMostRecentSessionByCourseId(courseId)
                 .orElseThrow(CurrentSessionNotFoundException::new);
         // 제일 최근 세션이 이미 출석 체크가 끝났는지
-        if(mostRecentSession.isDeactivated()){
+        if (mostRecentSession.isDeactivated()) {
             throw new CurrentSessionDeactivatedException();
         }
         // 제일 최근 세션이 출석 코드를 만들지 않았는지
@@ -72,13 +73,13 @@ public class SessionServiceImpl implements SessionService {
                 .findById(mostRecentSession.getId())
                 .orElse(null);
 
-        if(sessionId == null){
-            return  CurrentSessionDto.builder()
-                            .authCode(null)
-                            .sessionTime(null)
-                            .sessionName(mostRecentSession.getName())
-                            .id(mostRecentSession.getId())
-                            .build();
+        if (sessionId == null) {
+            return CurrentSessionDto.builder()
+                    .authCode(null)
+                    .sessionTime(null)
+                    .sessionName(mostRecentSession.getName())
+                    .id(mostRecentSession.getId())
+                    .build();
         }
         // 제일 최근 세션이 출석 코드를 만들었다면.
         // warning! 널 익셉션이 발생한다면 authCode를 redis에 삽입하는 과정에서 어느 쪽이 빠져있는 것이다.
@@ -97,24 +98,24 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<SessionAttendanceInfo> getRecentFive(Long courseId){
+    public List<SessionAttendanceInfo> getRecentFive(Long courseId) {
         List<Session> recentFiveSessions = sessionRepository.findTOP6BySessionByCourseId(courseId);
-        if(recentFiveSessions == null || recentFiveSessions.isEmpty()){
+        if (recentFiveSessions == null || recentFiveSessions.isEmpty()) {
             return Collections.emptyList();
         }
 
-        if(!recentFiveSessions.get(0).isDeactivated()){
+        if (!recentFiveSessions.get(0).isDeactivated()) {
             recentFiveSessions.remove(0);
 
-        }else{
-            if(recentFiveSessions.size() > 5){
+        } else {
+            if (recentFiveSessions.size() > 5) {
                 recentFiveSessions.remove(5);
             }
         }
         List<SessionAttendanceInfo> list = new ArrayList<>();
         for (Session recentFiveSession : recentFiveSessions) {
             SessionInfo sessionWithAttendance = sessionRepository.findSessionWithAttendance(
-                    recentFiveSession.getId())
+                            recentFiveSession.getId())
                     .orElseThrow(SessionIdNotFoundException::new);
 
             list.add(SessionAttendanceInfo.builder()
@@ -131,7 +132,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<SessionAttendanceInfo> getAll(Long courseId){
+    public List<SessionAttendanceInfo> getAll(Long courseId) {
         List<SessionInfo> allSessions = sessionRepository.findSessionsWithAttendance(courseId);
         return allSessions == null || allSessions.isEmpty()
                 ? Collections.emptyList()
@@ -142,12 +143,12 @@ public class SessionServiceImpl implements SessionService {
                         .attendee(allSession.getattendee())
                         .absentee(allSession.getabsentee())
                         .build()
-                    ).toList();
+                ).toList();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public SessionAttendanceInfo getSessionAttendanceInfo(Long sessionId){
+    public SessionAttendanceInfo getSessionAttendanceInfo(Long sessionId) {
         SessionInfo sessionWithAttendance = sessionRepository
                 .findSessionWithAttendance(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
@@ -164,10 +165,10 @@ public class SessionServiceImpl implements SessionService {
 
     @Transactional(readOnly = true)
     @Override
-    public void checkNotDeactivated(Long sessionId){
+    public void checkNotDeactivated(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
-        if(session.isDeactivated()){
+        if (session.isDeactivated()) {
             throw new CurrentSessionDeactivatedException();
         }
     }
@@ -180,14 +181,14 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void deactivate(Long sessionId){
+    public void deactivate(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         session.setDeactivated(true);
         sessionRepository.save(session);
     }
-    
-    public void setStartTime(Long sessionId, LocalDateTime currentTime){
+
+    public void setStartTime(Long sessionId, LocalDateTime currentTime) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         session.setAuthCodeCreatedAt(currentTime);

@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CurrentAttendanceCountResponseDto {
-    private int attendances;
     private int total;
+    private int attendances;
 }

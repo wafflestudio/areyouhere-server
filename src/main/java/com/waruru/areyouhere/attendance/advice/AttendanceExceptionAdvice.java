@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class AttendanceExceptionAdvice {
 
     @ExceptionHandler(SessionIdNotFoundException.class)
-    public ResponseEntity<HttpStatus> sessionIdNotFoundHandler(){
+    public ResponseEntity<HttpStatus> sessionIdNotFoundHandler() {
         return RESPONSE_NOT_FOUND;
     }
 
@@ -29,17 +29,17 @@ public class AttendanceExceptionAdvice {
     }
 
     @ExceptionHandler(AuthCodeNotFoundException.class)
-    public ResponseEntity<HttpStatus> authCodeNotFoundHandler(){
+    public ResponseEntity<HttpStatus> authCodeNotFoundHandler() {
         return RESPONSE_NOT_FOUND;
     }
 
     @ExceptionHandler(AlreadyAttendException.class)
-    public ResponseEntity<HttpStatus> alreadyAttendHandler(){
+    public ResponseEntity<HttpStatus> alreadyAttendHandler() {
         return RESPONSE_BAD_REQUEST;
     }
 
     @ExceptionHandler(DuplicateAuthCodeAttendException.class)
-    public ResponseEntity<HttpStatus> duplicateAuthCodeAttendHandler(){
+    public ResponseEntity<HttpStatus> duplicateAuthCodeAttendHandler() {
         return RESPONSE_FORBIDDEN;
     }
 }

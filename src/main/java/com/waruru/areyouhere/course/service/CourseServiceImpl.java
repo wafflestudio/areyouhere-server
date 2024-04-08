@@ -39,8 +39,10 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public void create(Long managerId, String name, String description, List<AttendeeData> attendees, boolean onlyListNameAllowed) {
-        Manager manager = managerRepository.findManagerById(managerId).orElseThrow(() -> new IllegalArgumentException("Manager not found"));
+    public void create(Long managerId, String name, String description, List<AttendeeData> attendees,
+                       boolean onlyListNameAllowed) {
+        Manager manager = managerRepository.findManagerById(managerId)
+                .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
 
         Course course = Course.builder()
                 .manager(manager)
@@ -52,8 +54,8 @@ public class CourseServiceImpl implements CourseService {
 
         List<Attendee> attendeesToSave = new ArrayList<>();
 
-        if(!isAttendeesUnique(attendees.stream().map(attendeeData -> attendeeData.getName()
-                + (attendeeData.getNote() == null ? "": attendeeData.getNote())).toList())) {
+        if (!isAttendeesUnique(attendees.stream().map(attendeeData -> attendeeData.getName()
+                + (attendeeData.getNote() == null ? "" : attendeeData.getNote())).toList())) {
             throw new AttendeesNotUniqueException();
         }
 
@@ -75,7 +77,8 @@ public class CourseServiceImpl implements CourseService {
         List<EachClassAttendeeCountInfo> eachClassAttendeeCountInfos = attendeeRepository.countAttendeesEachCourseByManagerId(
                 managerId);
         Map<Long, Long> courseAttendeeCountMap = eachClassAttendeeCountInfos.stream()
-                .collect(Collectors.toMap(EachClassAttendeeCountInfo::getCourseId, EachClassAttendeeCountInfo::getAttendeeCnt));
+                .collect(Collectors.toMap(EachClassAttendeeCountInfo::getCourseId,
+                        EachClassAttendeeCountInfo::getAttendeeCnt));
 
         return courses.stream()
                 .map(course -> CourseData.builder()
