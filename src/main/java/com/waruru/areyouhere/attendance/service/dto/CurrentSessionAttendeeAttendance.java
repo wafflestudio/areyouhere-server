@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.attendance.service.dto;
 
-import com.waruru.areyouhere.attendance.domain.entity.AttendeeRedisData;
+import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;

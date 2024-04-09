@@ -7,7 +7,6 @@ import com.waruru.areyouhere.attendee.dto.response.ClassAttendeesResponseDto;
 import com.waruru.areyouhere.attendee.dto.request.DeleteAttendeesRequestDto;
 import com.waruru.areyouhere.attendee.dto.request.DuplicateCheckAttendeesRequestDto;
 import com.waruru.areyouhere.attendee.dto.request.NewAttendeesRequestDto;
-import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
 import com.waruru.areyouhere.attendee.service.query.AttendeeQueryService;

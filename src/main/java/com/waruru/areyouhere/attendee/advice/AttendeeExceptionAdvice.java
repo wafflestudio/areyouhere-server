@@ -10,6 +10,7 @@ import com.waruru.areyouhere.attendee.exception.ClassAttendeesEmptyException;
 import com.waruru.areyouhere.attendee.exception.SessionAttendeesEmptyException;
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
+import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +18,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice("com.waruru.areyouhere.attendee")
 public class AttendeeExceptionAdvice {
+
+    @ExceptionHandler(ActivatedSessionExistsException.class)
+    public ResponseEntity<HttpStatus> activatedSessionExistsHandler() {
+        return RESPONSE_CONFLICT;
+    }
+
     @ExceptionHandler(CourseNotFoundException.class)
     public ResponseEntity<HttpStatus> courseIdNotFoundFoundHandler() {
         return RESPONSE_NOT_FOUND;

@@ -218,7 +218,6 @@ public class AttendeeServiceImpl implements AttendeeService {
                                 .note(attendee.getNote())
                                 .build())
                 .forEach(attendeeRepository::save);
-
     }
 
     // TODO: Name에 index가 없다면 위에 비해 그리 빠를 지 모르겠다.

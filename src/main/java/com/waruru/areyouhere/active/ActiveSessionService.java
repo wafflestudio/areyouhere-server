@@ -1,8 +1,9 @@
-package com.waruru.areyouhere.attendance.service;
+package com.waruru.areyouhere.active;
 
-import com.waruru.areyouhere.attendance.domain.entity.AttendeeRedisData;
-import com.waruru.areyouhere.attendance.domain.entity.CurrentSessionAttendanceInfo;
+import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
+import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
+import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.session.domain.entity.Session;
@@ -10,7 +11,7 @@ import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface AttendanceRedisService {
+public interface ActiveSessionService {
 
     public List<AttendeeInfo> getNameSakeInfos(String authCode, String attendeeName);
 
@@ -34,6 +35,17 @@ public interface AttendanceRedisService {
     public int getTotalAttendees(String authCode);
 
     public int getAttendCount(String authCode);
+
+    public void updateCourseName(Long courseId, String courseName);
+
+    public void updateSessionName(Long courseId, String sessionName);
+
+    public void updateAttendees(Long courseId, List<Attendee> attendees);
+
+
+    public boolean isSessionActivatedByCourseId(Long courseId);
+
+    public boolean isSessionActivatedBySessionId(Long sessionId);
 
 
 }

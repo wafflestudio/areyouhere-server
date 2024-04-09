@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.session.service.command;
 
+import com.waruru.areyouhere.active.ActiveSessionService;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
@@ -9,6 +10,7 @@ import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
+import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.service.dto.UpdateSession;
@@ -27,11 +29,19 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     private final CourseRepository courseRepository;
     private final AttendanceRepository attendanceRepository;
     private final AttendeeRepository attendeeRepository;
+    private final ActiveSessionService activeSessionService;
 
     public void create(Long courseId, String sessionName) {
         // TODO : exception 수정
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseNotFoundException::new);
+
+        sessionRepository.findMostRecentSessionByCourseId(courseId)
+                .ifPresent(session -> {
+                    if (!session.isDeactivated()) {
+                        throw new ActivatedSessionExistsException();
+                    }
+                });
 
         if (attendeeRepository.findAttendeesByCourse_Id(courseId).isEmpty()) {
             throw new AttendeeNotFoundException();
@@ -46,7 +56,7 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     }
 
     @Override
-    public void delete(List<Long> sessionIds) {
+    public void deleteAll(List<Long> sessionIds) {
         sessionIds.forEach(sessionId -> {
             attendanceRepository.deleteAllBySessionId(sessionId);
             sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
