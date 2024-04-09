@@ -11,6 +11,7 @@ import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
+import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -88,10 +89,11 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
         Long courseId = attendeeRepository.findById(deleteAttendees.get(0))
                 .orElseThrow(() -> new AttendeeNotFoundException("Attendee not found"))
                 .getCourse().getId();
+        if(activeSessionService.isSessionActivatedByCourseId(courseId)){
+            throw new ActivatedSessionExistsException();
+        }
         attendanceRepository.deleteAllByAttendeeIds(deleteAttendees);
         attendeeRepository.deleteAllByIds(deleteAttendees);
-        syncToRedis(courseId);
-
     }
 
     private void syncToRedis(Long courseId){
