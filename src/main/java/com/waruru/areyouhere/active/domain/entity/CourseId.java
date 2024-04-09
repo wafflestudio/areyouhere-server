@@ -1,7 +1,6 @@
 package com.waruru.areyouhere.active.domain.entity;
 
 
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,19 +10,19 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
-@RedisHash(value = "session_id")
+@RedisHash(value = "course_id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SessionId {
+public class CourseId {
     @Id
     @NotNull
-    private long sessionId;
+    private long courseId;
 
     @NotNull
     private String authCode;
 
     @Builder
-    public SessionId(long sessionId, String authCode) {
-        this.sessionId = sessionId;
+    public CourseId(long courseId, String authCode) {
+        this.courseId = courseId;
         this.authCode = authCode;
     }
 }

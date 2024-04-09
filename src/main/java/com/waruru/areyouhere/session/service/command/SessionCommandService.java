@@ -7,7 +7,7 @@ import java.util.List;
 public interface SessionCommandService {
     public void create(Long courseId, String sessionName);
 
-    public void delete(List<Long> sessionIds);
+    public void deleteAll(List<Long> sessionIds);
 
     public void deactivate(Long sessionId);
 

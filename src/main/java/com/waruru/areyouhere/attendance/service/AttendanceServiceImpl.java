@@ -6,7 +6,7 @@ import com.waruru.areyouhere.attendance.dto.response.AttendResponseDto;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendCount;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendance.service.rdb.AttendanceRDBService;
-import com.waruru.areyouhere.active.attendance.AttendanceRedisService;
+import com.waruru.areyouhere.active.ActiveSessionService;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;
@@ -22,13 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceRDBService attendanceRDBService;
-    private final AttendanceRedisService attendanceRedisService;
+    private final ActiveSessionService activeSessionService;
 
     @Override
     @Transactional
     public AttendResponseDto attend(String attendeeName, String authCode, Long attendeeId) {
         LocalDateTime attendanceTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-        List<AttendeeInfo> nameSakeAttendees = attendanceRedisService.getNameSakeInfos(authCode, attendeeName);
+        List<AttendeeInfo> nameSakeAttendees = activeSessionService.getNameSakeInfos(authCode, attendeeName);
 
         // 동명이인 응답
         if (attendeeId == null && nameSakeAttendees.size() > 1) {
@@ -37,12 +37,12 @@ public class AttendanceServiceImpl implements AttendanceService {
                     .build();
         }
 
-        AuthCodeInfo authCodeInfo = attendanceRedisService.isAttendPossible(authCode, attendeeName, attendeeId);
+        AuthCodeInfo authCodeInfo = activeSessionService.isAttendPossible(authCode, attendeeName, attendeeId);
         attendanceRDBService.setAttend(authCodeInfo.getSessionId(), attendeeName, attendeeId);
-        AttendeeRedisData attendeeInSession = attendanceRedisService.findByNameIfNotDuplicatedOrId(attendeeName,
+        AttendeeRedisData attendeeInSession = activeSessionService.findByNameIfNotDuplicatedOrId(attendeeName,
                 attendeeId,
-                attendanceRedisService.getSessionAttendanceInfoOrThrow(authCode));
-        attendanceRedisService.setAttendInRedis(authCode, attendeeInSession);
+                activeSessionService.getSessionAttendanceInfoOrThrow(authCode));
+        activeSessionService.setAttendInRedis(authCode, attendeeInSession);
 
         return AttendResponseDto.builder()
                 .attendanceName(attendeeName)
@@ -61,16 +61,16 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     @Transactional(readOnly = true)
     public CurrentSessionAttendCount getCurrentSessionAttendCount(Long sessionId) {
-        String authCode = attendanceRedisService.findAuthCodeBySessionId(sessionId);
-        int total = attendanceRedisService.getTotalAttendees(authCode);
-        int attendeeCount = attendanceRedisService.getAttendCount(authCode);
+        String authCode = activeSessionService.findAuthCodeBySessionId(sessionId);
+        int total = activeSessionService.getTotalAttendees(authCode);
+        int attendeeCount = activeSessionService.getAttendCount(authCode);
         return new CurrentSessionAttendCount(total, attendeeCount);
     }
 
     @Override
     @Transactional(readOnly = true)
     public CurrentSessionAttendeeAttendance getCurrentSessionAttendeesAndAbsentees(String authCode) {
-        return attendanceRedisService.getCurrentSessionAttendees(authCode);
+        return activeSessionService.getCurrentSessionAttendees(authCode);
     }
 
 

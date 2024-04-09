@@ -57,7 +57,7 @@ public class SessionController {
 
     @PostMapping("/delete")
     public ResponseEntity<HttpStatus> delete(@RequestBody DeleteSessionRequestDto sessionIds){
-        sessionCommandService.delete(sessionIds.getSessionIds());
+        sessionCommandService.deleteAll(sessionIds.getSessionIds());
         return ResponseEntity.ok().build();
     }
 

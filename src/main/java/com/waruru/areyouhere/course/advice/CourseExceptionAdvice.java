@@ -6,6 +6,7 @@ import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
 import com.waruru.areyouhere.manager.exception.ManagerNotFoundException;
 import com.waruru.areyouhere.course.exception.UnauthorizedManagerException;
+import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,10 +38,16 @@ public class CourseExceptionAdvice {
         return RESPONSE_BAD_REQUEST;
     }
 
+    @ExceptionHandler(ActivatedSessionExistsException.class)
+    public ResponseEntity<?> handleActivatedSessionExistsException(ActivatedSessionExistsException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGlobalException(Exception ex, WebRequest request) {
         // 모든 나머지 예외들을 처리
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
     }
+
 }

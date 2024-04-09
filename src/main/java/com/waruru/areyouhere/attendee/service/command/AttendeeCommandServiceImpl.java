@@ -1,9 +1,11 @@
 package com.waruru.areyouhere.attendee.service.command;
 
+import com.waruru.areyouhere.active.ActiveSessionService;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
+import com.waruru.areyouhere.attendee.exception.AttendeeNotFoundException;
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.course.domain.entity.Course;
@@ -31,6 +33,7 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
     private final AttendanceRepository attendanceRepository;
     private final AttendeeBatchRepository attendeeBatchRepository;
     private final CourseRepository courseRepository;
+    private final ActiveSessionService activeSessionService;
 
     @Override
     public void createAll(Long courseId, List<AttendeeInfo> newAttendees){
@@ -61,13 +64,13 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
 
         attendeeRepository.saveAll(attendeeToUpdate);
         attendeeBatchRepository.insertAttendeesBatch(attendeesToSave);
+        syncToRedis(courseId);
     }
 
     @Override
     public void updateAll(Long courseId, List<AttendeeInfo> updatedAttendees){
 
         throwIfAttendeesNameAndNoteNotUnique(updatedAttendees, courseId);
-
         updatedAttendees.stream()
                 .map(attendee ->
                         Attendee.builder()
@@ -77,13 +80,25 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
                                 .note(attendee.getNote())
                                 .build())
                 .forEach(attendeeRepository::save);
-
+        attendeeRepository.findAttendeesByCourse_Id(courseId);
+        syncToRedis(courseId);
     }
 
     public void deleteAll(List<Long> deleteAttendees){
+        Long courseId = attendeeRepository.findById(deleteAttendees.get(0))
+                .orElseThrow(() -> new AttendeeNotFoundException("Attendee not found"))
+                .getCourse().getId();
         attendanceRepository.deleteAllByAttendeeIds(deleteAttendees);
         attendeeRepository.deleteAllByIds(deleteAttendees);
+        syncToRedis(courseId);
+
     }
+
+    private void syncToRedis(Long courseId){
+        List<Attendee> attendees = attendeeRepository.findAttendeesByCourse_Id(courseId);
+        activeSessionService.updateAttendees(courseId, attendees);
+    }
+
 
     // TODO: Name에 index가 없다면 위에 비해 그리 빠를 지 모르겠다.
     // FIXME: Map<String, Set<String>> 같은 것 대신 그냥 class 선언해서 쓰는게

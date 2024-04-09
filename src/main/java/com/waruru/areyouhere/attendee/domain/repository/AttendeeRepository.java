@@ -56,7 +56,7 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
             + "GROUP BY atda.id", nativeQuery = true)
     public List<AttendeeAttendDetailInfo> findAttendanceInfoByAttendeeId(@Param("attendeeId") Long attendeeId);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from attendee a where a.id in :ids")
     public void deleteAllByIds(@Param("ids") List<Long> ids);
 
