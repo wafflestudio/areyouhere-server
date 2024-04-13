@@ -4,7 +4,6 @@ import com.waruru.areyouhere.active.domain.entity.CourseId;
 import com.waruru.areyouhere.active.domain.repository.CourseIdRedisRepository;
 import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.active.domain.repository.AttendanceRedisRepository;
-import com.waruru.areyouhere.attendance.exception.AlreadyAttendException;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
@@ -18,6 +17,7 @@ import com.waruru.areyouhere.active.domain.repository.AuthCodeRedisRepository;
 import com.waruru.areyouhere.active.domain.repository.SessionIdRedisRepository;
 import com.waruru.areyouhere.attendance.exception.AuthCodeNotFoundException;
 import com.waruru.areyouhere.attendee.exception.AttendeeNotFoundException;
+import com.waruru.areyouhere.attendance.exception.AlreadyAttendException;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -221,14 +221,13 @@ public class ActiveSessionServiceImpl implements ActiveSessionService {
         return attendanceRedisRepository.getAttendees(authCode).size();
     }
 
-    public boolean isSessionActivatedByCourseId(Long courseId){
+    public boolean isSessionActivatedByCourseId(Long courseId) {
         return courseIdRedisRepository.findById(courseId).isPresent();
     }
 
-    public boolean isSessionActivatedBySessionId(Long sessionId){
+    public boolean isSessionActivatedBySessionId(Long sessionId) {
         return sessionIdRedisRepository.findById(sessionId).isPresent();
     }
-
 
 
     private String generateAuthCode() {

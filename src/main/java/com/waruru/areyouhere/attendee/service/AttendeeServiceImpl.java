@@ -177,33 +177,6 @@ public class AttendeeServiceImpl implements AttendeeService {
         return attendeeRepository.findAttendeesByCourse_Id(courseId).size();
     }
 
-    @Transactional(readOnly = true)
-    public AttendeeDetailDto getAttendanceCount(Long attendeeId) {
-        Attendee attendee = attendeeRepository.findById(attendeeId)
-                .orElseThrow(() -> new IllegalArgumentException("참여자가 존재하지 않습니다."));
-
-        List<AttendeeAttendDetailInfo> attendanceInfoByAttendeeId = attendeeRepository.findAttendanceInfoByAttendeeId(
-                attendeeId);
-
-        int attendance = 0;
-        int absence = 0;
-
-        for (AttendeeAttendDetailInfo attendDetailInfo : attendanceInfoByAttendeeId) {
-            if (attendDetailInfo.getAttendanceStatus()) {
-                attendance++;
-            } else {
-                absence++;
-            }
-        }
-
-        return AttendeeDetailDto.builder()
-                .attendee(attendee)
-                .attendance(attendance)
-                .absence(absence)
-                .attendanceInfo(attendanceInfoByAttendeeId)
-                .build();
-    }
-
     @Override
     public void updateAll(Long courseId, List<AttendeeInfo> updatedAttendees) {
 
