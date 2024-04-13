@@ -29,7 +29,6 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     private final CourseRepository courseRepository;
     private final AttendanceRepository attendanceRepository;
     private final AttendeeRepository attendeeRepository;
-    private final ActiveSessionService activeSessionService;
 
     public void create(Long courseId, String sessionName) {
         // TODO : exception 수정
