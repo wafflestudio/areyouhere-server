@@ -85,7 +85,7 @@ public class ActiveSessionServiceImpl implements ActiveSessionService {
 
 
     @Override
-    public String createAuthCode(Course course, Session session, LocalDateTime currentTime) {
+    public String activate(Course course, Session session, LocalDateTime currentTime) {
         String generatedAuthCode = generateAuthCode();
 
         List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(course.getId());

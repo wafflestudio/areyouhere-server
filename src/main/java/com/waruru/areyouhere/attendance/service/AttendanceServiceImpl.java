@@ -8,7 +8,12 @@ import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttend
 import com.waruru.areyouhere.attendance.service.rdb.AttendanceRDBService;
 import com.waruru.areyouhere.active.service.ActiveSessionService;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
+import com.waruru.areyouhere.course.domain.entity.Course;
+import com.waruru.areyouhere.course.service.CourseService;
+import com.waruru.areyouhere.session.domain.entity.Session;
+import com.waruru.areyouhere.session.service.command.SessionCommandService;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
+import com.waruru.areyouhere.session.service.query.SessionQueryService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -23,6 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceRDBService attendanceRDBService;
     private final ActiveSessionService activeSessionService;
+    private final CourseService courseService;
+    private final SessionQueryService sessionQueryService;
+    private final SessionCommandService sessionCommandService;
 
     @Override
     @Transactional
@@ -38,7 +46,6 @@ public class AttendanceServiceImpl implements AttendanceService {
         }
 
         AuthCodeInfo authCodeInfo = activeSessionService.isAttendPossible(authCode, attendeeName, attendeeId);
-        attendanceRDBService.setAttend(authCodeInfo.getSessionId(), attendeeName, attendeeId);
         AttendeeRedisData attendeeInSession = activeSessionService.findByNameIfNotDuplicatedOrId(attendeeName,
                 attendeeId,
                 activeSessionService.getSessionAttendanceInfoOrThrow(authCode));
@@ -71,6 +78,27 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Transactional(readOnly = true)
     public CurrentSessionAttendeeAttendance getCurrentSessionAttendeesAndAbsentees(String authCode) {
         return activeSessionService.getCurrentSessionAttendees(authCode);
+    }
+
+    @Override
+    @Transactional
+    public String activateSession(Long sessionId, Long courseId) {
+        Course course = courseService.get(courseId);
+        Session session = sessionQueryService.get(sessionId);
+        LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        return activeSessionService.activate(course, session, currentTime);
+    }
+
+    @Override
+    @Transactional
+    public void deactivateSession(String authCode, Long sessionId, Long courseId) {
+        sessionQueryService.checkNotDeactivated(sessionId);
+        CurrentSessionAttendeeAttendance currentSessionAttendees = activeSessionService.getCurrentSessionAttendees(
+                authCode);
+
+        attendanceRDBService.setAttendancesAfterDeactivate(courseId, sessionId, currentSessionAttendees);
+        sessionCommandService.deactivate(sessionId);
+        activeSessionService.deactivate(authCode);
     }
 
 

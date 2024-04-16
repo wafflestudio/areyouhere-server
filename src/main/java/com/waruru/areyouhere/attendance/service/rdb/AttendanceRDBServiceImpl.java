@@ -2,8 +2,11 @@ package com.waruru.areyouhere.attendance.service.rdb;
 
 
 import com.waruru.areyouhere.attendance.domain.entity.Attendance;
+import com.waruru.areyouhere.attendance.domain.repository.AttendanceBatchRepository;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
+import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
+import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.session.domain.entity.Session;
@@ -24,42 +27,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class AttendanceRDBServiceImpl implements AttendanceRDBService {
 
     private final AttendanceRepository attendanceRepository;
-    private final AttendeeRepository attendeeRepository;
-    private final SessionRepository sessionRepository;
+    private final AttendanceBatchRepository attendanceBatchRepository;
+
 
     @Override
-    public void setAbsentAfterDeactivation(long courseId, long sessionId) {
+    public void setAttendancesAfterDeactivate(long courseId, long sessionId, CurrentSessionAttendeeAttendance currentSessionAttendeeAttendance) {
 
-        List<Attendee> absenteeBySessionId = attendeeRepository.findAbsenteeBySessionIdWhenNoRegister(courseId,
-                sessionId);
-        Session session = sessionRepository.findById(sessionId).orElseThrow(SessionIdNotFoundException::new);
-        List<Attendance> attendances = absenteeBySessionId.stream().map(attendee -> Attendance.builder()
-                .attendee((attendee))
-                .session(session)
-                .isAttended(false)
-                .build()).toList();
-        attendanceRepository.saveAll(attendances);
-    }
+        List<AttendeeRedisData> attendees = currentSessionAttendeeAttendance.getAttendees();
+        List<AttendeeRedisData> absentees = currentSessionAttendeeAttendance.getAbsentees();
 
-    @Async
-    public void setAttend(Long sessionId, String attendanceName, Long attendeeId) {
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(SessionIdNotFoundException::new);
-        Long courseId = session.getCourse().getId(); // lazy loading?
-        List<Attendee> attendeesByCourseId = attendeeRepository.findAttendeesByCourse_Id(courseId);
-
-        Attendee attendee = getAttendee(attendanceName, attendeeId,
-                attendeesByCourseId);
-
-        // TODO : attendeesByCourseId null 및 empty 체크
-
-        Attendance attendance = Attendance.builder()
-                .session(session)
-                .isAttended(true)
-                .attendee(attendee)
-                .build();
-        attendanceRepository.save(attendance);
-
+        attendanceBatchRepository.insertAttendanceBatch(attendees, true, sessionId);
+        attendanceBatchRepository.insertAttendanceBatch(absentees, false, sessionId);
     }
 
 

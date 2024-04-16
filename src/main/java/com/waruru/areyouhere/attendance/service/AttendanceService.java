@@ -15,4 +15,8 @@ public interface AttendanceService {
     public CurrentSessionAttendCount getCurrentSessionAttendCount(Long sessionId);
 
     public CurrentSessionAttendeeAttendance getCurrentSessionAttendeesAndAbsentees(String authCode);
+
+    public String activateSession(Long sessionId, Long courseId);
+
+    public void deactivateSession(String authCode, Long sessionId, Long courseId);
 }

@@ -17,7 +17,7 @@ public interface ActiveSessionService {
 
     public AuthCodeInfo isAttendPossible(String authCode, String attendanceName, Long attendeeId);
 
-    public String createAuthCode(Course course, Session sessionId, LocalDateTime currentTime);
+    public String activate(Course course, Session sessionId, LocalDateTime currentTime);
 
     public void deactivate(String authCode);
 
