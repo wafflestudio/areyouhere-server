@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.course.service;
 
-import com.waruru.areyouhere.active.ActiveSessionService;
+import com.waruru.areyouhere.active.service.ActiveSessionService;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
@@ -11,7 +11,6 @@ import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.course.dto.CourseData;
-import com.waruru.areyouhere.course.exception.CourseActivatedSessionException;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.session.domain.entity.Session;

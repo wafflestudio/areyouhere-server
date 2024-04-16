@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.active;
+package com.waruru.areyouhere.active.service;
 
 import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;

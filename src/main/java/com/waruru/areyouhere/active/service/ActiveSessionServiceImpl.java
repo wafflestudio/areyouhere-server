@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.active;
+package com.waruru.areyouhere.active.service;
 
 import com.waruru.areyouhere.active.domain.entity.CourseId;
 import com.waruru.areyouhere.active.domain.repository.CourseIdRedisRepository;

@@ -6,7 +6,7 @@ import com.waruru.areyouhere.attendance.dto.response.AttendResponseDto;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendCount;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendance.service.rdb.AttendanceRDBService;
-import com.waruru.areyouhere.active.ActiveSessionService;
+import com.waruru.areyouhere.active.service.ActiveSessionService;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;

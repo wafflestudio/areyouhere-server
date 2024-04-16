@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//TODO : user 정보에 따른 course가 맞는지 확인하는 로직 추가. 보안.
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -36,7 +35,7 @@ public class SessionServiceImpl implements SessionService {
     private final AttendanceRepository attendanceRepository;
 
     public void create(Long courseId, String sessionName) {
-        // TODO : exception 수정
+
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(SessionIdNotFoundException::new);
 
@@ -57,7 +56,6 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.deleteAllByIds(sessionIds);
     }
 
-    // TODO : 리팩토링 노타임..
     @Transactional(readOnly = true)
     @Override
     public CurrentSessionDto getCurrentSessionInfo(Long courseId) {

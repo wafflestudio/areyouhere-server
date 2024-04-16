@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.attendee.service.command;
 
-import com.waruru.areyouhere.active.ActiveSessionService;
+import com.waruru.areyouhere.active.service.ActiveSessionService;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
