@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.active;
+package com.waruru.areyouhere.active.service;
 
 import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
@@ -11,13 +11,13 @@ import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ActiveSessionService {
+public interface ActiveAttendanceService {
 
     public List<AttendeeInfo> getNameSakeInfos(String authCode, String attendeeName);
 
     public AuthCodeInfo isAttendPossible(String authCode, String attendanceName, Long attendeeId);
 
-    public String createAuthCode(Course course, Session sessionId, LocalDateTime currentTime);
+    public String activate(Course course, Session sessionId, LocalDateTime currentTime);
 
     public void deactivate(String authCode);
 
@@ -38,14 +38,10 @@ public interface ActiveSessionService {
 
     public void updateCourseName(Long courseId, String courseName);
 
-    public void updateSessionName(Long courseId, String sessionName);
 
     public void updateAttendees(Long courseId, List<Attendee> attendees);
 
-
     public boolean isSessionActivatedByCourseId(Long courseId);
-
-    public boolean isSessionActivatedBySessionId(Long sessionId);
 
 
 }

@@ -32,15 +32,15 @@ public class RedisConfig {
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
-    @Bean
-    public RedisTemplate<String, Long> redisTemplate() {
-        RedisTemplate<String, Long> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-        redisTemplate.setKeySerializer( new StringRedisSerializer() );
-        redisTemplate.setHashValueSerializer( new GenericToStringSerializer< Long >( Long.class ) );
-        redisTemplate.setValueSerializer( new GenericToStringSerializer< Long >( Long.class ) );
-        return redisTemplate;
-    }
+//    @Bean
+//    public RedisTemplate<String, Long> redisTemplate() {
+//        RedisTemplate<String, Long> redisTemplate = new RedisTemplate<>();
+//        redisTemplate.setConnectionFactory(redisConnectionFactory());
+//        redisTemplate.setKeySerializer( new StringRedisSerializer() );
+//        redisTemplate.setHashValueSerializer( new GenericToStringSerializer< Long >( Long.class ) );
+//        redisTemplate.setValueSerializer( new GenericToStringSerializer< Long >( Long.class ) );
+//        return redisTemplate;
+//    }
 
 
 }

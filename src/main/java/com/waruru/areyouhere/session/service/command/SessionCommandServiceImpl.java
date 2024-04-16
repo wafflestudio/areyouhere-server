@@ -1,8 +1,6 @@
 package com.waruru.areyouhere.session.service.command;
 
-import com.waruru.areyouhere.active.ActiveSessionService;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
-import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.exception.AttendeeNotFoundException;
 import com.waruru.areyouhere.course.domain.entity.Course;
