@@ -2,9 +2,7 @@ package com.waruru.areyouhere.session.service.query;
 
 import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.session.domain.entity.Session;
-import com.waruru.areyouhere.active.domain.entity.SessionId;
-import com.waruru.areyouhere.active.domain.repository.AuthCodeRedisRepository;
-import com.waruru.areyouhere.active.domain.repository.SessionIdRedisRepository;
+import com.waruru.areyouhere.active.domain.repository.ActiveSessionRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.domain.repository.dto.SessionInfo;
 import com.waruru.areyouhere.session.exception.CurrentSessionDeactivatedException;
@@ -26,8 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SessionQueryServiceImpl implements SessionQueryService {
 
     private final SessionRepository sessionRepository;
-    private final AuthCodeRedisRepository authCodeRedisRepository;
-    private final SessionIdRedisRepository sessionIdRedisRepository;
+    private final ActiveSessionRepository activeSessionRepository;
 
     @Override
     public CurrentSessionDto getCurrentSessionInfo(Long courseId) {
@@ -111,18 +108,11 @@ public class SessionQueryServiceImpl implements SessionQueryService {
     }
 
     private CurrentSessionAttendanceInfo getAuthCodeIfExistsOrEmptyAuthCode(Long sessionId) {
-        SessionId session = sessionIdRedisRepository
-                .findById(sessionId)
-                .orElse(null);
-
-        return session != null ?
-                authCodeRedisRepository
-                        .findById(session.getAuthCode())
-                        .orElseThrow(CurrentSessionNotFoundException::new)
-                : CurrentSessionAttendanceInfo.builder()
+        return activeSessionRepository
+                .findBySessionId(sessionId).orElseGet(() -> CurrentSessionAttendanceInfo.builder()
                         .authCode(null)
                         .sessionName(null)
-                        .build();
+                        .build());
     }
 
     private List<Session> getRecentSessions(Long courseId) {

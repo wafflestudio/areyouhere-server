@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.course.service;
 
-import com.waruru.areyouhere.active.service.ActiveSessionService;
+import com.waruru.areyouhere.active.service.ActiveAttendanceService;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
@@ -38,7 +38,7 @@ public class CourseServiceImpl implements CourseService {
     private final AttendeeRepository attendeeRepository;
     private final AttendanceRepository attendanceRepository;
     private final SessionRepository sessionRepository;
-    private final ActiveSessionService activeSessionService;
+    private final ActiveAttendanceService activeAttendanceService;
 
 
     @Override
@@ -105,12 +105,12 @@ public class CourseServiceImpl implements CourseService {
 
         course.update(name, description, onlyListNameAllowed);
         courseRepository.save(course);
-        activeSessionService.updateCourseName(courseId, name);
+        activeAttendanceService.updateCourseName(courseId, name);
     }
 
     @Override
     public void delete(Long managerId, Long courseId) {
-        if(activeSessionService.isSessionActivatedByCourseId(courseId)){
+        if(activeAttendanceService.isSessionActivatedByCourseId(courseId)){
             throw new ActivatedSessionExistsException("Session is activated");
         }
 
@@ -128,6 +128,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Course get(Long courseId) {
         return courseRepository.findById(courseId).
                 orElseThrow(() -> new IllegalArgumentException("Course not found"));

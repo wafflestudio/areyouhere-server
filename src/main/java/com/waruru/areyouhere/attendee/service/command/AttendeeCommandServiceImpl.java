@@ -1,6 +1,6 @@
 package com.waruru.areyouhere.attendee.service.command;
 
-import com.waruru.areyouhere.active.service.ActiveSessionService;
+import com.waruru.areyouhere.active.service.ActiveAttendanceService;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
@@ -34,7 +34,7 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
     private final AttendanceRepository attendanceRepository;
     private final AttendeeBatchRepository attendeeBatchRepository;
     private final CourseRepository courseRepository;
-    private final ActiveSessionService activeSessionService;
+    private final ActiveAttendanceService activeAttendanceService;
 
     @Override
     public void createAll(Long courseId, List<AttendeeInfo> newAttendees){
@@ -89,7 +89,7 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
         Long courseId = attendeeRepository.findById(deleteAttendees.get(0))
                 .orElseThrow(() -> new AttendeeNotFoundException("Attendee not found"))
                 .getCourse().getId();
-        if(activeSessionService.isSessionActivatedByCourseId(courseId)){
+        if(activeAttendanceService.isSessionActivatedByCourseId(courseId)){
             throw new ActivatedSessionExistsException();
         }
         attendanceRepository.deleteAllByAttendeeIds(deleteAttendees);
@@ -98,7 +98,7 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
 
     private void syncToRedis(Long courseId){
         List<Attendee> attendees = attendeeRepository.findAttendeesByCourse_Id(courseId);
-        activeSessionService.updateAttendees(courseId, attendees);
+        activeAttendanceService.updateAttendees(courseId, attendees);
     }
 
 

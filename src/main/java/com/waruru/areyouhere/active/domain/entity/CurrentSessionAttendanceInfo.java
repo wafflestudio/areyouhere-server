@@ -5,7 +5,9 @@ import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
 @RedisHash(value = "auth_code")
@@ -26,12 +29,17 @@ public class CurrentSessionAttendanceInfo {
     private String authCode;
 
     @NotNull
+    @Indexed
     private long sessionId;
 
     @NotNull
+    @Indexed
     private long courseId;
 
     private List<AttendeeRedisData> attendees;
+
+    @Getter
+    private Map<Long, LocalDateTime> attendanceTime = new HashMap<>();
 
     @NotNull
     @Setter
@@ -72,6 +80,22 @@ public class CurrentSessionAttendanceInfo {
                         .note(attendee.getNote())
                         .build())
                 .toList();
+    }
+
+    public void setAttendanceTime(Long attendeeId, LocalDateTime time){
+        attendanceTime.put(attendeeId, time);
+    }
+
+    public void removeAttendanceTime(Long attendeeId){
+        attendanceTime.remove(attendeeId);
+    }
+
+    public Set<Long> getAttendAttendeesIds(){
+        return attendanceTime.keySet();
+    }
+
+    public boolean isAlreadyAttended(Long attendeeId){
+        return attendanceTime.containsKey(attendeeId);
     }
 
 }
