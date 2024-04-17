@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(ActiveSessionAttendanceController.AUTH_CODE_API_URL)
-public class ActiveSessionAttendanceController {
+@RequestMapping(ActiveSessionController.AUTH_CODE_API_URL)
+public class ActiveSessionController {
 
     public static final String AUTH_CODE_API_URL = "/api/auth-code";
 
@@ -26,7 +26,7 @@ public class ActiveSessionAttendanceController {
     public ResponseEntity<String> activate(@RequestBody AuthCodeRequestDto authCodeRequestDto) {
         Long sessionId = authCodeRequestDto.getSessionId();
         Long courseId = authCodeRequestDto.getCourseId();
-        return ResponseEntity.ok(activeSessionService.activateSession(sessionId, courseId));
+        return ResponseEntity.ok(activeSessionService.activate(sessionId, courseId));
     }
 
     @PostMapping("/deactivate")
@@ -35,7 +35,7 @@ public class ActiveSessionAttendanceController {
         Long sessionId = authCodeDeactivationRequestDto.getSessionId();
         Long courseId = authCodeDeactivationRequestDto.getCourseId();
         String authCode = authCodeDeactivationRequestDto.getAuthCode();
-        activeSessionService.deactivateSession(authCode, sessionId, courseId);
+        activeSessionService.deactivate(authCode, sessionId, courseId);
         return ResponseEntity.ok().build();
     }
 

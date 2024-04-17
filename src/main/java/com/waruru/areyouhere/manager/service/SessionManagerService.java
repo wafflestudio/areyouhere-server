@@ -41,7 +41,7 @@ public class SessionManagerService implements ManagerService {
 
     @Override
     @Transactional
-    public void register(String email, String password, String nickname){
+    public void signUp(String email, String password, String nickname){
         boolean isEmailDuplicated = isDuplicatedEmail(email);
 
         if(isEmailDuplicated){

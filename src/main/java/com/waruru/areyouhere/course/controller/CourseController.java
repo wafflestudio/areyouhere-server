@@ -25,14 +25,14 @@ public class CourseController {
 
     @LoginRequired
     @GetMapping("/{courseId}")
-    ResponseEntity<CourseGetResponse> getCourse(@PathVariable Long courseId) {
+    ResponseEntity<CourseGetResponse> get(@PathVariable Long courseId) {
         Course course = courseService.get(courseId);
         return ResponseEntity.ok(CourseGetResponse.from(course));
     }
 
     @LoginRequired
     @PostMapping
-    public ResponseEntity<Void> createCourse(
+    public ResponseEntity<Void> create(
             @Login Manager manager,
             @RequestBody CourseCreationRequest request) {
         courseService.create(manager.getId(), request.getName(), request.getDescription(), request.getAttendees(),
@@ -43,7 +43,7 @@ public class CourseController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<AllCourseResponse> getAllCourses(@Login Manager manager) {
+    public ResponseEntity<AllCourseResponse> getAll(@Login Manager manager) {
         List<CourseData> courses = courseService.getAll(manager.getId());
         AllCourseResponse response = new AllCourseResponse(courses);
         return ResponseEntity.ok(response);
@@ -51,8 +51,8 @@ public class CourseController {
 
     @LoginRequired
     @PutMapping("/{courseId}")
-    public ResponseEntity<Void> updateCourse(@Login Manager manager, @PathVariable Long courseId,
-                                             @RequestBody CourseUpdateRequest request) {
+    public ResponseEntity<Void> update(@Login Manager manager, @PathVariable Long courseId,
+                                       @RequestBody CourseUpdateRequest request) {
         courseService.update(manager.getId(), courseId, request.getName(), request.getDescription(),
                 request.isOnlyListNameAllowed());
         return ResponseEntity.ok().build();
@@ -60,7 +60,7 @@ public class CourseController {
 
     @LoginRequired
     @DeleteMapping("/{courseId}")
-    public ResponseEntity<Void> deleteCourse(@Login Manager manager
+    public ResponseEntity<Void> delete(@Login Manager manager
             , @PathVariable Long courseId) {
         courseService.delete(manager.getId(), courseId);
         return ResponseEntity.ok().build();

@@ -46,7 +46,7 @@ public class ManagerController {
     @PostMapping("/signup")
     public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
 
-        managerService.register(signUpRequestDto.getEmail(), signUpRequestDto.getPassword(), signUpRequestDto.getNickname());
+        managerService.signUp(signUpRequestDto.getEmail(), signUpRequestDto.getPassword(), signUpRequestDto.getNickname());
         return RESPONSE_OK;
 
     }

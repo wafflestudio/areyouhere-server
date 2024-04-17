@@ -37,7 +37,7 @@ public class SessionController {
 
     // TODO : refactor => service Dto 그대로 사용.
     @GetMapping
-    public ResponseEntity<AllSessionAttendanceInfo> getAllSession(@RequestParam("courseId") Long courseId){
+    public ResponseEntity<AllSessionAttendanceInfo> getAll(@RequestParam("courseId") Long courseId){
 
         List<SessionAttendanceInfo> allSessions = sessionQueryService.getAll(courseId);
         if(allSessions.isEmpty()){
@@ -65,7 +65,7 @@ public class SessionController {
     public ResponseEntity<SessionAttendanceInfo> getSessionBasicInfo(@PathVariable("sessionId") Long sessionId){
         return ResponseEntity.ok(sessionQueryService.getSessionAttendanceInfo(sessionId));
     }
-
+    // TODO: refactor => attendeeService로 이동
     @GetMapping("/{sessionId}/attendee")
     public ResponseEntity<SessionAttendeesResponseDto> getSessionAllAttendees(@PathVariable("sessionId") Long sessionId){
         List<SessionAttendees> sessionAttendees = attendeeQueryService.getSessionAttendeesIfExistsOrEmpty(

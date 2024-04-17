@@ -20,10 +20,10 @@ public class Manager {
     private String email;
 
     @NotNull
-    private String password;
+    private String name;
 
     @NotNull
-    private String name;
+    private String password;
 
     @Builder
     public Manager(String email, String password, String name){

@@ -12,7 +12,6 @@ import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.service.dto.UpdateSession;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class SessionCommandServiceImpl implements SessionCommandService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseNotFoundException::new);
 
-        sessionRepository.findMostRecentSessionByCourseId(courseId)
+        sessionRepository.findMostRecentByCourseId(courseId)
                 .ifPresent(session -> {
                     if (!session.isDeactivated()) {
                         throw new ActivatedSessionExistsException();
@@ -69,13 +68,6 @@ public class SessionCommandServiceImpl implements SessionCommandService {
         sessionRepository.save(session);
     }
 
-    @Override
-    public void setStartTime(Long sessionId, LocalDateTime currentTime) {
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(SessionIdNotFoundException::new);
-        session.setAuthCodeCreatedAt(currentTime);
-        sessionRepository.save(session);
-    }
 
     @Override
     public void updateAll(List<UpdateSession> sessions) {
