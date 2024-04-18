@@ -29,7 +29,7 @@ public class SessionQueryServiceImpl implements SessionQueryService {
     @Override
     public CurrentSessionDto getCurrentSessionInfo(Long courseId) {
         Session mostRecentSession = sessionRepository
-                .findMostRecentSessionByCourseId(courseId)
+                .findMostRecentByCourseId(courseId)
                 .orElseThrow(CurrentSessionNotFoundException::new);
 
         // 제일 최근 세션이 이미 출석 체크가 끝났는지
@@ -116,7 +116,7 @@ public class SessionQueryServiceImpl implements SessionQueryService {
     }
 
     private List<Session> getRecentSessions(Long courseId) {
-        return Optional.ofNullable(sessionRepository.findTOP6BySessionByCourseId(courseId))
+        return Optional.ofNullable(sessionRepository.findTOP6ByCourseId(courseId))
                 .orElse(Collections.emptyList());
     }
 

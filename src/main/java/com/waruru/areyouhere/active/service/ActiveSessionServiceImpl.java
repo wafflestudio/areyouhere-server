@@ -27,7 +27,7 @@ public class ActiveSessionServiceImpl implements ActiveSessionService {
 
     @Override
     @Transactional
-    public String activateSession(Long sessionId, Long courseId) {
+    public String activate(Long sessionId, Long courseId) {
         Course course = courseService.get(courseId);
         Session session = sessionQueryService.get(sessionId);
         LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
@@ -36,7 +36,7 @@ public class ActiveSessionServiceImpl implements ActiveSessionService {
 
     @Override
     @Transactional
-    public void deactivateSession(String authCode, Long sessionId, Long courseId) {
+    public void deactivate(String authCode, Long sessionId, Long courseId) {
         sessionQueryService.checkNotDeactivated(sessionId);
 
         CurrentSessionAttendanceInfo currentSessionAttendanceInfo = activeAttendanceService.getSessionAttendanceInfoOrThrow(

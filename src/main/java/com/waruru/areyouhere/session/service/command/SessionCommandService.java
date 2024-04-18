@@ -11,7 +11,5 @@ public interface SessionCommandService {
 
     public void deactivate(Long sessionId);
 
-    public void setStartTime(Long sessionId, LocalDateTime currentTime);
-
     public void updateAll(List<UpdateSession> sessions);
 }
