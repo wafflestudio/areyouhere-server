@@ -2,6 +2,9 @@ package com.waruru.areyouhere.manager.service;
 
 import com.waruru.areyouhere.auth.entity.LoginUser;
 import com.waruru.areyouhere.auth.session.SessionManager;
+import com.waruru.areyouhere.common.annotation.LoginRequired;
+import com.waruru.areyouhere.course.domain.repository.CourseRepository;
+import com.waruru.areyouhere.course.service.CourseService;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
@@ -17,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class SessionManagerService implements ManagerService {
-
+    // TODO: refactor: 계층 구조 최초 위반 -> 그냥 soft delete로 바꾸기
+    private final CourseService courseService;
+    private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
     private final SessionManager sessionManager;
     private final PasswordEncoder passwordEncoder;
@@ -85,8 +90,10 @@ public class SessionManagerService implements ManagerService {
         managerRepository.save(manager.update(name, passwordEncoder.encode(password)));
     }
 
+    @Override
+    @Transactional
     public void delete(Long userId){
-        
+        courseRepository.findAllByManagerId(userId).forEach(course -> courseService.delete(userId, course.getId()));
         managerRepository.deleteById(userId);
     }
 }

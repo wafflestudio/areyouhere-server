@@ -15,4 +15,6 @@ public interface ManagerService {
     public boolean isDuplicatedEmail(String email);
 
     public void update(Long userId, String name, String password);
+
+    public void delete(Long userId);
 }
