@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -85,6 +86,13 @@ public class ManagerController {
     @PutMapping
     public ResponseEntity<HttpStatus> update(@RequestBody UpdateRequestDto updateRequestDto, @Login Manager manager){
         managerService.update(manager.getId(), updateRequestDto.getName(), updateRequestDto.getPassword());
+        return RESPONSE_OK;
+    }
+
+    @LoginRequired
+    @DeleteMapping
+    public ResponseEntity<HttpStatus> delete(@Login Manager manager){
+        managerService.delete(manager.getId());
         return RESPONSE_OK;
     }
 
