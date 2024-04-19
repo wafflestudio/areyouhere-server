@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.session.service.command;
 
+import com.waruru.areyouhere.active.service.ActiveAttendanceService;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.exception.AttendeeNotFoundException;
@@ -26,7 +27,9 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     private final CourseRepository courseRepository;
     private final AttendanceRepository attendanceRepository;
     private final AttendeeRepository attendeeRepository;
+    private final ActiveAttendanceService activeAttendanceService;
 
+    @Override
     public void create(Long courseId, String sessionName) {
         // TODO : exception 수정
         Course course = courseRepository.findById(courseId)
@@ -51,6 +54,15 @@ public class SessionCommandServiceImpl implements SessionCommandService {
         sessionRepository.save(session);
     }
 
+    @Override
+    public void deleteNotActivated(Long courseId) {
+        sessionRepository.findMostRecentByCourseId(courseId)
+                .ifPresent(session -> {
+                    if (!activeAttendanceService.isSessionActivatedByCourseId(courseId) && !session.isDeactivated()) {
+                        sessionRepository.delete(session);
+                    }
+                });
+    }
     @Override
     public void deleteAll(List<Long> sessionIds) {
         sessionIds.forEach(sessionId -> {
