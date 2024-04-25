@@ -69,6 +69,7 @@ public class SessionController {
         sessionCommandService.deleteNotActivated(courseId);
         return ResponseEntity.ok().build();
     }
+
     @LoginRequired
     @GetMapping("/{sessionId}")
     public ResponseEntity<SessionAttendanceInfo> getSessionBasicInfo(@PathVariable("sessionId") Long sessionId){

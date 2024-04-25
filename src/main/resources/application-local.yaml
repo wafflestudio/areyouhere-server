@@ -23,10 +23,20 @@ spring:
     redis:
       host: localhost
       port: 6379
-
+  mail:
+    host: null
+    port: 1
+    username: null
+    password: null
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
 logging:
   level:
-    root: info
+    root: debug
 
 cors:
   allowed-origins: http://localhost:5173

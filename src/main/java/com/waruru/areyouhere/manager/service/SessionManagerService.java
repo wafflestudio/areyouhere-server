@@ -12,6 +12,7 @@ import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class SessionManagerService implements ManagerService {
-    // TODO: refactor: 계층 구조 최초 위반 -> 그냥 soft delete로 바꾸기
+    // TODO: refactor: 계층 구조 위반
     private final CourseService courseService;
     private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
     private final SessionManager sessionManager;
     private final PasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
 
     @Override
     @Transactional(readOnly = true)
@@ -96,4 +98,5 @@ public class SessionManagerService implements ManagerService {
         courseRepository.findAllByManagerId(userId).forEach(course -> courseService.delete(userId, course.getId()));
         managerRepository.deleteById(userId);
     }
+
 }

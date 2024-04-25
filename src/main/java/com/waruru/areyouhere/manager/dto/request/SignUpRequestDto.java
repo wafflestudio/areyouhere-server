@@ -1,7 +1,6 @@
 package com.waruru.areyouhere.manager.dto.request;
 
 
-import com.waruru.areyouhere.manager.domain.entity.Manager;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -10,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @Getter
@@ -32,5 +30,5 @@ public class SignUpRequestDto {
     @NotEmpty
     @Pattern(message = "닉네임은 2자 이상 16자 이하의 영어, 숫자, 한글로 입력해주세요. 초성은 허가하지 않습니다.",
             regexp = "^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,16}$")
-    private String nickname;
+    private String name;
 }

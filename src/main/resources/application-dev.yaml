@@ -19,11 +19,21 @@ spring:
     redis:
       host: ${REDIS_DATASOURCE_HOST}
       port: ${REDIS_DATASOURCE_PORT}
+  mail:
+    host: ${DEV_MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${DEV_MAIL_USERNAME}
+    password: ${DEV_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 
 cors:
   allowed-origins: https://dev.areyouhere.today, https://dev.www.areyouhere.today
-
 cookie:
   encode: ${SECRET_KEY}
 
