@@ -28,6 +28,7 @@ spring:
     port: 1
     username: null
     password: null
+    from: null
     properties:
       mail:
         smtp:

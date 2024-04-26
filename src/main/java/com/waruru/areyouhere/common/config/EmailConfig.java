@@ -12,7 +12,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Configuration
 @ConfigurationProperties(prefix = "spring.mail")
 public class EmailConfig {
-    private String email;
+    private String username;
     private String password;
     private String host;
     private int port;
@@ -22,12 +22,15 @@ public class EmailConfig {
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(host);
-        mailSender.setUsername(email);
+        mailSender.setUsername(username);
         mailSender.setPassword(password);
         mailSender.setPort(port);
+
         Properties javaMailProperties = new Properties();
         javaMailProperties.put("mail.smtp.auth", "true");
         javaMailProperties.put("mail.smtp.starttls.enable", "true");
+        javaMailProperties.put("mail.smtp.starttls.required", "true");
+
 
         mailSender.setJavaMailProperties(javaMailProperties);
 

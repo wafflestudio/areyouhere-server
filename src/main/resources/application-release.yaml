@@ -17,9 +17,10 @@ spring:
       port: ${REDIS_DATASOURCE_PORT}
   mail:
     host: ${RELEASE_MAIL_HOST}
-    port: ${MAIL_PORT}
+    port: 587
     username: ${RELEASE_MAIL_USERNAME}
     password: ${RELEASE_MAIL_PASSWORD}
+    from: ${RELEASE_MAIL_SENDER}
     properties:
       mail:
         smtp:

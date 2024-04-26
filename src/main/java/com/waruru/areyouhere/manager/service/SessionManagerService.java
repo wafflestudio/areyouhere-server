@@ -2,24 +2,23 @@ package com.waruru.areyouhere.manager.service;
 
 import com.waruru.areyouhere.auth.entity.LoginUser;
 import com.waruru.areyouhere.auth.session.SessionManager;
-import com.waruru.areyouhere.common.annotation.LoginRequired;
+import com.waruru.areyouhere.email.domain.MessageTemplate;
+import com.waruru.areyouhere.email.service.EmailService;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.course.service.CourseService;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
+import com.waruru.areyouhere.manager.domain.repository.VerifyCodeRepository;
 import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
 import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class SessionManagerService implements ManagerService {
     // TODO: refactor: 계층 구조 위반
     private final CourseService courseService;
@@ -27,7 +26,12 @@ public class SessionManagerService implements ManagerService {
     private final ManagerRepository managerRepository;
     private final SessionManager sessionManager;
     private final PasswordEncoder passwordEncoder;
-    private final JavaMailSender mailSender;
+    private final EmailService emailService;
+    private final VerifyCodeRepository verifyCodeRepository;
+
+    private static final String SIGNUP_EMAIL_TITLE = "이메일 인증";
+    private static final String PASSWORD_RESET_EMAIL_TITLE = "비밀번호 재설정";
+
 
     @Override
     @Transactional(readOnly = true)
@@ -97,6 +101,15 @@ public class SessionManagerService implements ManagerService {
     public void delete(Long userId){
         courseRepository.findAllByManagerId(userId).forEach(course -> courseService.delete(userId, course.getId()));
         managerRepository.deleteById(userId);
+    }
+    public void checkEmailForSignUp(String email){
+        String verificationCode = verifyCodeRepository.saveAndGetCode(email);
+        emailService.sendVerifyEmail(email, SIGNUP_EMAIL_TITLE, verificationCode, MessageTemplate.SIGN_UP);
+    }
+
+    public void checkEmailForPasswordReset(String email){
+        String verificationCode = verifyCodeRepository.saveAndGetCode(email);
+        emailService.sendVerifyEmail(email, PASSWORD_RESET_EMAIL_TITLE, verificationCode, MessageTemplate.PASSWORD_RESET);
     }
 
 }
