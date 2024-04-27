@@ -22,12 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class SessionManagerService implements ManagerService {
     // TODO: refactor: 계층 구조 위반
     private final CourseService courseService;
+    private final EmailService emailService;
+
     private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
+    private final VerifyCodeRepository verifyCodeRepository;
+
     private final SessionManager sessionManager;
     private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
-    private final VerifyCodeRepository verifyCodeRepository;
 
     private static final String SIGNUP_EMAIL_TITLE = "이메일 인증";
     private static final String PASSWORD_RESET_EMAIL_TITLE = "비밀번호 재설정";
@@ -38,7 +40,7 @@ public class SessionManagerService implements ManagerService {
     public boolean login(String email, String password) {
         Manager findManager = managerRepository.findManagerByEmail(email)
                 .orElseThrow(UnAuthenticatedException::new);
-        if(passwordEncoder.matches(password, findManager.getPassword())){
+        if (passwordEncoder.matches(password, findManager.getPassword())) {
             sessionManager.createSession(findManager.getId());
             return true;
         }
@@ -52,14 +54,14 @@ public class SessionManagerService implements ManagerService {
 
     @Override
     @Transactional
-    public void signUp(String email, String password, String nickname){
+    public void signUp(String email, String password, String nickname) {
         boolean isEmailDuplicated = isDuplicatedEmail(email);
 
-        if(!verifyCodeRepository.isVerified(email)){
+        if (!verifyCodeRepository.isVerified(email)) {
             throw new UnAuthenticatedException("이메일 인증을 완료해주세요.");
         }
 
-        if(isEmailDuplicated){
+        if (isEmailDuplicated) {
             throw new DuplicatedEmailException("중복된 이메일입니다.");
         }
         Manager manager = managerRepository.save(
@@ -76,10 +78,10 @@ public class SessionManagerService implements ManagerService {
 
     @Override
     @Transactional(readOnly = true)
-    public Manager getLoginUser(){
+    public Manager getLoginUser() {
         LoginUser loginUser = sessionManager.getSession();
 
-        if (loginUser == null){
+        if (loginUser == null) {
             throw new UnAuthenticatedException();
         }
 
@@ -88,43 +90,46 @@ public class SessionManagerService implements ManagerService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isDuplicatedEmail(String email){
+    public boolean isDuplicatedEmail(String email) {
         return managerRepository.existsByEmail(email);
     }
 
 
     @Override
     @Transactional
-    public void update(Long userId, String name, String password){
+    public void update(Long userId, String name, String password) {
         Manager manager = managerRepository.findById(userId).orElseThrow(UnAuthenticatedException::new);
         managerRepository.save(manager.update(name, passwordEncoder.encode(password)));
     }
 
     @Override
     @Transactional
-    public void delete(Long userId){
+    public void delete(Long userId) {
         courseRepository.findAllByManagerId(userId).forEach(course -> courseService.delete(userId, course.getId()));
+        sessionManager.removeSession();
         managerRepository.deleteById(userId);
     }
+
     @Override
     @Transactional
-    public void sendEmailForSignUp(String email){
+    public void sendEmailForSignUp(String email) {
         String verificationCode = verifyCodeRepository.saveAndGetCode(email);
         emailService.sendVerifyEmail(email, SIGNUP_EMAIL_TITLE, verificationCode, MessageTemplate.SIGN_UP);
     }
 
     @Override
     @Transactional
-    public void sendEmailForPasswordReset(String email){
+    public void sendEmailForPasswordReset(String email) {
         String verificationCode = verifyCodeRepository.saveAndGetCode(email);
-        emailService.sendVerifyEmail(email, PASSWORD_RESET_EMAIL_TITLE, verificationCode, MessageTemplate.PASSWORD_RESET);
+        emailService.sendVerifyEmail(email, PASSWORD_RESET_EMAIL_TITLE, verificationCode,
+                MessageTemplate.PASSWORD_RESET);
     }
 
     @Override
     @Transactional
-    public void verifyEmail(String email, String verificationCode){
+    public void verifyEmail(String email, String verificationCode) {
         String savedCode = verifyCodeRepository.findByEmail(email);
-        if(savedCode == null || !savedCode.equals(verificationCode)){
+        if (savedCode == null || !savedCode.equals(verificationCode)) {
             throw new UnAuthenticatedException("인증코드가 일치하지 않습니다.");
         }
         verifyCodeRepository.deleteByEmail(email);
@@ -133,12 +138,13 @@ public class SessionManagerService implements ManagerService {
 
     @Override
     @Transactional
-    public void resetPassword(String email, String password){
-        if(!verifyCodeRepository.isVerified(email)){
+    public void resetPassword(String email, String password) {
+        if (!verifyCodeRepository.isVerified(email)) {
             throw new UnAuthenticatedException("이메일 인증을 완료해주세요.");
         }
         Manager manager = managerRepository.findManagerByEmail(email).orElseThrow(UnAuthenticatedException::new);
         managerRepository.save(manager.update(manager.getName(), passwordEncoder.encode(password)));
+        verifyCodeRepository.deleteByEmail(email);
     }
 
 }

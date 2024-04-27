@@ -31,7 +31,6 @@ public class EmailConfig {
         javaMailProperties.put("mail.smtp.starttls.enable", "true");
         javaMailProperties.put("mail.smtp.starttls.required", "true");
 
-
         mailSender.setJavaMailProperties(javaMailProperties);
 
         return mailSender;

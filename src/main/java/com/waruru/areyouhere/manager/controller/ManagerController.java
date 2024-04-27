@@ -39,15 +39,15 @@ public class ManagerController {
 
     @LoginRequired
     @GetMapping("/me")
-    public ResponseEntity<ManagerDto> isLogin(@Login Manager manager){
+    public ResponseEntity<ManagerDto> isLogin(@Login Manager manager) {
         return ResponseEntity.ok(ManagerDto.builder()
-                        .email(manager.getEmail())
-                        .name(manager.getName())
+                .email(manager.getEmail())
+                .name(manager.getName())
                 .build());
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
+    public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
 
         managerService.signUp(signUpRequestDto.getEmail(), signUpRequestDto.getPassword(), signUpRequestDto.getName());
         return RESPONSE_OK;
@@ -55,9 +55,9 @@ public class ManagerController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<HttpStatus> login(@RequestBody @Valid LoginRequestDto loginRequestDto){
+    public ResponseEntity<HttpStatus> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
 
-        if(managerService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword())){
+        if (managerService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword())) {
             return RESPONSE_OK;
         }
 
@@ -66,64 +66,62 @@ public class ManagerController {
 
     @LoginRequired
     @GetMapping("/logout")
-    public ResponseEntity<HttpStatus> logout(){
+    public ResponseEntity<HttpStatus> logout() {
         managerService.logout();
         return RESPONSE_OK;
     }
 
     @GetMapping("/email-availability")
-    public ResponseEntity<HttpStatus> isDuplicatedEmail(@RequestParam String email){
-        if(managerService.isDuplicatedEmail(email)){
+    public ResponseEntity<HttpStatus> isDuplicatedEmail(@RequestParam String email) {
+        if (managerService.isDuplicatedEmail(email)) {
             return RESPONSE_CONFLICT;
         }
         return RESPONSE_OK;
     }
 
     @GetMapping("/unauthorized")
-    public ResponseEntity<HttpStatus> unauthorized(){
+    public ResponseEntity<HttpStatus> unauthorized() {
         return RESPONSE_FORBIDDEN;
     }
 
     @LoginRequired
     @PutMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody UpdateRequestDto updateRequestDto, @Login Manager manager){
+    public ResponseEntity<HttpStatus> update(@RequestBody UpdateRequestDto updateRequestDto, @Login Manager manager) {
         managerService.update(manager.getId(), updateRequestDto.getName(), updateRequestDto.getPassword());
         return RESPONSE_OK;
     }
 
     @LoginRequired
     @DeleteMapping
-    public ResponseEntity<HttpStatus> delete(@Login Manager manager){
+    public ResponseEntity<HttpStatus> delete(@Login Manager manager) {
         managerService.delete(manager.getId());
         return RESPONSE_OK;
     }
 
     @GetMapping("/email")
-    public ResponseEntity<HttpStatus> sendSignUpEmail(@RequestParam String email){
+    public ResponseEntity<HttpStatus> sendSignUpEmail(@RequestParam String email) {
         managerService.sendEmailForSignUp(email);
         return RESPONSE_BAD_REQUEST;
     }
 
     @GetMapping("/password")
-    public ResponseEntity<HttpStatus> sendPasswordEmail(@RequestParam String email){
+    public ResponseEntity<HttpStatus> sendPasswordEmail(@RequestParam String email) {
         managerService.sendEmailForPasswordReset(email);
         return RESPONSE_BAD_REQUEST;
     }
 
     @PostMapping("/verification")
-    public ResponseEntity<HttpStatus> verifyEmail(@RequestBody @Valid VerifyEmailRequestDto verifyEmailRequestDto){
+    public ResponseEntity<HttpStatus> verifyEmail(@RequestBody @Valid VerifyEmailRequestDto verifyEmailRequestDto) {
         managerService.verifyEmail(verifyEmailRequestDto.getEmail(), verifyEmailRequestDto.getCode());
         return RESPONSE_OK;
     }
 
     @PostMapping("/password")
-    public ResponseEntity<HttpStatus> resetPassword(@RequestBody @Valid ResetPasswordRequestDto resetPasswordRequestDto){
+    public ResponseEntity<HttpStatus> resetPassword(
+            @RequestBody @Valid ResetPasswordRequestDto resetPasswordRequestDto) {
         managerService.resetPassword(resetPasswordRequestDto.getEmail(), resetPasswordRequestDto.getPassword());
         return RESPONSE_OK;
     }
-
-
-
 
 
 }
