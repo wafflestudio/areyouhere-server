@@ -1,6 +1,7 @@
 package com.waruru.areyouhere.manager.domain.repository;
 
 import com.waruru.areyouhere.common.utils.random.RandomIdentifierGenerator;
+import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,10 +20,19 @@ public class VerifyCodeRepository {
         return verificationCode;
     }
 
+    public void saveVerification(String email){
+        redisTemplate.opsForValue().set(email, "verified");
+    }
+
     public String findByEmail(String email){
         return redisTemplate.opsForValue().get(email);
     }
     public void deleteByEmail(String email){
         redisTemplate.delete(email);
+    }
+
+    public boolean isVerified(String email){
+        String verifyCode = redisTemplate.opsForValue().get(email);
+        return verifyCode != null && verifyCode.equals("verified");
     }
 }

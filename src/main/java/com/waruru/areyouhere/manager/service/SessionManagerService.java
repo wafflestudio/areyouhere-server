@@ -55,6 +55,10 @@ public class SessionManagerService implements ManagerService {
     public void signUp(String email, String password, String nickname){
         boolean isEmailDuplicated = isDuplicatedEmail(email);
 
+        if(!verifyCodeRepository.isVerified(email)){
+            throw new UnAuthenticatedException("이메일 인증을 완료해주세요.");
+        }
+
         if(isEmailDuplicated){
             throw new DuplicatedEmailException("중복된 이메일입니다.");
         }
@@ -66,7 +70,7 @@ public class SessionManagerService implements ManagerService {
                         .build()
 
         );
-
+        verifyCodeRepository.deleteByEmail(email);
         sessionManager.createSession(manager.getId());
     }
 
@@ -102,14 +106,39 @@ public class SessionManagerService implements ManagerService {
         courseRepository.findAllByManagerId(userId).forEach(course -> courseService.delete(userId, course.getId()));
         managerRepository.deleteById(userId);
     }
-    public void checkEmailForSignUp(String email){
+    @Override
+    @Transactional
+    public void sendEmailForSignUp(String email){
         String verificationCode = verifyCodeRepository.saveAndGetCode(email);
         emailService.sendVerifyEmail(email, SIGNUP_EMAIL_TITLE, verificationCode, MessageTemplate.SIGN_UP);
     }
 
-    public void checkEmailForPasswordReset(String email){
+    @Override
+    @Transactional
+    public void sendEmailForPasswordReset(String email){
         String verificationCode = verifyCodeRepository.saveAndGetCode(email);
         emailService.sendVerifyEmail(email, PASSWORD_RESET_EMAIL_TITLE, verificationCode, MessageTemplate.PASSWORD_RESET);
+    }
+
+    @Override
+    @Transactional
+    public void verifyEmail(String email, String verificationCode){
+        String savedCode = verifyCodeRepository.findByEmail(email);
+        if(savedCode == null || !savedCode.equals(verificationCode)){
+            throw new UnAuthenticatedException("인증코드가 일치하지 않습니다.");
+        }
+        verifyCodeRepository.deleteByEmail(email);
+        verifyCodeRepository.saveVerification(email);
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(String email, String password){
+        if(!verifyCodeRepository.isVerified(email)){
+            throw new UnAuthenticatedException("이메일 인증을 완료해주세요.");
+        }
+        Manager manager = managerRepository.findManagerByEmail(email).orElseThrow(UnAuthenticatedException::new);
+        managerRepository.save(manager.update(manager.getName(), passwordEncoder.encode(password)));
     }
 
 }

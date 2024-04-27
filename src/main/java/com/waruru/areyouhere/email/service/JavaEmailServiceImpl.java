@@ -18,8 +18,14 @@ public class JavaEmailServiceImpl implements EmailService {
     @Value("${spring.mail.from}")
     private String from;
 
+
+    public void sendVerifyEmail(String to, String title, String verificationLink, MessageTemplate messageTemplate) {
+        MessageHolder messageHolder = new MessageHolder(title, messageTemplate, verificationLink);
+        sendSimpleMessage(to, messageHolder.getTitle(), messageHolder.getContents());
+    }
+
     private void sendSimpleMessage(String to, String title, String content) {
-        if(from == null || from.isEmpty()){
+        if (from == null || from.isEmpty()) {
             log.info("Email text Test: " + content);
             return;
         }
@@ -29,13 +35,6 @@ public class JavaEmailServiceImpl implements EmailService {
         message.setSubject(title);
         message.setText(content);
         emailSender.send(message);
-    }
-
-
-    public void sendVerifyEmail(String to, String title, String verificationLink, MessageTemplate messageTemplate) {
-        MessageHolder messageHolder = new MessageHolder(title, messageTemplate, verificationLink);
-        sendSimpleMessage(to, messageHolder.getTitle(), messageHolder.getContents());
-
     }
 
 }

@@ -9,8 +9,10 @@ import com.waruru.areyouhere.common.annotation.Login;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.dto.request.LoginRequestDto;
+import com.waruru.areyouhere.manager.dto.request.ResetPasswordRequestDto;
 import com.waruru.areyouhere.manager.dto.request.SignUpRequestDto;
 import com.waruru.areyouhere.manager.dto.request.UpdateRequestDto;
+import com.waruru.areyouhere.manager.dto.request.VerifyEmailRequestDto;
 import com.waruru.areyouhere.manager.dto.response.ManagerDto;
 import com.waruru.areyouhere.manager.service.ManagerService;
 import jakarta.validation.Valid;
@@ -95,5 +97,33 @@ public class ManagerController {
         managerService.delete(manager.getId());
         return RESPONSE_OK;
     }
+
+    @GetMapping("/email")
+    public ResponseEntity<HttpStatus> sendSignUpEmail(@RequestParam String email){
+        managerService.sendEmailForSignUp(email);
+        return RESPONSE_BAD_REQUEST;
+    }
+
+    @GetMapping("/password")
+    public ResponseEntity<HttpStatus> sendPasswordEmail(@RequestParam String email){
+        managerService.sendEmailForPasswordReset(email);
+        return RESPONSE_BAD_REQUEST;
+    }
+
+    @PostMapping("/verification")
+    public ResponseEntity<HttpStatus> verifyEmail(@RequestBody @Valid VerifyEmailRequestDto verifyEmailRequestDto){
+        managerService.verifyEmail(verifyEmailRequestDto.getEmail(), verifyEmailRequestDto.getCode());
+        return RESPONSE_OK;
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<HttpStatus> resetPassword(@RequestBody @Valid ResetPasswordRequestDto resetPasswordRequestDto){
+        managerService.resetPassword(resetPasswordRequestDto.getEmail(), resetPasswordRequestDto.getPassword());
+        return RESPONSE_OK;
+    }
+
+
+
+
 
 }
