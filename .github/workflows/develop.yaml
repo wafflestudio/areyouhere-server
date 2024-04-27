@@ -39,6 +39,10 @@ jobs:
           spring.datasource.password: ${{ secrets.MYSQL_DATASOURCE_PASSWORD }}
           spring.data.redis.host: ${{ secrets.REDIS_DATASOURCE_HOST }}
           spring.data.redis.port: ${{ secrets.REDIS_DATASOURCE_PORT }}
+          spring.mail.host: ${{ secrets.DEV_MAIL_HOST }}
+          spring.mail.username: ${{ secrets.DEV_MAIL_USERNAME }}
+          spring.mail.password: ${{ secrets.DEV_MAIL_PASSWORD }}
+          spring.mail.from: ${{ secrets.DEV_MAIL_SENDER }}
           cookie.encode: ${{ secrets.SECRET_KEY }}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew

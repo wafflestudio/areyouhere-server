@@ -5,7 +5,7 @@ import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttend
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
-import com.waruru.areyouhere.common.utils.RandomIdentifierGenerator;
+import com.waruru.areyouhere.common.utils.random.RandomIdentifierGenerator;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.session.domain.entity.Session;

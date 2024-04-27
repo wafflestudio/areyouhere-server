@@ -17,4 +17,12 @@ public interface ManagerService {
     public void update(Long userId, String name, String password);
 
     public void delete(Long userId);
+
+    public void sendEmailForSignUp(String email);
+
+    public void sendEmailForPasswordReset(String email);
+
+    public void verifyEmail(String email, String verificationCode);
+
+    public void resetPassword(String email, String password);
 }

@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.common.utils;
+package com.waruru.areyouhere.common.utils.random;
 
 import java.util.Random;
 
