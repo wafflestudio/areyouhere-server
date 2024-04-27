@@ -8,7 +8,7 @@ import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
 import com.waruru.areyouhere.session.domain.entity.Session;
-import com.waruru.areyouhere.session.domain.repository.SessionRepository;
+import com.waruru.areyouhere.session.domain.repository.ClassSessionRepository;
 import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class SessionCommandServiceImpl implements SessionCommandService {
 
-    private final SessionRepository sessionRepository;
+    private final ClassSessionRepository classSessionRepository;
     private final CourseRepository courseRepository;
     private final AttendanceRepository attendanceRepository;
     private final AttendeeRepository attendeeRepository;
@@ -35,7 +35,7 @@ public class SessionCommandServiceImpl implements SessionCommandService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseNotFoundException::new);
 
-        sessionRepository.findMostRecentByCourseId(courseId)
+        classSessionRepository.findMostRecentByCourseId(courseId)
                 .ifPresent(session -> {
                     if (!session.isDeactivated()) {
                         throw new ActivatedSessionExistsException();
@@ -51,15 +51,15 @@ public class SessionCommandServiceImpl implements SessionCommandService {
                 .course(course)
                 .isDeactivated(false)
                 .build();
-        sessionRepository.save(session);
+        classSessionRepository.save(session);
     }
 
     @Override
     public void deleteNotActivated(Long courseId) {
-        sessionRepository.findMostRecentByCourseId(courseId)
+        classSessionRepository.findMostRecentByCourseId(courseId)
                 .ifPresent(session -> {
                     if (!activeAttendanceService.isSessionActivatedByCourseId(courseId) && !session.isDeactivated()) {
-                        sessionRepository.delete(session);
+                        classSessionRepository.delete(session);
                     }
                 });
     }
@@ -67,24 +67,24 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     public void deleteAll(List<Long> sessionIds) {
         sessionIds.forEach(sessionId -> {
             attendanceRepository.deleteAllBySessionId(sessionId);
-            sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
+            classSessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
         });
-        sessionRepository.deleteAllByIds(sessionIds);
+        classSessionRepository.deleteAllByIds(sessionIds);
     }
 
     @Override
     public void deactivate(Long sessionId) {
-        Session session = sessionRepository.findById(sessionId)
+        Session session = classSessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         session.setDeactivated(true);
-        sessionRepository.save(session);
+        classSessionRepository.save(session);
     }
 
 
     @Override
     public void updateAll(List<UpdateSession> sessions) {
         sessions.forEach(session -> {
-            sessionRepository.setSessionNameById(session.getName(), session.getId());
+            classSessionRepository.setSessionNameById(session.getName(), session.getId());
         });
     }
 

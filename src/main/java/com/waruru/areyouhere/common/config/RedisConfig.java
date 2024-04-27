@@ -13,9 +13,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @EnableCaching
 @Configuration
+@EnableRedisHttpSession
 public class RedisConfig {
 
     @Value("${spring.data.redis.host}")

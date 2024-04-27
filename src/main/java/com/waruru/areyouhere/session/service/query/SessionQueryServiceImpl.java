@@ -3,7 +3,7 @@ package com.waruru.areyouhere.session.service.query;
 import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.active.domain.repository.ActiveSessionRepository;
-import com.waruru.areyouhere.session.domain.repository.SessionRepository;
+import com.waruru.areyouhere.session.domain.repository.ClassSessionRepository;
 import com.waruru.areyouhere.session.domain.repository.dto.SessionInfo;
 import com.waruru.areyouhere.session.exception.CurrentSessionDeactivatedException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
@@ -23,12 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SessionQueryServiceImpl implements SessionQueryService {
 
-    private final SessionRepository sessionRepository;
+    private final ClassSessionRepository classSessionRepository;
     private final ActiveSessionRepository activeSessionRepository;
 
     @Override
     public CurrentSessionDto getCurrentSessionInfo(Long courseId) {
-        Session mostRecentSession = sessionRepository
+        Session mostRecentSession = classSessionRepository
                 .findMostRecentByCourseId(courseId)
                 .orElseThrow(CurrentSessionNotFoundException::new);
 
@@ -58,7 +58,7 @@ public class SessionQueryServiceImpl implements SessionQueryService {
 
     @Override
     public List<SessionAttendanceInfo> getAll(Long courseId) {
-        List<SessionInfo> allSessions = sessionRepository.findSessionsWithAttendance(courseId);
+        List<SessionInfo> allSessions = classSessionRepository.findSessionsWithAttendance(courseId);
 
         return allSessions == null || allSessions.isEmpty()
                 ? Collections.emptyList()
@@ -74,7 +74,7 @@ public class SessionQueryServiceImpl implements SessionQueryService {
 
     @Override
     public SessionAttendanceInfo getSessionAttendanceInfo(Long sessionId) {
-        SessionInfo sessionWithAttendance = sessionRepository
+        SessionInfo sessionWithAttendance = classSessionRepository
                 .findSessionWithAttendance(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
 
@@ -90,14 +90,14 @@ public class SessionQueryServiceImpl implements SessionQueryService {
 
     @Override
     public void checkNotDeactivated(Long sessionId) {
-        Session session = sessionRepository.findById(sessionId)
+        Session session = classSessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         throwIfSessionDeactivated(session);
     }
 
     @Override
     public Session get(Long sessionId) {
-        return sessionRepository.findById(sessionId)
+        return classSessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
     }
 
@@ -116,7 +116,7 @@ public class SessionQueryServiceImpl implements SessionQueryService {
     }
 
     private List<Session> getRecentSessions(Long courseId) {
-        return Optional.ofNullable(sessionRepository.findTOP6ByCourseId(courseId))
+        return Optional.ofNullable(classSessionRepository.findTOP6ByCourseId(courseId))
                 .orElse(Collections.emptyList());
     }
 
@@ -136,7 +136,7 @@ public class SessionQueryServiceImpl implements SessionQueryService {
     private List<SessionAttendanceInfo> getSessionAttendanceInfoList(List<Session> recentFiveSessions) {
         return recentFiveSessions.stream()
                 .map(Session::getId)
-                .map(sessionId -> sessionRepository.findSessionWithAttendance(sessionId)
+                .map(sessionId -> classSessionRepository.findSessionWithAttendance(sessionId)
                         .orElseThrow(SessionIdNotFoundException::new))
                 .map(sessionWithAttendance -> SessionAttendanceInfo.builder()
                         .attendee(sessionWithAttendance.getattendee())

@@ -7,21 +7,14 @@ import com.waruru.areyouhere.attendance.domain.repository.AttendanceBatchReposit
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
-import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
-import com.waruru.areyouhere.attendee.domain.entity.Attendee;
-import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
-import com.waruru.areyouhere.session.domain.entity.Session;
-import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

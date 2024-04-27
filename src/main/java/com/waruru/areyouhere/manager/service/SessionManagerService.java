@@ -57,9 +57,9 @@ public class SessionManagerService implements ManagerService {
     public void signUp(String email, String password, String nickname) {
         boolean isEmailDuplicated = isDuplicatedEmail(email);
 
-        if (!verifyCodeRepository.isVerified(email)) {
-            throw new UnAuthenticatedException("이메일 인증을 완료해주세요.");
-        }
+//        if (!verifyCodeRepository.isVerified(email)) {
+//            throw new UnAuthenticatedException("이메일 인증을 완료해주세요.");
+//        }
 
         if (isEmailDuplicated) {
             throw new DuplicatedEmailException("중복된 이메일입니다.");

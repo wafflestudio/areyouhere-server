@@ -6,6 +6,10 @@ server:
 spring:
   profiles:
     active: local
+  session:
+    redis:
+      flush-mode: on_save
+      namespace: spring:session
   config:
     import:
       - application-local.yaml

@@ -14,7 +14,7 @@ import com.waruru.areyouhere.course.dto.CourseData;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.session.domain.entity.Session;
-import com.waruru.areyouhere.session.domain.repository.SessionRepository;
+import com.waruru.areyouhere.session.domain.repository.ClassSessionRepository;
 import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +37,7 @@ public class CourseServiceImpl implements CourseService {
     private final AttendeeBatchRepository attendeeBatchRepository;
     private final AttendeeRepository attendeeRepository;
     private final AttendanceRepository attendanceRepository;
-    private final SessionRepository sessionRepository;
+    private final ClassSessionRepository classSessionRepository;
     private final ActiveAttendanceService activeAttendanceService;
 
 
@@ -120,9 +120,9 @@ public class CourseServiceImpl implements CourseService {
         if (!course.getManager().getId().equals(managerId)) {
             throw new IllegalArgumentException("Manager not authorized");
         }
-        List<Session> sessions = sessionRepository.findAllByCourseId(courseId);
+        List<Session> sessions = classSessionRepository.findAllByCourseId(courseId);
         attendanceRepository.deleteAllBySessionIds(sessions.stream().map(Session::getId).toList());
-        sessionRepository.deleteAllByCourseId(courseId);
+        classSessionRepository.deleteAllByCourseId(courseId);
         attendeeRepository.deleteAllByCourseId(courseId);
         courseRepository.delete(course);
     }
