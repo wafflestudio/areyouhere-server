@@ -9,14 +9,17 @@ import com.waruru.areyouhere.attendee.exception.AttendeeAlreadyExistsException;
 import com.waruru.areyouhere.attendee.exception.ClassAttendeesEmptyException;
 import com.waruru.areyouhere.attendee.exception.SessionAttendeesEmptyException;
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
+import com.waruru.areyouhere.common.utils.Ordered;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
 import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice("com.waruru.areyouhere.attendee")
+@Order(Ordered.SECOND_VALUE)
 public class AttendeeExceptionAdvice {
 
     @ExceptionHandler(ActivatedSessionExistsException.class)
