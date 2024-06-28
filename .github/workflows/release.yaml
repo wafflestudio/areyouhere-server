@@ -40,6 +40,7 @@ jobs:
           spring.mail.username: ${{ secrets.RELEASE_MAIL_USERNAME }}
           spring.mail.password: ${{ secrets.RELEASE_MAIL_PASSWORD }}
           spring.mail.from: ${{ secrets.RELEASE_MAIL_SENDER }}
+          slack.webhook.url: ${{ secrets.SLACK_WEBHOOK_URL }}
           cookie.encode: ${{ secrets.SECRET_KEY }}
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew

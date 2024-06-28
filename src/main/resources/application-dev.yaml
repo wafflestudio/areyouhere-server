@@ -31,7 +31,9 @@ spring:
           auth: true
           starttls:
             enable: true
-
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
 
 cors:
   allowed-origins: https://dev.areyouhere.today, https://dev.www.areyouhere.today

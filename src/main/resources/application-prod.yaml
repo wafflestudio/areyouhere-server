@@ -11,6 +11,9 @@ spring:
       host: ${AWS_ELASTICACHE_HOST}
       database: ${AWS_ELASTICACHE_DATABASE}
       port: 6379
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
 
 cookie:
   encode: TEMP
