@@ -15,13 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-  private final SlackApi slackApi;
-
-  public GlobalExceptionHandler(@Value("${spring.slack.webhook}") String webhook) {
-    this.slackApi = new SlackApi(webhook);
-  }
-
+  
   @SlackNotification
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
