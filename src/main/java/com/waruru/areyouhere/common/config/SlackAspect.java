@@ -33,7 +33,7 @@ public class SlackAspect {
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
     private final Environment env;
 
-    public SlackAspect(@Value("${spring.slack.webhook}") String webhook,
+    public SlackAspect(@Value("${slack.webhook.url}") String webhook,
                                    ThreadPoolTaskExecutor threadPoolTaskExecutor, Environment env) {
         this.slackApi = new SlackApi(webhook);
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
