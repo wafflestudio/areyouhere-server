@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.course.service;
 
+import com.waruru.areyouhere.active.service.ActiveAttendanceService;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeBatchRepository;
@@ -14,6 +15,7 @@ import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
+import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,11 +38,14 @@ public class CourseServiceImpl implements CourseService {
     private final AttendeeRepository attendeeRepository;
     private final AttendanceRepository attendanceRepository;
     private final SessionRepository sessionRepository;
+    private final ActiveAttendanceService activeAttendanceService;
 
 
     @Override
-    public void create(Long managerId, String name, String description, List<AttendeeData> attendees, boolean onlyListNameAllowed) {
-        Manager manager = managerRepository.findManagerById(managerId).orElseThrow(() -> new IllegalArgumentException("Manager not found"));
+    public void create(Long managerId, String name, String description, List<AttendeeData> attendees,
+                       boolean onlyListNameAllowed) {
+        Manager manager = managerRepository.findManagerById(managerId)
+                .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
 
         Course course = Course.builder()
                 .manager(manager)
@@ -52,8 +57,8 @@ public class CourseServiceImpl implements CourseService {
 
         List<Attendee> attendeesToSave = new ArrayList<>();
 
-        if(!isAttendeesUnique(attendees.stream().map(attendeeData -> attendeeData.getName()
-                + (attendeeData.getNote() == null ? "": attendeeData.getNote())).toList())) {
+        if (!isAttendeesUnique(attendees.stream().map(attendeeData -> attendeeData.getName()
+                + (attendeeData.getNote() == null ? "" : attendeeData.getNote())).toList())) {
             throw new AttendeesNotUniqueException();
         }
 
@@ -75,7 +80,8 @@ public class CourseServiceImpl implements CourseService {
         List<EachClassAttendeeCountInfo> eachClassAttendeeCountInfos = attendeeRepository.countAttendeesEachCourseByManagerId(
                 managerId);
         Map<Long, Long> courseAttendeeCountMap = eachClassAttendeeCountInfos.stream()
-                .collect(Collectors.toMap(EachClassAttendeeCountInfo::getCourseId, EachClassAttendeeCountInfo::getAttendeeCnt));
+                .collect(Collectors.toMap(EachClassAttendeeCountInfo::getCourseId,
+                        EachClassAttendeeCountInfo::getAttendeeCnt));
 
         return courses.stream()
                 .map(course -> CourseData.builder()
@@ -99,10 +105,15 @@ public class CourseServiceImpl implements CourseService {
 
         course.update(name, description, onlyListNameAllowed);
         courseRepository.save(course);
+        activeAttendanceService.updateCourseName(courseId, name);
     }
 
     @Override
     public void delete(Long managerId, Long courseId) {
+        if(activeAttendanceService.isSessionActivatedByCourseId(courseId)){
+            throw new ActivatedSessionExistsException("Session is activated");
+        }
+
         Course course = courseRepository.findById(courseId).
                 orElseThrow(() -> new IllegalArgumentException("Course not found"));
 
@@ -117,6 +128,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Course get(Long courseId) {
         return courseRepository.findById(courseId).
                 orElseThrow(() -> new IllegalArgumentException("Course not found"));

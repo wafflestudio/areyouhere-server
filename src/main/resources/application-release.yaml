@@ -7,18 +7,29 @@ spring:
     username: ${MYSQL_DATASOURCE_USERNAME}
     password: ${MYSQL_DATASOURCE_PASSWORD}
   jpa:
-    show-sql: true
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
     database: mysql
+    open-in-view: false
   data:
     redis:
       host: ${REDIS_DATASOURCE_HOST}
       port: ${REDIS_DATASOURCE_PORT}
-
+  mail:
+    host: ${RELEASE_MAIL_HOST}
+    port: 587
+    username: ${RELEASE_MAIL_USERNAME}
+    password: ${RELEASE_MAIL_PASSWORD}
+    from: ${RELEASE_MAIL_SENDER}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: false
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
 
 cors:
   allowed-origins: https://areyouhere.today, https://www.areyouhere.today

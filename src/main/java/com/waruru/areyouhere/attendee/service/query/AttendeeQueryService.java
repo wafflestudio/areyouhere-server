@@ -1,6 +1,5 @@
 package com.waruru.areyouhere.attendee.service.query;
 
-import com.waruru.areyouhere.attendance.service.dto.AttendanceCount;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeDetailDto;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;

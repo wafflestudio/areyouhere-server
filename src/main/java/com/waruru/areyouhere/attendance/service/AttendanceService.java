@@ -1,15 +1,18 @@
 package com.waruru.areyouhere.attendance.service;
 
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
-import com.waruru.areyouhere.attendance.service.dto.AttendanceCount;
+import com.waruru.areyouhere.attendance.dto.response.AttendResponseDto;
+import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendCount;
+import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import java.util.List;
 
 public interface AttendanceService {
-    public AttendanceCount getAttendanceCount(long sessionId);
-    public void setAbsentAfterDeactivation(long courseId, long sessionId);
 
-    public void setAttend(Long sessionId, String attendanceName, Long attendeeId);
+    public AttendResponseDto attend(String attendeeName, String authCode, Long attendeeId);
 
-    public void setAttendanceStatuses(Long sessionId , List<UpdateAttendance> updateAttendances);
-    public int currentAttendance(Long sessionId);
+    public void updateAllStatuses(Long sessionId, List<UpdateAttendance> updateAttendances);
+
+    public CurrentSessionAttendCount getCurrentSessionAttendCount(Long sessionId);
+
+    public CurrentSessionAttendeeAttendance getCurrentSessionAttendeesAndAbsentees(String authCode);
 }

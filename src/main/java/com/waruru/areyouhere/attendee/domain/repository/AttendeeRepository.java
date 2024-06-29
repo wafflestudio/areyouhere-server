@@ -15,14 +15,14 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
     @Query(value = "SELECT * FROM attendee WHERE attendee.course_id = :courseId And attendee.id NOT IN (SELECT att.attendee_id FROM attendance as att WHERE att.session_id = :sessionId)", nativeQuery = true)
     public List<Attendee> findAbsenteeBySessionIdWhenNoRegister(@Param("courseId") Long courseId, @Param("sessionId") Long sessionId);
 
-    @Query(value = "SELECT atda.id as AttendanceId, atdee.name as AttendeeName, atdee.note as AttendeeNote, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime \n"
+    @Query(value = "SELECT atda.id as AttendanceId, atdee.id as AttendeeId, atdee.name as AttendeeName, atdee.note as AttendeeNote, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime \n"
             + "FROM attendee as atdee \n"
             + "INNER JOIN attendance as atda ON atdee.id = atda.attendee_id  \n"
             + "WHERE atda.session_id = :sessionId", nativeQuery = true)
     public List<SessionAttendeeInfo> findSessionAttendees(@Param("sessionId") Long sessionId);
 
 
-    @Query(value = "SELECT atda.id as AttendanceId, atdee.name as AttendeeName, atdee.note as AttendeeNote, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime \n"
+    @Query(value = "SELECT atda.id as AttendanceId, atdee.id as AttendeeId, atdee.name as AttendeeName, atdee.note as AttendeeNote, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime \n"
             + "FROM attendee as atdee \n"
             + "INNER JOIN attendance as atda ON atdee.id = atda.attendee_id  \n"
             + "WHERE atda.session_id = :sessionId \n"
@@ -49,14 +49,14 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
             + "GROUP BY a.course_id", nativeQuery = true)
     public List<EachClassAttendeeCountInfo> countAttendeesEachCourseByManagerId(@Param("managerId") Long managerId);
 
-    @Query(value = "SELECT atda.id as AttendanceId, sess.name as SessionName, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime\n"
+    @Query(value = "SELECT atda.id as AttendanceId,  sess.id as SessionId, sess.name as SessionName, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime\n"
             + "from attendance atda\n"
             + "INNER JOIN session as sess ON atda.session_id = sess.id\n"
             + "where atda.attendee_id = :attendeeId\n"
             + "GROUP BY atda.id", nativeQuery = true)
     public List<AttendeeAttendDetailInfo> findAttendanceInfoByAttendeeId(@Param("attendeeId") Long attendeeId);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from attendee a where a.id in :ids")
     public void deleteAllByIds(@Param("ids") List<Long> ids);
 

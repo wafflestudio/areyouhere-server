@@ -14,15 +14,29 @@ spring:
       hibernate:
         format_sql: true
     database: mysql
+    open-in-view: false
   data:
     redis:
       host: ${REDIS_DATASOURCE_HOST}
       port: ${REDIS_DATASOURCE_PORT}
-
+  mail:
+    host: ${DEV_MAIL_HOST}
+    port: 587
+    username: ${DEV_MAIL_USERNAME}
+    password: ${DEV_MAIL_PASSWORD}
+    from: ${DEV_MAIL_SENDER}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
 
 cors:
   allowed-origins: https://dev.areyouhere.today, https://dev.www.areyouhere.today
-
 cookie:
   encode: ${SECRET_KEY}
 

@@ -21,10 +21,10 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
 
 
     @Query("SELECT s FROM session s WHERE s.course.id = :courseId order by s.createdAt desc limit 6")
-    public List<Session> findTOP6BySessionByCourseId(@Param("courseId") Long courseId);
+    public List<Session> findTOP6ByCourseId(@Param("courseId") Long courseId);
 
     @Query("SELECT s FROM session s WHERE s.course.id = :courseId order by s.createdAt desc limit 1")
-    public Optional<Session> findMostRecentSessionByCourseId(@Param("courseId") Long courseId);
+    public Optional<Session> findMostRecentByCourseId(@Param("courseId") Long courseId);
 
     //find attendee who participate particular course and no attendance in particular session by query
 
@@ -59,5 +59,9 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
     @Modifying(clearAutomatically = true)
     @Query("delete from session s where s.id in :ids")
     public void deleteAllByIds(@Param("ids") List<Long> ids);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE session s SET s.name= :name WHERE s.id = :sessionId")
+    void setSessionNameById(@Param("name") String name, @Param("sessionId") Long sessionId);
 
 }

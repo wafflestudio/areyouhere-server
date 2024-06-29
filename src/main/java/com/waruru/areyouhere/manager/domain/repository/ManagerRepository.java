@@ -10,4 +10,6 @@ public interface ManagerRepository extends JpaRepository<Manager, Long> {
 
     public boolean existsByEmail(String email);
 
+    public void deleteById(Long id);
+
 }

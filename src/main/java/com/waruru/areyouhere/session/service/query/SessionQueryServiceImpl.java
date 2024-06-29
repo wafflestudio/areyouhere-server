@@ -1,10 +1,8 @@
 package com.waruru.areyouhere.session.service.query;
 
-import com.waruru.areyouhere.attendance.domain.entity.CurrentSessionAttendanceInfo;
+import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.session.domain.entity.Session;
-import com.waruru.areyouhere.session.domain.entity.SessionId;
-import com.waruru.areyouhere.session.domain.repository.AuthCodeRedisRepository;
-import com.waruru.areyouhere.session.domain.repository.SessionIdRedisRepository;
+import com.waruru.areyouhere.active.domain.repository.ActiveSessionRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.domain.repository.dto.SessionInfo;
 import com.waruru.areyouhere.session.exception.CurrentSessionDeactivatedException;
@@ -12,7 +10,6 @@ import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.service.dto.CurrentSessionDto;
 import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -24,23 +21,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class SessionQueryServiceImpl implements SessionQueryService{
+public class SessionQueryServiceImpl implements SessionQueryService {
 
     private final SessionRepository sessionRepository;
-    private final AuthCodeRedisRepository authCodeRedisRepository;
-    private final SessionIdRedisRepository sessionIdRedisRepository;
+    private final ActiveSessionRepository activeSessionRepository;
 
     @Override
-    public CurrentSessionDto getCurrentSessionInfo(Long courseId){
+    public CurrentSessionDto getCurrentSessionInfo(Long courseId) {
         Session mostRecentSession = sessionRepository
-                .findMostRecentSessionByCourseId(courseId)
+                .findMostRecentByCourseId(courseId)
                 .orElseThrow(CurrentSessionNotFoundException::new);
 
         // 제일 최근 세션이 이미 출석 체크가 끝났는지
         throwIfSessionDeactivated(mostRecentSession);
 
         // 제일 최근 세션이 출석 코드를 만들지 않았는지
-        CurrentSessionAttendanceInfo currentSessionAttendanceInfo = getAuthCodeIfExistsOrEmptyAuthCode(mostRecentSession.getId());
+        CurrentSessionAttendanceInfo currentSessionAttendanceInfo = getAuthCodeIfExistsOrEmptyAuthCode(
+                mostRecentSession.getId());
 
         return CurrentSessionDto.builder()
                 .authCode(currentSessionAttendanceInfo.getAuthCode())
@@ -51,19 +48,16 @@ public class SessionQueryServiceImpl implements SessionQueryService{
     }
 
 
-
-
     @Override
-    public List<SessionAttendanceInfo> getRecentFive(Long courseId){
+    public List<SessionAttendanceInfo> getRecentFive(Long courseId) {
         List<Session> recentSessions = getRecentSessions(courseId);
         removeExtraSession(recentSessions);
         return getSessionAttendanceInfoList(recentSessions);
     }
 
 
-
     @Override
-    public List<SessionAttendanceInfo> getAll(Long courseId){
+    public List<SessionAttendanceInfo> getAll(Long courseId) {
         List<SessionInfo> allSessions = sessionRepository.findSessionsWithAttendance(courseId);
 
         return allSessions == null || allSessions.isEmpty()
@@ -79,7 +73,7 @@ public class SessionQueryServiceImpl implements SessionQueryService{
     }
 
     @Override
-    public SessionAttendanceInfo getSessionAttendanceInfo(Long sessionId){
+    public SessionAttendanceInfo getSessionAttendanceInfo(Long sessionId) {
         SessionInfo sessionWithAttendance = sessionRepository
                 .findSessionWithAttendance(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
@@ -95,7 +89,7 @@ public class SessionQueryServiceImpl implements SessionQueryService{
     }
 
     @Override
-    public void checkNotDeactivated(Long sessionId){
+    public void checkNotDeactivated(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
         throwIfSessionDeactivated(session);
@@ -108,43 +102,37 @@ public class SessionQueryServiceImpl implements SessionQueryService{
     }
 
     private void throwIfSessionDeactivated(Session mostRecentSession) {
-        if(mostRecentSession.isDeactivated()){
+        if (mostRecentSession.isDeactivated()) {
             throw new CurrentSessionDeactivatedException();
         }
     }
 
-    private CurrentSessionAttendanceInfo getAuthCodeIfExistsOrEmptyAuthCode(Long sessionId){
-        SessionId session = sessionIdRedisRepository
-                .findById(sessionId)
-                .orElse(null);
-
-        return session != null ?
-                authCodeRedisRepository
-                        .findById(session.getAuthCode())
-                        .orElseThrow(CurrentSessionNotFoundException::new)
-                : CurrentSessionAttendanceInfo.builder()
+    private CurrentSessionAttendanceInfo getAuthCodeIfExistsOrEmptyAuthCode(Long sessionId) {
+        return activeSessionRepository
+                .findBySessionId(sessionId).orElseGet(() -> CurrentSessionAttendanceInfo.builder()
                         .authCode(null)
                         .sessionName(null)
-                        .build();
+                        .build());
     }
 
     private List<Session> getRecentSessions(Long courseId) {
-        return Optional.ofNullable(sessionRepository.findTOP6BySessionByCourseId(courseId))
+        return Optional.ofNullable(sessionRepository.findTOP6ByCourseId(courseId))
                 .orElse(Collections.emptyList());
     }
 
     private void removeExtraSession(List<Session> recentFiveSessions) {
-        if(recentFiveSessions.isEmpty()){
+        if (recentFiveSessions.isEmpty()) {
             return;
         }
 
-        if(!recentFiveSessions.get(0).isDeactivated()){
+        if (!recentFiveSessions.get(0).isDeactivated()) {
             recentFiveSessions.remove(0);
-        }else if(recentFiveSessions.size() > 5){
+        } else if (recentFiveSessions.size() > 5) {
             recentFiveSessions.remove(5);
         }
     }
 
+    //FIXME : 404 발생
     private List<SessionAttendanceInfo> getSessionAttendanceInfoList(List<Session> recentFiveSessions) {
         return recentFiveSessions.stream()
                 .map(Session::getId)

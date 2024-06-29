@@ -6,7 +6,7 @@ public interface ManagerService {
 
     public boolean login(String email, String password);
 
-    public void register(String email, String password, String nickname);
+    public void signUp(String email, String password, String nickname);
 
     public void logout();
 
@@ -15,4 +15,14 @@ public interface ManagerService {
     public boolean isDuplicatedEmail(String email);
 
     public void update(Long userId, String name, String password);
+
+    public void delete(Long userId);
+
+    public void sendEmailForSignUp(String email);
+
+    public void sendEmailForPasswordReset(String email);
+
+    public void verifyEmail(String email, String verificationCode);
+
+    public void resetPassword(String email, String password);
 }

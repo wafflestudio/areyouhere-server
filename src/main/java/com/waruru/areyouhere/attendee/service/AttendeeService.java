@@ -23,7 +23,5 @@ public interface AttendeeService {
 
     public DuplicateAttendees getDuplicatesAll(Long courseId, List<String> newAttendees);
 
-    public AttendeeDetailDto getAttendanceCount(Long attendeeId);
-
     public void updateAll(Long courseId, List<AttendeeInfo> updatedAttendees);
 }

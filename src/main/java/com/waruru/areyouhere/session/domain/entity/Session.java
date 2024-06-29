@@ -28,6 +28,7 @@ public class Session {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
+    @Setter
     private String name;
 
     @Setter

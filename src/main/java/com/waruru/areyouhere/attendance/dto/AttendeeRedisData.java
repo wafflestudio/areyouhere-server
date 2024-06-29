@@ -1,4 +1,4 @@
-package com.waruru.areyouhere.attendance.domain.entity;
+package com.waruru.areyouhere.attendance.dto;
 
 import java.util.Objects;
 import lombok.AccessLevel;

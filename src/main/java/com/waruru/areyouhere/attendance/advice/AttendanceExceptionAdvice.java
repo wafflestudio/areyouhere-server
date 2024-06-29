@@ -8,18 +8,22 @@ import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPON
 import com.waruru.areyouhere.attendance.exception.AlreadyAttendException;
 import com.waruru.areyouhere.attendance.exception.DuplicateAuthCodeAttendException;
 import com.waruru.areyouhere.attendance.exception.AuthCodeNotFoundException;
+import com.waruru.areyouhere.common.utils.Ordered;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.attendee.exception.AttendeeNotFoundException;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice("com.waruru.areyouhere.attendance")
+@Order(Ordered.SECOND_VALUE)
 public class AttendanceExceptionAdvice {
 
+
     @ExceptionHandler(SessionIdNotFoundException.class)
-    public ResponseEntity<HttpStatus> sessionIdNotFoundHandler(){
+    public ResponseEntity<HttpStatus> sessionIdNotFoundHandler() {
         return RESPONSE_NOT_FOUND;
     }
 
@@ -29,17 +33,17 @@ public class AttendanceExceptionAdvice {
     }
 
     @ExceptionHandler(AuthCodeNotFoundException.class)
-    public ResponseEntity<HttpStatus> authCodeNotFoundHandler(){
+    public ResponseEntity<HttpStatus> authCodeNotFoundHandler() {
         return RESPONSE_NOT_FOUND;
     }
 
     @ExceptionHandler(AlreadyAttendException.class)
-    public ResponseEntity<HttpStatus> alreadyAttendHandler(){
+    public ResponseEntity<HttpStatus> alreadyAttendHandler() {
         return RESPONSE_BAD_REQUEST;
     }
 
     @ExceptionHandler(DuplicateAuthCodeAttendException.class)
-    public ResponseEntity<HttpStatus> duplicateAuthCodeAttendHandler(){
+    public ResponseEntity<HttpStatus> duplicateAuthCodeAttendHandler() {
         return RESPONSE_FORBIDDEN;
     }
 }

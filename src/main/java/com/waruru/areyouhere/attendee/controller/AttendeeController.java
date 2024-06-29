@@ -7,7 +7,6 @@ import com.waruru.areyouhere.attendee.dto.response.ClassAttendeesResponseDto;
 import com.waruru.areyouhere.attendee.dto.request.DeleteAttendeesRequestDto;
 import com.waruru.areyouhere.attendee.dto.request.DuplicateCheckAttendeesRequestDto;
 import com.waruru.areyouhere.attendee.dto.request.NewAttendeesRequestDto;
-import com.waruru.areyouhere.attendee.service.AttendeeService;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
 import com.waruru.areyouhere.attendee.service.query.AttendeeQueryService;
@@ -37,7 +36,7 @@ public class AttendeeController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<ClassAttendeesResponseDto> getClassAttendees(@RequestParam("courseId") Long courseId){
+    public ResponseEntity<ClassAttendeesResponseDto> getClassAttendees(@RequestParam("courseId") Long courseId) {
         List<ClassAttendees> classAttendees = attendeeQueryService.getClassAttendeesIfExistsOrEmpty(courseId);
 
         return ResponseEntity.ok(ClassAttendeesResponseDto.builder()
@@ -47,34 +46,38 @@ public class AttendeeController {
 
     @LoginRequired
     @PostMapping
-    public ResponseEntity<HttpStatus> create(@RequestBody NewAttendeesRequestDto newAttendeesRequestDto){
-        attendeeCommandService.createAll(newAttendeesRequestDto.getCourseId(), newAttendeesRequestDto.getNewAttendees());
+    public ResponseEntity<HttpStatus> create(@RequestBody NewAttendeesRequestDto newAttendeesRequestDto) {
+        attendeeCommandService.createAll(newAttendeesRequestDto.getCourseId(),
+                newAttendeesRequestDto.getNewAttendees());
         return ResponseEntity.ok().build();
     }
 
     @LoginRequired
     @PostMapping("/delete")
-    public ResponseEntity<HttpStatus> delete(@RequestBody DeleteAttendeesRequestDto deleteAttendeesRequestDto){
+    public ResponseEntity<HttpStatus> delete(@RequestBody DeleteAttendeesRequestDto deleteAttendeesRequestDto) {
         attendeeCommandService.deleteAll(deleteAttendeesRequestDto.getAttendeeIds());
         return ResponseEntity.ok().build();
     }
 
     @LoginRequired
     @PostMapping("/duplicate")
-    public ResponseEntity<DuplicateAttendees> checkDuplicate(@RequestBody DuplicateCheckAttendeesRequestDto duplicateCheckAttendeesRequestDto){
-        return ResponseEntity.ok(attendeeQueryService.getDuplicatesAll(duplicateCheckAttendeesRequestDto.getCourseId(), duplicateCheckAttendeesRequestDto.getNewAttendees()));
+    public ResponseEntity<DuplicateAttendees> checkDuplicate(
+            @RequestBody DuplicateCheckAttendeesRequestDto duplicateCheckAttendeesRequestDto) {
+        return ResponseEntity.ok(attendeeQueryService.getDuplicatesAll(duplicateCheckAttendeesRequestDto.getCourseId(),
+                duplicateCheckAttendeesRequestDto.getNewAttendees()));
     }
 
     @LoginRequired
     @GetMapping("/detail")
-    public ResponseEntity<AttendeeDetailDto> getAttendeeDetail(@RequestParam("attendeeId") Long attendeeId){
+    public ResponseEntity<AttendeeDetailDto> getAttendeeDetail(@RequestParam("attendeeId") Long attendeeId) {
         return ResponseEntity.ok(attendeeQueryService.getAttendanceCount(attendeeId));
     }
 
     @LoginRequired
     @PutMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody UpdateAttendeesRequestDto UpdateAttendeesRequestDto){
-        attendeeCommandService.updateAll(UpdateAttendeesRequestDto.getCourseId(), UpdateAttendeesRequestDto.getUpdatedAttendees());
+    public ResponseEntity<HttpStatus> update(@RequestBody UpdateAttendeesRequestDto UpdateAttendeesRequestDto) {
+        attendeeCommandService.updateAll(UpdateAttendeesRequestDto.getCourseId(),
+                UpdateAttendeesRequestDto.getUpdatedAttendees());
         return ResponseEntity.ok().build();
     }
 }

@@ -30,6 +30,7 @@ public class AttendeeDetailDto {
         this.attendanceInfo = attendanceInfo.stream()
                 .map(attendeeAttendDetailInfo -> new AttendeeAttendeeDetail(
                         attendeeAttendDetailInfo.getAttendanceId(),
+                        attendeeAttendDetailInfo.getSessionId(),
                         attendeeAttendDetailInfo.getSessionName(),
                         attendeeAttendDetailInfo.getAttendanceStatus(),
                         attendeeAttendDetailInfo.getAttendanceTime().toString()
@@ -38,6 +39,6 @@ public class AttendeeDetailDto {
     }
 }
 
-record AttendeeAttendeeDetail(Long attendanceId, String sessionName, Boolean attendanceStatus, String attendanceTime) {
+record AttendeeAttendeeDetail(Long attendanceId, Long sessionId, String sessionName, Boolean attendanceStatus, String attendanceTime) {
 }
 
