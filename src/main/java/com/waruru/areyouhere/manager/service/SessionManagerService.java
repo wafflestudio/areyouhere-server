@@ -58,9 +58,9 @@ public class SessionManagerService implements ManagerService {
         boolean isEmailDuplicated = isDuplicatedEmail(email);
 
 
-//        if (!verifyCodeRepository.isVerified(email)) {
-//            throw new UnAuthenticatedException("이메일 인증을 완료해주세요.");
-//        }
+        if (!verifyCodeRepository.isVerified(email)) {
+            throw new UnAuthenticatedException("이메일 인증을 완료해주세요.");
+        }
 
 
         if (isEmailDuplicated) {
@@ -75,7 +75,7 @@ public class SessionManagerService implements ManagerService {
 
         );
 
-//        verifyCodeRepository.deleteByEmail(email);
+        verifyCodeRepository.deleteByEmail(email);
 
         sessionManager.createSession(manager.getId());
     }
