@@ -2,6 +2,7 @@ package com.waruru.areyouhere.email.service;
 
 import com.waruru.areyouhere.email.domain.MessageHolder;
 import com.waruru.areyouhere.email.domain.MessageTemplate;
+import com.waruru.areyouhere.email.exception.EmailSendException;
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
@@ -13,7 +14,6 @@ import java.util.Properties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -51,7 +51,7 @@ public class JavaEmailServiceImpl implements EmailService {
             doSend(session, msg);
 
         } catch (MessagingException | UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new EmailSendException();
         }
 
 

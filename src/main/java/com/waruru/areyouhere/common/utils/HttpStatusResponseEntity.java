@@ -13,4 +13,5 @@ public class HttpStatusResponseEntity {
     public static final ResponseEntity<HttpStatus> RESPONSE_UNAUTHORIZED = ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     public static final ResponseEntity<HttpStatus> RESPONSE_FORBIDDEN = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    public static final ResponseEntity<HttpStatus> RESPONSE_INTERNAL_ERROR = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 }
