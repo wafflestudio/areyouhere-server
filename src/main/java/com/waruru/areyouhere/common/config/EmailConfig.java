@@ -1,6 +1,7 @@
 package com.waruru.areyouhere.common.config;
 
 import java.util.Properties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,13 +10,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 
-@Configuration
+@RequiredArgsConstructor
 @ConfigurationProperties(prefix = "spring.mail")
 public class EmailConfig {
-    private String username;
-    private String password;
-    private String host;
-    private int port;
+    private final String username;
+    private final String password;
+    private final String host;
+    private final int port;
 
     @Profile({"develop", "release"})
     @Bean
