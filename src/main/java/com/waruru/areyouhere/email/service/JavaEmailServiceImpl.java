@@ -46,10 +46,8 @@ public class JavaEmailServiceImpl implements EmailService {
         }
 
         Session session = getSession();
-        MimeMessage msg = new MimeMessage(session);
-
         try {
-            setMessage(to, title, content, msg);
+            MimeMessage msg = setMessage(to, from, content, session);
             doSend(session, msg);
 
         } catch (MessagingException | UnsupportedEncodingException e) {
@@ -66,8 +64,9 @@ public class JavaEmailServiceImpl implements EmailService {
         transport.close();
     }
 
-    private void setMessage(String to, String title, String content, MimeMessage msg)
+    private MimeMessage setMessage(String to, String title, String content, Session session)
             throws MessagingException, UnsupportedEncodingException {
+        MimeMessage msg = new MimeMessage(session);
         msg.setFrom(new InternetAddress(from, from));
         InternetAddress internetAddress = new InternetAddress(to);
         internetAddress.validate();
@@ -75,6 +74,7 @@ public class JavaEmailServiceImpl implements EmailService {
         msg.setSubject(title);
         msg.setContent(content, "text/html");
         msg.setHeader("X-SES-CONFIGURATION-SET", "ConfigSet");
+        return msg;
     }
 
     private Session getSession(){

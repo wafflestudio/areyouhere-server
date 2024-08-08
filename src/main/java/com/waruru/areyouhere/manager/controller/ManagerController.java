@@ -101,13 +101,13 @@ public class ManagerController {
     @GetMapping("/email")
     public ResponseEntity<HttpStatus> sendSignUpEmail(@RequestParam String email) {
         managerService.sendEmailForSignUp(email);
-        return RESPONSE_BAD_REQUEST;
+        return RESPONSE_OK;
     }
 
     @GetMapping("/password")
     public ResponseEntity<HttpStatus> sendPasswordEmail(@RequestParam String email) {
         managerService.sendEmailForPasswordReset(email);
-        return RESPONSE_BAD_REQUEST;
+        return RESPONSE_OK;
     }
 
     @PostMapping("/verification")
