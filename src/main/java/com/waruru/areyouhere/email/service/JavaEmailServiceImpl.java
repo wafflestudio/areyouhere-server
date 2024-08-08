@@ -12,19 +12,24 @@ import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-@ConfigurationProperties(prefix = "spring.mail")
 @Slf4j
 public class JavaEmailServiceImpl implements EmailService {
 
+    @Value("${spring.mail.from}")
     private String from;
+    @Value("${spring.mail.username}")
     private String username;
+    @Value("${spring.mail.password}")
     private String password;
+    @Value("${spring.mail.host}")
     private String host;
+    @Value("${spring.mail.port}")
     private int port;
 
 
