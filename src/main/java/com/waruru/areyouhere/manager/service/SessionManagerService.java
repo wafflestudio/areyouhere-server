@@ -111,10 +111,7 @@ public class SessionManagerService implements ManagerService {
     @Override
     @Transactional
     public void delete(Long userId) {
-        List<Course> courses = courseRepository.findAllByManagerId(userId);
-        for (Course course : courses) {
-            courseService.delete(userId, course.getId());
-        }
+        courseRepository.findAllByManagerId(userId).forEach(course -> courseService.delete(userId, course.getId()));
         sessionManager.removeSession();
         managerRepository.deleteById(userId);
     }
