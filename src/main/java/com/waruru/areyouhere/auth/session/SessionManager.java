@@ -17,17 +17,10 @@ import org.springframework.stereotype.Component;
 public class SessionManager {
 
     private final HttpSession httpSession;
-    private final CourseRepository courseRepository;
 
     private static final String LOG_ID = "logId";
 
     public void createSession(Long managerId){
-        List<Course> courses = courseRepository.findAllByManagerId(managerId);
-
-        List<Long> courseIds = courses == null || courses.isEmpty() ?
-                Collections.emptyList()
-                : courses.stream().map(course -> course.getManager().getId()).toList();
-
         LoginUser loginUser = new LoginUser(managerId);
         httpSession.setAttribute(LOG_ID, loginUser);
     }

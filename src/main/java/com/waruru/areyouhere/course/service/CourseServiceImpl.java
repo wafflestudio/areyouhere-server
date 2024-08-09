@@ -11,6 +11,8 @@ import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.attendee.exception.AttendeesNotUniqueException;
 import com.waruru.areyouhere.course.dto.CourseData;
+import com.waruru.areyouhere.course.exception.CourseNotFoundException;
+import com.waruru.areyouhere.course.exception.UnauthorizedManagerException;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.session.domain.entity.Session;
@@ -45,7 +47,7 @@ public class CourseServiceImpl implements CourseService {
     public void create(Long managerId, String name, String description, List<AttendeeData> attendees,
                        boolean onlyListNameAllowed) {
         Manager manager = managerRepository.findManagerById(managerId)
-                .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
+                .orElseThrow(() -> new UnauthorizedManagerException("Manager not found"));
 
         Course course = Course.builder()
                 .manager(manager)
@@ -97,10 +99,10 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void update(Long managerId, Long courseId, String name, String description, boolean onlyListNameAllowed) {
         Course course = courseRepository.findById(courseId).
-                orElseThrow(() -> new IllegalArgumentException("Course not found"));
+                orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
         if (!course.getManager().getId().equals(managerId)) {
-            throw new IllegalArgumentException("Manager not authorized");
+            throw new UnauthorizedManagerException("Manager not authorized");
         }
 
         course.update(name, description, onlyListNameAllowed);
@@ -115,23 +117,24 @@ public class CourseServiceImpl implements CourseService {
         }
 
         Course course = courseRepository.findById(courseId).
-                orElseThrow(() -> new IllegalArgumentException("Course not found"));
+                orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
         if (!course.getManager().getId().equals(managerId)) {
-            throw new IllegalArgumentException("Manager not authorized");
+            throw new UnauthorizedManagerException("Manager not authorized");
         }
         List<Session> sessions = sessionRepository.findAllByCourseId(courseId);
         attendanceRepository.deleteAllBySessionIds(sessions.stream().map(Session::getId).toList());
         sessionRepository.deleteAllByCourseId(courseId);
         attendeeRepository.deleteAllByCourseId(courseId);
         courseRepository.delete(course);
+        log.info("course delete!");
     }
 
     @Override
     @Transactional(readOnly = true)
     public Course get(Long courseId) {
         return courseRepository.findById(courseId).
-                orElseThrow(() -> new IllegalArgumentException("Course not found"));
+                orElseThrow(() -> new CourseNotFoundException("Course not found"));
     }
 
     private boolean isAttendeesUnique(List<String> attendees) {
