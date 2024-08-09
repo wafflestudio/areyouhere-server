@@ -15,12 +15,14 @@ import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SessionManagerService implements ManagerService {
     // TODO: refactor: 계층 구조 위반
     private final CourseService courseService;
@@ -111,7 +113,11 @@ public class SessionManagerService implements ManagerService {
     @Override
     @Transactional
     public void delete(Long userId) {
-        courseRepository.findAllByManagerId(userId).forEach(course -> courseService.delete(userId, course.getId()));
+        courseRepository.findAllByManagerId(userId).forEach(course -> {
+            log.info(course.getName());
+            courseService.delete(userId, course.getId());
+        });
+
         managerRepository.deleteById(userId);
         sessionManager.removeSession();
     }

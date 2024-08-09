@@ -127,6 +127,7 @@ public class CourseServiceImpl implements CourseService {
         sessionRepository.deleteAllByCourseId(courseId);
         attendeeRepository.deleteAllByCourseId(courseId);
         courseRepository.delete(course);
+        log.info("course delete!");
     }
 
     @Override
