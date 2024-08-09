@@ -13,6 +13,8 @@ import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import com.waruru.areyouhere.session.service.dto.UpdateSession;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -80,6 +82,11 @@ public class SessionCommandServiceImpl implements SessionCommandService {
         sessionRepository.save(session);
     }
 
+    @Override
+    public void setAuthCodeDate(Session session, LocalDateTime date){
+        session.setAuthCodeCreatedAt(date);
+        sessionRepository.save(session);
+    }
 
     @Override
     public void updateAll(List<UpdateSession> sessions) {

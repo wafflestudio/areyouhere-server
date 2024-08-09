@@ -2,6 +2,7 @@ package com.waruru.areyouhere.manager.service;
 
 import com.waruru.areyouhere.auth.entity.LoginUser;
 import com.waruru.areyouhere.auth.session.SessionManager;
+import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.email.domain.MessageTemplate;
 import com.waruru.areyouhere.email.service.EmailService;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
@@ -11,6 +12,7 @@ import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.manager.domain.repository.VerifyCodeRepository;
 import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
 import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -109,7 +111,10 @@ public class SessionManagerService implements ManagerService {
     @Override
     @Transactional
     public void delete(Long userId) {
-        courseRepository.findAllByManagerId(userId).forEach(course -> courseService.delete(userId, course.getId()));
+        List<Course> courses = courseRepository.findAllByManagerId(userId);
+        for (Course course : courses) {
+            courseService.delete(userId, course.getId());
+        }
         sessionManager.removeSession();
         managerRepository.deleteById(userId);
     }
