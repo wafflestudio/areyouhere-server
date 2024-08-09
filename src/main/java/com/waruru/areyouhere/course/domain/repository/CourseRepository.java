@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-    @Query("SELECT course FROM course c WHERE c.manager.id = :managerId")
     List<Course> findAllByManagerId(Long managerId);
 
 }
