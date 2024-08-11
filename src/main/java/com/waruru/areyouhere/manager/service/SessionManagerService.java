@@ -2,6 +2,7 @@ package com.waruru.areyouhere.manager.service;
 
 import com.waruru.areyouhere.auth.entity.LoginUser;
 import com.waruru.areyouhere.auth.session.SessionManager;
+import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.email.domain.MessageTemplate;
 import com.waruru.areyouhere.email.service.EmailService;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
@@ -11,14 +12,18 @@ import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.manager.domain.repository.VerifyCodeRepository;
 import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
 import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
+import jakarta.persistence.EntityManager;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SessionManagerService implements ManagerService {
     // TODO: refactor: 계층 구조 위반
     private final CourseService courseService;
@@ -27,6 +32,7 @@ public class SessionManagerService implements ManagerService {
     private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
     private final VerifyCodeRepository verifyCodeRepository;
+    private final EntityManager entityManager;
 
     private final SessionManager sessionManager;
     private final PasswordEncoder passwordEncoder;
@@ -58,9 +64,10 @@ public class SessionManagerService implements ManagerService {
         boolean isEmailDuplicated = isDuplicatedEmail(email);
 
 
-//        if (!verifyCodeRepository.isVerified(email)) {
-//            throw new UnAuthenticatedException("이메일 인증을 완료해주세요.");
-//        }
+        if (!verifyCodeRepository.isVerified(email)) {
+            throw new UnAuthenticatedException("이메일 인증을 완료해주세요.");
+        }
+
 
 
         if (isEmailDuplicated) {
@@ -75,7 +82,9 @@ public class SessionManagerService implements ManagerService {
 
         );
 
-//        verifyCodeRepository.deleteByEmail(email);
+
+        verifyCodeRepository.deleteByEmail(email);
+
 
         sessionManager.createSession(manager.getId());
     }
@@ -109,9 +118,13 @@ public class SessionManagerService implements ManagerService {
     @Override
     @Transactional
     public void delete(Long userId) {
-        courseRepository.findAllByManagerId(userId).forEach(course -> courseService.delete(userId, course.getId()));
-        sessionManager.removeSession();
+        courseRepository.findAllByManagerId(userId).forEach(course -> {
+            courseService.delete(userId, course.getId());
+            entityManager.flush();
+        });
+
         managerRepository.deleteById(userId);
+        sessionManager.removeSession();
     }
 
     @Override

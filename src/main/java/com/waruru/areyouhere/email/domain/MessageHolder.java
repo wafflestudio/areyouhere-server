@@ -10,6 +10,6 @@ public class MessageHolder {
 
     public MessageHolder(String title, MessageTemplate messageTemplate, Object... values){
         this.title = title;
-        this.contents = String.format(messageTemplate.getTemplate(), (Object) values);
+        this.contents = String.format(messageTemplate.getTemplate(), values);
     }
 }

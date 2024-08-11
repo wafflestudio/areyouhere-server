@@ -31,6 +31,7 @@ public class ActiveSessionServiceImpl implements ActiveSessionService {
         Course course = courseService.get(courseId);
         Session session = sessionQueryService.get(sessionId);
         LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        sessionCommandService.setAuthCodeDate(session, currentTime);
         return activeAttendanceService.activate(course, session, currentTime);
     }
 
