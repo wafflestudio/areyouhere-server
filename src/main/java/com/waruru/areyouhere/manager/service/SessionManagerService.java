@@ -69,6 +69,7 @@ public class SessionManagerService implements ManagerService {
         }
 
 
+
         if (isEmailDuplicated) {
             throw new DuplicatedEmailException("중복된 이메일입니다.");
         }
@@ -81,7 +82,9 @@ public class SessionManagerService implements ManagerService {
 
         );
 
+
         verifyCodeRepository.deleteByEmail(email);
+
 
         sessionManager.createSession(manager.getId());
     }
