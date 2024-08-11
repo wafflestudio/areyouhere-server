@@ -12,6 +12,7 @@ import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
 import com.waruru.areyouhere.manager.domain.repository.VerifyCodeRepository;
 import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
 import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,7 @@ public class SessionManagerService implements ManagerService {
     private final CourseRepository courseRepository;
     private final ManagerRepository managerRepository;
     private final VerifyCodeRepository verifyCodeRepository;
+    private final EntityManager entityManager;
 
     private final SessionManager sessionManager;
     private final PasswordEncoder passwordEncoder;
@@ -114,8 +116,8 @@ public class SessionManagerService implements ManagerService {
     @Transactional
     public void delete(Long userId) {
         courseRepository.findAllByManagerId(userId).forEach(course -> {
-            log.info(course.getName());
             courseService.delete(userId, course.getId());
+            entityManager.flush();
         });
 
         managerRepository.deleteById(userId);
