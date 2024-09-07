@@ -16,6 +16,7 @@ import com.waruru.areyouhere.manager.dto.request.VerifyEmailRequestDto;
 import com.waruru.areyouhere.manager.dto.response.ManagerDto;
 import com.waruru.areyouhere.manager.service.ManagerService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -99,13 +100,15 @@ public class ManagerController {
     }
 
     @GetMapping("/email")
-    public ResponseEntity<HttpStatus> sendSignUpEmail(@RequestParam String email) {
+    public ResponseEntity<HttpStatus> sendSignUpEmail(@RequestParam @Email(message = "유효하지 않은 이메일 형식입니다.",
+            regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$") String email) {
         managerService.sendEmailForSignUp(email);
         return RESPONSE_OK;
     }
 
     @GetMapping("/password")
-    public ResponseEntity<HttpStatus> sendPasswordEmail(@RequestParam String email) {
+    public ResponseEntity<HttpStatus> sendPasswordEmail(@RequestParam @Email(message = "유효하지 않은 이메일 형식입니다.",
+            regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$") String email) {
         managerService.sendEmailForPasswordReset(email);
         return RESPONSE_OK;
     }
