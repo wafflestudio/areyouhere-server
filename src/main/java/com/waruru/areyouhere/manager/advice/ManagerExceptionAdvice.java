@@ -10,6 +10,7 @@ import com.waruru.areyouhere.common.annotation.SlackNotification;
 import com.waruru.areyouhere.common.error.ErrorResponse;
 import com.waruru.areyouhere.common.utils.Ordered;
 import com.waruru.areyouhere.email.exception.EmailSendException;
+import com.waruru.areyouhere.email.exception.InvalidEmailDestinationException;
 import com.waruru.areyouhere.manager.exception.DuplicatedEmailException;
 import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +37,10 @@ public class ManagerExceptionAdvice {
         return RESPONSE_CONFLICT;
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<HttpStatus> invalidInputHandler(){
+        return RESPONSE_BAD_REQUEST;
+    }
 
     @ExceptionHandler(EmailSendException.class)
     @SlackNotification
@@ -50,8 +55,9 @@ public class ManagerExceptionAdvice {
         return ErrorResponse.of("INTERNAL SERVER ERROR", sb.toString());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<HttpStatus> invalidInputHandler(){
+
+    @ExceptionHandler(InvalidEmailDestinationException.class)
+    public ResponseEntity<HttpStatus> invalidEmailDestinationHandler(){
         return RESPONSE_BAD_REQUEST;
     }
 }
