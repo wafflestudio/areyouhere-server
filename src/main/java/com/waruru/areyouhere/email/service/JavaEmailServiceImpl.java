@@ -3,8 +3,10 @@ package com.waruru.areyouhere.email.service;
 import com.waruru.areyouhere.email.domain.MessageHolder;
 import com.waruru.areyouhere.email.domain.MessageTemplate;
 import com.waruru.areyouhere.email.exception.EmailSendException;
+import com.waruru.areyouhere.email.exception.InvalidEmailDestinationException;
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.MessagingException;
+import jakarta.mail.SendFailedException;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
@@ -13,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.angus.mail.smtp.SMTPSendFailedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -50,8 +53,10 @@ public class JavaEmailServiceImpl implements EmailService {
             MimeMessage msg = setMessage(to, from, content, session);
             doSend(session, msg);
 
-        } catch (MessagingException | UnsupportedEncodingException e) {
-            throw new EmailSendException();
+        } catch (SendFailedException e) {
+            throw new InvalidEmailDestinationException();
+        }catch (MessagingException | UnsupportedEncodingException e){
+            throw new EmailSendException(e.getMessage());
         }
 
 

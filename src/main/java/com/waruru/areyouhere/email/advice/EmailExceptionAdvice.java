@@ -1,16 +1,24 @@
 package com.waruru.areyouhere.email.advice;
 
 
+import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_BAD_REQUEST;
+
 import com.waruru.areyouhere.common.annotation.SlackNotification;
 import com.waruru.areyouhere.common.error.ErrorResponse;
+import com.waruru.areyouhere.common.utils.Ordered;
 import com.waruru.areyouhere.email.exception.EmailSendException;
+import com.waruru.areyouhere.email.exception.InvalidEmailDestinationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 // 이메일 전송이 안되는 것은 이메일 서버에 이상이 있으므로 slack에서 처리될 수 있도록 한다.
 @RestControllerAdvice("com.waruru.areyouhere.email")
+@Order(Ordered.SECOND_VALUE)
 @Slf4j
 public class EmailExceptionAdvice {
 
@@ -25,5 +33,10 @@ public class EmailExceptionAdvice {
         sb.append(e.getMessage());
 
         return ErrorResponse.of("INTERNAL SERVER ERROR", sb.toString());
+    }
+
+    @ExceptionHandler(InvalidEmailDestinationException.class)
+    public ResponseEntity<HttpStatus> invalidEmailDestinationHandler(){
+        return RESPONSE_BAD_REQUEST;
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @RestControllerAdvice("com.waruru.areyouhere.session")
 @Order(Ordered.SECOND_VALUE)
@@ -42,11 +43,6 @@ public class SessionExceptionAdvice {
     @ExceptionHandler(CourseNotFoundException.class)
     public ResponseEntity<HttpStatus> courseNotFoundFoundHandler() {
         return RESPONSE_NOT_FOUND;
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<HttpStatus> methodArgumentNotValidHandler(){
-        return RESPONSE_BAD_REQUEST;
     }
 
     @ExceptionHandler(AttendeeNotFoundException.class)

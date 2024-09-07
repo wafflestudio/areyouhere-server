@@ -130,6 +130,9 @@ public class SessionManagerService implements ManagerService {
     @Override
     @Transactional
     public void sendEmailForSignUp(String email) {
+        if(managerRepository.existsByEmail(email)){
+            throw new DuplicatedEmailException("이미 가입된 이메일이 있습니다.");
+        }
         String verificationCode = verifyCodeRepository.saveAndGetCode(email);
         emailService.sendVerifyEmail(email, SIGNUP_EMAIL_TITLE, verificationCode, MessageTemplate.SIGN_UP);
     }
@@ -137,6 +140,9 @@ public class SessionManagerService implements ManagerService {
     @Override
     @Transactional
     public void sendEmailForPasswordReset(String email) {
+        if(!managerRepository.existsByEmail(email)){
+            throw new UnAuthenticatedException("가입된 이메일 정보가 존재하지 않습니다.");
+        }
         String verificationCode = verifyCodeRepository.saveAndGetCode(email);
         emailService.sendVerifyEmail(email, PASSWORD_RESET_EMAIL_TITLE, verificationCode,
                 MessageTemplate.PASSWORD_RESET);
