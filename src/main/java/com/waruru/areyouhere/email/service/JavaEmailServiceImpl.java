@@ -51,7 +51,7 @@ public class JavaEmailServiceImpl implements EmailService {
             doSend(session, msg);
 
         } catch (MessagingException | UnsupportedEncodingException e) {
-            throw new EmailSendException();
+            throw new EmailSendException(e.getMessage());
         }
 
 
