@@ -6,6 +6,7 @@ import com.waruru.areyouhere.email.exception.EmailSendException;
 import com.waruru.areyouhere.email.exception.InvalidEmailDestinationException;
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.MessagingException;
+import jakarta.mail.SendFailedException;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
@@ -52,7 +53,7 @@ public class JavaEmailServiceImpl implements EmailService {
             MimeMessage msg = setMessage(to, from, content, session);
             doSend(session, msg);
 
-        } catch (SMTPSendFailedException e) {
+        } catch (SendFailedException e) {
             throw new InvalidEmailDestinationException();
         }catch (MessagingException | UnsupportedEncodingException e){
             throw new EmailSendException(e.getMessage());
