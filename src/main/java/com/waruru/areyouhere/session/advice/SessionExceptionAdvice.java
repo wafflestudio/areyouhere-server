@@ -45,16 +45,6 @@ public class SessionExceptionAdvice {
         return RESPONSE_NOT_FOUND;
     }
 
-    @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<HttpStatus> BadRequestHandler(){
-        return RESPONSE_BAD_REQUEST;
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<HttpStatus> methodArgumentNotValidHandler(){
-        return RESPONSE_BAD_REQUEST;
-    }
-
     @ExceptionHandler(AttendeeNotFoundException.class)
     public ResponseEntity<HttpStatus> attendeeNotFoundHandler(){
         return RESPONSE_BAD_REQUEST;
