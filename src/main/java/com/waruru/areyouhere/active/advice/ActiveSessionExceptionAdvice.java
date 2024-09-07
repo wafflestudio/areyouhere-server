@@ -2,10 +2,12 @@ package com.waruru.areyouhere.active.advice;
 
 
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_NOT_FOUND;
+import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_NO_CONTENT;
 
 import com.waruru.areyouhere.attendance.exception.AuthCodeNotFoundException;
 import com.waruru.areyouhere.common.utils.Ordered;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
+import com.waruru.areyouhere.session.exception.CurrentSessionDeactivatedException;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -29,5 +31,9 @@ public class ActiveSessionExceptionAdvice {
     @ExceptionHandler(AuthCodeNotFoundException.class)
     public ResponseEntity<HttpStatus> authCodeNotFoundHandler(){ return RESPONSE_NOT_FOUND; }
 
+    @ExceptionHandler(CurrentSessionDeactivatedException.class)
+    public ResponseEntity<HttpStatus> currentSessionDeactivatedHandler(){
+        return RESPONSE_NO_CONTENT;
+    }
 
 }
