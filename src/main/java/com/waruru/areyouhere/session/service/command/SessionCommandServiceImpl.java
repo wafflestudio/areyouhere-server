@@ -71,7 +71,7 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     @Override
     public void deleteAll(Long managerId, List<Long> sessionIds) {
 
-        sessionIds.forEach(sessionId -> throwIfCourseAuthorizationFail(managerId, sessionId));
+        sessionIds.forEach(sessionId -> throwIfSessionAuthorizationFail(managerId, sessionId));
 
         sessionIds.forEach(sessionId -> {
             attendanceRepository.deleteAllBySessionId(sessionId);
@@ -96,7 +96,7 @@ public class SessionCommandServiceImpl implements SessionCommandService {
 
     @Override
     public void updateAll(Long managerId, List<UpdateSession> sessions) {
-        sessions.forEach(session -> throwIfCourseAuthorizationFail(managerId, session.getId()));
+        sessions.forEach(session -> throwIfSessionAuthorizationFail(managerId, session.getId()));
 
         sessions.forEach(session -> {
             sessionRepository.setSessionNameById(session.getName(), session.getId());
@@ -105,6 +105,12 @@ public class SessionCommandServiceImpl implements SessionCommandService {
 
     private void throwIfCourseAuthorizationFail(Long managerId, Long courseId){
         if(!courseRepository.isCourseMadeByManagerId(managerId, courseId)){
+            throw new UnAuthenticatedException();
+        }
+    }
+
+    private void throwIfSessionAuthorizationFail(Long managerId, Long sessionId){
+        if(!sessionRepository.isSessionMadeByManagerId(managerId, sessionId)){
             throw new UnAuthenticatedException();
         }
     }
