@@ -101,14 +101,14 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId).
                 orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
-        if (!course.getManager().getId().equals(managerId)) {
-            throw new UnauthorizedManagerException("Manager not authorized");
-        }
+        checkAuthority(managerId, course);
 
         course.update(name, description, onlyListNameAllowed);
         courseRepository.save(course);
         activeAttendanceService.updateCourseName(courseId, name);
     }
+
+
 
     @Override
     public void delete(Long managerId, Long courseId) {
@@ -119,9 +119,7 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId).
                 orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
-        if (!course.getManager().getId().equals(managerId)) {
-            throw new UnauthorizedManagerException("Manager not authorized");
-        }
+        checkAuthority(managerId, course);
         List<Session> sessions = sessionRepository.findAllByCourseId(courseId);
         attendanceRepository.deleteAllBySessionIds(sessions.stream().map(Session::getId).toList());
         sessionRepository.deleteAllByCourseId(courseId);
@@ -130,10 +128,9 @@ public class CourseServiceImpl implements CourseService {
     }
 
 
-
     @Override
     @Transactional(readOnly = true)
-    public Course get(Long courseId) {
+    public Course get(Long managerId, Long courseId) {
         return courseRepository.findById(courseId).
                 orElseThrow(() -> new CourseNotFoundException("Course not found"));
     }
@@ -142,6 +139,12 @@ public class CourseServiceImpl implements CourseService {
         Set<String> uniqueAttendees = Set.copyOf(attendees);
         log.debug("Attendees: {}", uniqueAttendees);
         return uniqueAttendees.size() == attendees.size();
+    }
+
+    private void checkAuthority(Long managerId, Course course) {
+        if (!course.getManager().getId().equals(managerId)) {
+            throw new UnauthorizedManagerException("Manager not authorized");
+        }
     }
 
 }

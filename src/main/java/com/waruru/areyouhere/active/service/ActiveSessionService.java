@@ -4,6 +4,6 @@ public interface ActiveSessionService {
 
     public void deactivate(String authCode, Long sessionId, Long courseId);
 
-    public String activate(Long sessionId, Long courseId);
+    public String activate(Long managerId, Long sessionId, Long courseId);
 
 }

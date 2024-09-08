@@ -25,8 +25,10 @@ public class CourseController {
 
     @LoginRequired
     @GetMapping("/{courseId}")
-    ResponseEntity<CourseGetResponse> get(@PathVariable Long courseId) {
-        Course course = courseService.get(courseId);
+    ResponseEntity<CourseGetResponse> get(
+            @Login Manager manager,
+            @PathVariable Long courseId) {
+        Course course = courseService.get(manager.getId(), courseId);
         return ResponseEntity.ok(CourseGetResponse.from(course));
     }
 

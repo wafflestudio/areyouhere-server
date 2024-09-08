@@ -4,6 +4,9 @@ package com.waruru.areyouhere.active;
 import com.waruru.areyouhere.attendance.dto.request.AuthCodeDeactivationRequestDto;
 import com.waruru.areyouhere.attendance.dto.request.AuthCodeRequestDto;
 import com.waruru.areyouhere.active.service.ActiveSessionService;
+import com.waruru.areyouhere.common.annotation.Login;
+import com.waruru.areyouhere.common.annotation.LoginRequired;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +26,19 @@ public class ActiveSessionController {
 
 
     @PostMapping
-    public ResponseEntity<String> activate(@RequestBody AuthCodeRequestDto authCodeRequestDto) {
+    @LoginRequired
+    public ResponseEntity<String> activate(
+            @Login Manager manager,
+            @RequestBody AuthCodeRequestDto authCodeRequestDto) {
         Long sessionId = authCodeRequestDto.getSessionId();
         Long courseId = authCodeRequestDto.getCourseId();
-        return ResponseEntity.ok(activeSessionService.activate(sessionId, courseId));
+        return ResponseEntity.ok(activeSessionService.activate(manager.getId(), sessionId, courseId));
     }
 
     @PostMapping("/deactivate")
+    @LoginRequired
     public ResponseEntity<HttpStatus> deactivate(
+            @Login Manager manager,
             @RequestBody AuthCodeDeactivationRequestDto authCodeDeactivationRequestDto) {
         Long sessionId = authCodeDeactivationRequestDto.getSessionId();
         Long courseId = authCodeDeactivationRequestDto.getCourseId();
