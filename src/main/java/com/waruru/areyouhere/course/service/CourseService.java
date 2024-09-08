@@ -18,5 +18,5 @@ public interface CourseService {
 
     void delete(Long managerId, Long courseId);
 
-    public Course get(Long courseId);
+    public Course get(Long managerId, Long courseId);
 }

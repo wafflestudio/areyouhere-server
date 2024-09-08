@@ -10,7 +10,9 @@ import com.waruru.areyouhere.attendee.dto.request.NewAttendeesRequestDto;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
 import com.waruru.areyouhere.attendee.service.query.AttendeeQueryService;
+import com.waruru.areyouhere.common.annotation.Login;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +38,10 @@ public class AttendeeController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<ClassAttendeesResponseDto> getClassAttendees(@RequestParam("courseId") Long courseId) {
-        List<ClassAttendees> classAttendees = attendeeQueryService.getClassAttendeesIfExistsOrEmpty(courseId);
+    public ResponseEntity<ClassAttendeesResponseDto> getClassAttendees(
+            @Login Manager manager,
+            @RequestParam("courseId") Long courseId) {
+        List<ClassAttendees> classAttendees = attendeeQueryService.getClassAttendeesIfExistsOrEmpty(manager.getId(), courseId);
 
         return ResponseEntity.ok(ClassAttendeesResponseDto.builder()
                 .classAttendees(classAttendees)
@@ -46,16 +50,22 @@ public class AttendeeController {
 
     @LoginRequired
     @PostMapping
-    public ResponseEntity<HttpStatus> create(@RequestBody NewAttendeesRequestDto newAttendeesRequestDto) {
-        attendeeCommandService.createAll(newAttendeesRequestDto.getCourseId(),
+    public ResponseEntity<HttpStatus> create(
+            @Login Manager manager,
+            @RequestBody NewAttendeesRequestDto newAttendeesRequestDto) {
+        attendeeCommandService.createAll(
+                manager.getId(),
+                newAttendeesRequestDto.getCourseId(),
                 newAttendeesRequestDto.getNewAttendees());
         return ResponseEntity.ok().build();
     }
 
     @LoginRequired
     @PostMapping("/delete")
-    public ResponseEntity<HttpStatus> delete(@RequestBody DeleteAttendeesRequestDto deleteAttendeesRequestDto) {
-        attendeeCommandService.deleteAll(deleteAttendeesRequestDto.getAttendeeIds());
+    public ResponseEntity<HttpStatus> delete(
+            @Login Manager manager,
+            @RequestBody DeleteAttendeesRequestDto deleteAttendeesRequestDto) {
+        attendeeCommandService.deleteAll(manager.getId(), deleteAttendeesRequestDto.getAttendeeIds());
         return ResponseEntity.ok().build();
     }
 
@@ -75,8 +85,12 @@ public class AttendeeController {
 
     @LoginRequired
     @PutMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody UpdateAttendeesRequestDto UpdateAttendeesRequestDto) {
-        attendeeCommandService.updateAll(UpdateAttendeesRequestDto.getCourseId(),
+    public ResponseEntity<HttpStatus> update(
+            @Login Manager manager,
+            @RequestBody UpdateAttendeesRequestDto UpdateAttendeesRequestDto) {
+        attendeeCommandService.updateAll(
+                manager.getId(),
+                UpdateAttendeesRequestDto.getCourseId(),
                 UpdateAttendeesRequestDto.getUpdatedAttendees());
         return ResponseEntity.ok().build();
     }

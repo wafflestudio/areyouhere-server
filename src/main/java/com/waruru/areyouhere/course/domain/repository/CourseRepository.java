@@ -12,4 +12,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("SELECT c FROM course c WHERE c.manager.id = :managerId")
     List<Course> findAllByManagerId(@Param("managerId")Long managerId);
 
+    @Query(nativeQuery = true, value = "SELECT case when EXISTS(SELECT 1 from course WHERE course.id = :courseId and manager_id = :managerId) then 'true' else 'false' end")
+    boolean isCourseMadeByManagerId(@Param("managerId") Long managerId, @Param("courseId") Long courseId);
 }

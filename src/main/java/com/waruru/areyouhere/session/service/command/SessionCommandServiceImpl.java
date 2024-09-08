@@ -7,6 +7,7 @@ import com.waruru.areyouhere.attendee.exception.AttendeeNotFoundException;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
+import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
@@ -32,11 +33,11 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     private final ActiveAttendanceService activeAttendanceService;
 
     @Override
-    public void create(Long courseId, String sessionName) {
+    public void create(Long managerId, Long courseId, String sessionName) {
         // TODO : exception 수정
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseNotFoundException::new);
-
+        throwIfCourseAuthorizationFail(managerId, courseId);
         sessionRepository.findMostRecentByCourseId(courseId)
                 .ifPresent(session -> {
                     if (!session.isDeactivated()) {
@@ -57,7 +58,9 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     }
 
     @Override
-    public void deleteNotActivated(Long courseId) {
+    public void deleteNotActivated(Long managerId, Long courseId) {
+        throwIfCourseAuthorizationFail(managerId, courseId);
+
         sessionRepository.findMostRecentByCourseId(courseId)
                 .ifPresent(session -> {
                     if (!activeAttendanceService.isSessionActivatedByCourseId(courseId) && !session.isDeactivated()) {
@@ -66,7 +69,10 @@ public class SessionCommandServiceImpl implements SessionCommandService {
                 });
     }
     @Override
-    public void deleteAll(List<Long> sessionIds) {
+    public void deleteAll(Long managerId, List<Long> sessionIds) {
+
+        sessionIds.forEach(sessionId -> throwIfSessionAuthorizationFail(managerId, sessionId));
+
         sessionIds.forEach(sessionId -> {
             attendanceRepository.deleteAllBySessionId(sessionId);
             sessionRepository.findById(sessionId).orElseThrow(CurrentSessionNotFoundException::new);
@@ -89,11 +95,24 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     }
 
     @Override
-    public void updateAll(List<UpdateSession> sessions) {
+    public void updateAll(Long managerId, List<UpdateSession> sessions) {
+        sessions.forEach(session -> throwIfSessionAuthorizationFail(managerId, session.getId()));
+
         sessions.forEach(session -> {
             sessionRepository.setSessionNameById(session.getName(), session.getId());
         });
     }
 
+    private void throwIfCourseAuthorizationFail(Long managerId, Long courseId){
+        if(!courseRepository.isCourseMadeByManagerId(managerId, courseId)){
+            throw new UnAuthenticatedException();
+        }
+    }
+
+    private void throwIfSessionAuthorizationFail(Long managerId, Long sessionId){
+        if(!sessionRepository.isSessionMadeByManagerId(managerId, sessionId)){
+            throw new UnAuthenticatedException();
+        }
+    }
 
 }

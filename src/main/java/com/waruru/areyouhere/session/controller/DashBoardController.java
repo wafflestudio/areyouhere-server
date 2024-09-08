@@ -1,7 +1,9 @@
 package com.waruru.areyouhere.session.controller;
 
 
+import com.waruru.areyouhere.common.annotation.Login;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.session.dto.response.CurrentSessionResponseDto;
 import com.waruru.areyouhere.session.dto.response.PreviousFiveSessionResponseDto;
 import com.waruru.areyouhere.session.exception.CurrentSessionNotFoundException;
@@ -29,8 +31,10 @@ public class DashBoardController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<CurrentSessionResponseDto> getCurrentSessionInfo(@PathVariable Long courseId) {
-        CurrentSessionDto currentSessionInfo = sessionQueryService.getCurrentSessionInfo(courseId);
+    public ResponseEntity<CurrentSessionResponseDto> getCurrentSessionInfo(
+            @Login Manager manager,
+            @PathVariable Long courseId) {
+        CurrentSessionDto currentSessionInfo = sessionQueryService.getCurrentSessionInfo(manager.getId(), courseId);
         CurrentSessionResponseDto currentSessionResponseDto = CurrentSessionResponseDto.builder()
                 .authCode(currentSessionInfo.getAuthCode())
                 .sessionName(currentSessionInfo.getSessionName())
@@ -43,9 +47,11 @@ public class DashBoardController {
 
     @LoginRequired
     @GetMapping("/session")
-    public ResponseEntity<PreviousFiveSessionResponseDto> getRecentFiveSessionInfo(@PathVariable Long courseId){
+    public ResponseEntity<PreviousFiveSessionResponseDto> getRecentFiveSessionInfo(
+            @Login Manager manager,
+            @PathVariable Long courseId){
 
-        List<SessionAttendanceInfo> recentFiveSessions = sessionQueryService.getRecentFive(courseId);
+        List<SessionAttendanceInfo> recentFiveSessions = sessionQueryService.getRecentFive(manager.getId(), courseId);
         if(recentFiveSessions.isEmpty()){
             throw new CurrentSessionNotFoundException();
         }

@@ -8,7 +8,9 @@ import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttend
 import com.waruru.areyouhere.attendance.service.rdb.AttendanceRDBService;
 import com.waruru.areyouhere.active.service.ActiveAttendanceService;
 import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
+import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
+import com.waruru.areyouhere.session.service.query.SessionQueryService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceRDBService attendanceRDBService;
     private final ActiveAttendanceService activeAttendanceService;
+    private final SessionQueryService sessionQueryService;
 
     @Override
     @Transactional
@@ -53,8 +56,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     @Transactional
-    public void updateAllStatuses(Long sessionId, List<UpdateAttendance> updateAttendances) {
-        attendanceRDBService.setAttendanceStatuses(sessionId, updateAttendances);
+    public void updateAllStatuses(Long managerId, List<UpdateAttendance> updateAttendances) {
+        updateAttendances.forEach(updateAttendance -> throwIfAttendanceNotOwnByManager(managerId, updateAttendance.getAttendanceId()));
+        attendanceRDBService.setAttendanceStatuses(updateAttendances);
     }
 
     @Override
@@ -70,6 +74,11 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Transactional(readOnly = true)
     public CurrentSessionAttendeeAttendance getCurrentSessionAttendeesAndAbsentees(String authCode) {
         return activeAttendanceService.getCurrentSessionAttendees(authCode);
+    }
+
+    private void throwIfAttendanceNotOwnByManager(Long managerId, Long attendanceId){
+        long sessionId = attendanceRDBService.getSessionId(attendanceId);
+        sessionQueryService.throwIfSessionAuthorizationFail(managerId, sessionId);
     }
 
 

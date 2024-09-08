@@ -27,9 +27,9 @@ public class ActiveSessionServiceImpl implements ActiveSessionService {
 
     @Override
     @Transactional
-    public String activate(Long sessionId, Long courseId) {
-        Course course = courseService.get(courseId);
-        Session session = sessionQueryService.get(sessionId);
+    public String activate(Long managerId, Long sessionId, Long courseId) {
+        Course course = courseService.get(managerId, courseId);
+        Session session = sessionQueryService.get(managerId, sessionId);
         LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         sessionCommandService.setAuthCodeDate(session, currentTime);
         return activeAttendanceService.activate(course, session, currentTime);

@@ -6,15 +6,17 @@ import com.waruru.areyouhere.session.service.dto.SessionAttendanceInfo;
 import java.util.List;
 
 public interface SessionQueryService {
-    public CurrentSessionDto getCurrentSessionInfo(Long courseId);
+    public CurrentSessionDto getCurrentSessionInfo(Long managerId, Long courseId);
 
-    public List<SessionAttendanceInfo> getRecentFive(Long courseId);
+    public List<SessionAttendanceInfo> getRecentFive(Long managerId, Long courseId);
 
-    public List<SessionAttendanceInfo> getAll(Long courseId);
+    public List<SessionAttendanceInfo> getAll(Long managerId, Long courseId);
 
-    public SessionAttendanceInfo getSessionAttendanceInfo(Long sessionId);
+    public SessionAttendanceInfo getSessionAttendanceInfo(Long managerId, Long sessionId);
 
     public void checkNotDeactivated(Long sessionId);
 
-    public Session get(Long sessionId);
+    public Session get(Long managerId, Long sessionId);
+
+    public void throwIfSessionAuthorizationFail(Long managerId, Long sessionId);
 }
