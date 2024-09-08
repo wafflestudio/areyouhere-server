@@ -11,6 +11,7 @@ import com.waruru.areyouhere.attendee.service.dto.AttendeeInfo;
 import com.waruru.areyouhere.course.domain.entity.Course;
 import com.waruru.areyouhere.course.domain.repository.CourseRepository;
 import com.waruru.areyouhere.course.exception.CourseNotFoundException;
+import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +38,8 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
     private final ActiveAttendanceService activeAttendanceService;
 
     @Override
-    public void createAll(Long courseId, List<AttendeeInfo> newAttendees){
+    public void createAll(Long managerId, Long courseId, List<AttendeeInfo> newAttendees){
+        throwIfCourseAuthorizationFail(managerId, courseId);
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(CourseNotFoundException::new);
 
@@ -69,8 +71,8 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
     }
 
     @Override
-    public void updateAll(Long courseId, List<AttendeeInfo> updatedAttendees){
-
+    public void updateAll(Long managerId, Long courseId, List<AttendeeInfo> updatedAttendees){
+        throwIfCourseAuthorizationFail(managerId, courseId);
         throwIfAttendeesNameAndNoteNotUnique(updatedAttendees, courseId);
         updatedAttendees.stream()
                 .map(attendee ->
@@ -85,10 +87,11 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
         syncToRedis(courseId);
     }
 
-    public void deleteAll(List<Long> deleteAttendees){
+    public void deleteAll(Long managerId, List<Long> deleteAttendees){
         Long courseId = attendeeRepository.findById(deleteAttendees.get(0))
                 .orElseThrow(() -> new AttendeeNotFoundException("Attendee not found"))
                 .getCourse().getId();
+        throwIfCourseAuthorizationFail(managerId, courseId);
         if(activeAttendanceService.isSessionActivatedByCourseId(courseId)){
             throw new ActivatedSessionExistsException();
         }
@@ -174,4 +177,12 @@ public class AttendeeCommandServiceImpl implements AttendeeCommandService{
                 .get(attendee.getName())
                 .add(Optional.ofNullable(attendee.getNote()).orElse(""));
     }
+
+    private void throwIfCourseAuthorizationFail(Long managerId, Long courseId){
+        if(!courseRepository.isCourseMadeByManagerId(managerId, courseId)){
+            throw new UnAuthenticatedException();
+        }
+    }
+
+
 }
