@@ -15,6 +15,7 @@ import com.waruru.areyouhere.course.exception.CourseNotFoundException;
 import com.waruru.areyouhere.course.exception.UnauthorizedManagerException;
 import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.manager.domain.repository.ManagerRepository;
+import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.ActivatedSessionExistsException;
@@ -101,7 +102,7 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId).
                 orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
-        throwIfAuthorizationFail(managerId, course);
+        throwIfCourseAuthorizationFail(managerId, courseId);
 
         course.update(name, description, onlyListNameAllowed);
         courseRepository.save(course);
@@ -119,7 +120,7 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId).
                 orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
-        throwIfAuthorizationFail(managerId, course);
+        throwIfCourseAuthorizationFail(managerId, courseId);
         List<Session> sessions = sessionRepository.findAllByCourseId(courseId);
         attendanceRepository.deleteAllBySessionIds(sessions.stream().map(Session::getId).toList());
         sessionRepository.deleteAllByCourseId(courseId);
@@ -131,8 +132,10 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional(readOnly = true)
     public Course get(Long managerId, Long courseId) {
-        return courseRepository.findById(courseId).
+        Course course = courseRepository.findById(courseId).
                 orElseThrow(() -> new CourseNotFoundException("Course not found"));
+        throwIfCourseAuthorizationFail(managerId, courseId);
+        return course;
     }
 
     private boolean isAttendeesUnique(List<String> attendees) {
@@ -141,9 +144,10 @@ public class CourseServiceImpl implements CourseService {
         return uniqueAttendees.size() == attendees.size();
     }
 
-    private void throwIfAuthorizationFail(Long managerId, Course course) {
-        if (!course.getManager().getId().equals(managerId)) {
-            throw new UnauthorizedManagerException("Manager not authorized");
+
+    private void throwIfCourseAuthorizationFail(Long managerId, Long courseId){
+        if(!courseRepository.isCourseMadeByManagerId(managerId, courseId)){
+            throw new UnAuthenticatedException();
         }
     }
 
