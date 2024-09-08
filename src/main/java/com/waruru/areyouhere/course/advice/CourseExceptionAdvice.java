@@ -46,11 +46,4 @@ public class CourseExceptionAdvice {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGlobalException(Exception ex, WebRequest request) {
-        // 모든 나머지 예외들을 처리
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-    }
-
 }
