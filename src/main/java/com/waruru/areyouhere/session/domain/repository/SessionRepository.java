@@ -64,10 +64,10 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
     @Query("UPDATE session s SET s.name= :name WHERE s.id = :sessionId")
     void setSessionNameById(@Param("name") String name, @Param("sessionId") Long sessionId);
 
-    @Query(nativeQuery = true, value = "SELECT EXISTS "
+    @Query(nativeQuery = true, value = "SELECT case when EXISTS "
             + "(SELECT 1 FROM course WHERE course.id = "
             + "(SELECT s.course_id FROM session AS s WHERE s.id = :sessionId)"
-            + " and course.manager_id = :managerId)")
+            + " and course.manager_id = :managerId) then 'true' else 'false' end")
     boolean isSessionMadeByManagerId(@Param("managerId") Long managerId, @Param("sessionId") Long sessionId);
 
 }
