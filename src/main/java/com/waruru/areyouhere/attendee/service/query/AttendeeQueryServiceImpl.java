@@ -11,6 +11,8 @@ import com.waruru.areyouhere.attendee.service.dto.AttendeeDetailDto;
 import com.waruru.areyouhere.attendee.service.dto.ClassAttendees;
 import com.waruru.areyouhere.attendee.service.dto.DuplicateAttendees;
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
+import com.waruru.areyouhere.course.domain.repository.CourseRepository;
+import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class AttendeeQueryServiceImpl implements AttendeeQueryService{
 
     private final AttendeeRepository attendeeRepository;
+    private final CourseRepository courseRepository;
+
     @Override
     public AttendeeDetailDto getAttendanceCount(Long attendeeId) {
         Attendee attendee = attendeeRepository.findById(attendeeId)
@@ -114,11 +118,13 @@ public class AttendeeQueryServiceImpl implements AttendeeQueryService{
     }
 
     @Override
-    public List<ClassAttendees> getClassAttendeesIfExistsOrEmpty(Long courseId) {
+    public List<ClassAttendees> getClassAttendeesIfExistsOrEmpty(Long managerId, Long courseId) {
         List<ClassAttendeeInfo> classAttendancesInfos = attendeeRepository.getClassAttendancesInfo(courseId);
 
         if(classAttendancesInfos == null || classAttendancesInfos.isEmpty())
             throw new ClassAttendeesEmptyException();
+
+        throwIfCourseAuthorizationFail(managerId, courseId);
 
         return classAttendancesInfos.stream().map( classAttendancesInfo -> ClassAttendees.builder()
                 .id(classAttendancesInfo.getAttendeeId())
@@ -133,5 +139,11 @@ public class AttendeeQueryServiceImpl implements AttendeeQueryService{
     @Override
     public int getAllByCourseId(Long courseId) {
         return attendeeRepository.findAttendeesByCourse_Id(courseId).size();
+    }
+
+    private void throwIfCourseAuthorizationFail(Long managerId, Long courseId){
+        if(!courseRepository.isCourseMadeByManagerId(managerId, courseId)){
+            throw new UnAuthenticatedException();
+        }
     }
 }

@@ -38,8 +38,10 @@ public class AttendeeController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<ClassAttendeesResponseDto> getClassAttendees(@RequestParam("courseId") Long courseId) {
-        List<ClassAttendees> classAttendees = attendeeQueryService.getClassAttendeesIfExistsOrEmpty(courseId);
+    public ResponseEntity<ClassAttendeesResponseDto> getClassAttendees(
+            @Login Manager manager,
+            @RequestParam("courseId") Long courseId) {
+        List<ClassAttendees> classAttendees = attendeeQueryService.getClassAttendeesIfExistsOrEmpty(manager.getId(), courseId);
 
         return ResponseEntity.ok(ClassAttendeesResponseDto.builder()
                 .classAttendees(classAttendees)

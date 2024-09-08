@@ -14,7 +14,7 @@ public interface AttendeeQueryService {
 
     public List<SessionAttendees> getSessionAbsenteesIfExistsOrEmpty(Long sessionId);
 
-    public List<ClassAttendees> getClassAttendeesIfExistsOrEmpty(Long courseId);
+    public List<ClassAttendees> getClassAttendeesIfExistsOrEmpty(Long managerId, Long courseId);
 
     public int getAllByCourseId(Long courseId);
 
