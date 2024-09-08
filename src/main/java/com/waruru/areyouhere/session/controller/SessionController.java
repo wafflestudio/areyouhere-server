@@ -3,7 +3,9 @@ package com.waruru.areyouhere.session.controller;
 
 import com.waruru.areyouhere.attendee.service.dto.SessionAttendees;
 import com.waruru.areyouhere.attendee.service.query.AttendeeQueryService;
+import com.waruru.areyouhere.common.annotation.Login;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
 import com.waruru.areyouhere.session.dto.request.CreateSessionRequestDto;
 import com.waruru.areyouhere.session.dto.request.DeleteSessionRequestDto;
 import com.waruru.areyouhere.session.dto.request.UpdateSessionsRequestDto;
@@ -40,9 +42,11 @@ public class SessionController {
     // TODO : refactor => service Dto 그대로 사용.
     @LoginRequired
     @GetMapping
-    public ResponseEntity<AllSessionAttendanceInfo> getAll(@RequestParam("courseId") Long courseId){
+    public ResponseEntity<AllSessionAttendanceInfo> getAll(
+            @Login Manager manager,
+            @RequestParam("courseId") Long courseId){
 
-        List<SessionAttendanceInfo> allSessions = sessionQueryService.getAll(courseId);
+        List<SessionAttendanceInfo> allSessions = sessionQueryService.getAll(manager.getId(), courseId);
         if(allSessions.isEmpty()){
             return ResponseEntity.noContent().build();
         }
@@ -53,27 +57,35 @@ public class SessionController {
     }
     @LoginRequired
     @PostMapping
-    public ResponseEntity<HttpStatus> create(@RequestBody CreateSessionRequestDto createSessionRequestDto){
-        sessionCommandService.create(createSessionRequestDto.getCourseId(), createSessionRequestDto.getSessionName());
+    public ResponseEntity<HttpStatus> create(
+            @Login Manager manager,
+            @RequestBody CreateSessionRequestDto createSessionRequestDto){
+        sessionCommandService.create(manager.getId(), createSessionRequestDto.getCourseId(), createSessionRequestDto.getSessionName());
         return ResponseEntity.ok().build();
     }
     @LoginRequired
     @PostMapping("/delete")
-    public ResponseEntity<HttpStatus> delete(@RequestBody DeleteSessionRequestDto sessionIds){
-        sessionCommandService.deleteAll(sessionIds.getSessionIds());
+    public ResponseEntity<HttpStatus> delete(
+            @Login Manager manager,
+            @RequestBody DeleteSessionRequestDto sessionIds){
+        sessionCommandService.deleteAll(manager.getId(), sessionIds.getSessionIds());
         return ResponseEntity.ok().build();
     }
     @LoginRequired
     @DeleteMapping
-    public ResponseEntity<HttpStatus> deleteNotActivated(@RequestParam("courseId") Long courseId){
-        sessionCommandService.deleteNotActivated(courseId);
+    public ResponseEntity<HttpStatus> deleteNotActivated(
+            @Login Manager manager,
+            @RequestParam("courseId") Long courseId){
+        sessionCommandService.deleteNotActivated(manager.getId(), courseId);
         return ResponseEntity.ok().build();
     }
 
     @LoginRequired
     @GetMapping("/{sessionId}")
-    public ResponseEntity<SessionAttendanceInfo> getSessionBasicInfo(@PathVariable("sessionId") Long sessionId){
-        return ResponseEntity.ok(sessionQueryService.getSessionAttendanceInfo(sessionId));
+    public ResponseEntity<SessionAttendanceInfo> getSessionBasicInfo(
+            @Login Manager manager,
+            @PathVariable("sessionId") Long sessionId){
+        return ResponseEntity.ok(sessionQueryService.getSessionAttendanceInfo(manager.getId(), sessionId));
     }
     // TODO: refactor => attendeeService로 이동
     @LoginRequired
@@ -98,8 +110,10 @@ public class SessionController {
     }
     @LoginRequired
     @PutMapping
-    public ResponseEntity<HttpStatus> updateAll(@RequestBody UpdateSessionsRequestDto updateSessionsRequestDto){
-        sessionCommandService.updateAll(updateSessionsRequestDto.getSessions());
+    public ResponseEntity<HttpStatus> updateAll(
+            @Login Manager manager,
+            @RequestBody UpdateSessionsRequestDto updateSessionsRequestDto){
+        sessionCommandService.updateAll(manager.getId(), updateSessionsRequestDto.getSessions());
         return ResponseEntity.ok().build();
     }
 

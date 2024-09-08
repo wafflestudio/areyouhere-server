@@ -1,6 +1,8 @@
 package com.waruru.areyouhere.session.service.query;
 
 import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
+import com.waruru.areyouhere.course.domain.repository.CourseRepository;
+import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.active.domain.repository.ActiveSessionRepository;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
@@ -24,10 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class SessionQueryServiceImpl implements SessionQueryService {
 
     private final SessionRepository sessionRepository;
+    private final CourseRepository courseRepository;
     private final ActiveSessionRepository activeSessionRepository;
 
     @Override
-    public CurrentSessionDto getCurrentSessionInfo(Long courseId) {
+    public CurrentSessionDto getCurrentSessionInfo(Long managerId, Long courseId) {
+
+        throwIfCourseAuthorizationFail(managerId, courseId);
+
         Session mostRecentSession = sessionRepository
                 .findMostRecentByCourseId(courseId)
                 .orElseThrow(CurrentSessionNotFoundException::new);
@@ -49,7 +55,8 @@ public class SessionQueryServiceImpl implements SessionQueryService {
 
 
     @Override
-    public List<SessionAttendanceInfo> getRecentFive(Long courseId) {
+    public List<SessionAttendanceInfo> getRecentFive(Long managerId, Long courseId) {
+        throwIfCourseAuthorizationFail(managerId, courseId);
         List<Session> recentSessions = getRecentSessions(courseId);
         removeExtraSession(recentSessions);
         return getSessionAttendanceInfoList(recentSessions);
@@ -57,7 +64,9 @@ public class SessionQueryServiceImpl implements SessionQueryService {
 
 
     @Override
-    public List<SessionAttendanceInfo> getAll(Long courseId) {
+    public List<SessionAttendanceInfo> getAll(Long managerId, Long courseId) {
+        throwIfCourseAuthorizationFail(managerId, courseId);
+
         List<SessionInfo> allSessions = sessionRepository.findSessionsWithAttendance(courseId);
 
         return allSessions == null || allSessions.isEmpty()
@@ -73,10 +82,12 @@ public class SessionQueryServiceImpl implements SessionQueryService {
     }
 
     @Override
-    public SessionAttendanceInfo getSessionAttendanceInfo(Long sessionId) {
+    public SessionAttendanceInfo getSessionAttendanceInfo(Long managerId, Long sessionId) {
         SessionInfo sessionWithAttendance = sessionRepository
                 .findSessionWithAttendance(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
+
+        throwIfSessionAuthorizationFail(managerId, sessionId);
 
         return SessionAttendanceInfo.builder()
                 .id(sessionWithAttendance.getid())
@@ -96,9 +107,12 @@ public class SessionQueryServiceImpl implements SessionQueryService {
     }
 
     @Override
-    public Session get(Long sessionId) {
-        return sessionRepository.findById(sessionId)
+    public Session get(Long managerId, Long sessionId) {
+        Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(SessionIdNotFoundException::new);
+        throwIfSessionAuthorizationFail(managerId, sessionId);
+
+        return session;
     }
 
     private void throwIfSessionDeactivated(Session mostRecentSession) {
@@ -129,6 +143,18 @@ public class SessionQueryServiceImpl implements SessionQueryService {
             recentFiveSessions.remove(0);
         } else if (recentFiveSessions.size() > 5) {
             recentFiveSessions.remove(5);
+        }
+    }
+
+    private void throwIfCourseAuthorizationFail(Long managerId, Long courseId){
+        if(!courseRepository.isCourseMadeByManagerId(managerId, courseId)){
+            throw new UnAuthenticatedException();
+        }
+    }
+
+    private void throwIfSessionAuthorizationFail(Long managerId, Long sessionId){
+        if(!sessionRepository.isSessionMadeByManagerId(managerId, sessionId)){
+            throw new UnAuthenticatedException();
         }
     }
 

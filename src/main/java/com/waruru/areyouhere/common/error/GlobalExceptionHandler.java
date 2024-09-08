@@ -1,8 +1,10 @@
 package com.waruru.areyouhere.common.error;
 
 import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_NOT_FOUND;
+import static com.waruru.areyouhere.common.utils.HttpStatusResponseEntity.RESPONSE_UNAUTHORIZED;
 
 import com.waruru.areyouhere.common.annotation.SlackNotification;
+import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +59,11 @@ public class GlobalExceptionHandler {
       errors.put(fieldName, errorMessage);
     });
     return errors;
+  }
+
+  @ExceptionHandler(UnAuthenticatedException.class)
+  public ResponseEntity<HttpStatus> unAuthenticatedHandler(){
+    return RESPONSE_UNAUTHORIZED;
   }
 
 

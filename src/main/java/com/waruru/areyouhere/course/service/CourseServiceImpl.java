@@ -101,7 +101,7 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId).
                 orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
-        checkAuthority(managerId, course);
+        throwIfAuthorizationFail(managerId, course);
 
         course.update(name, description, onlyListNameAllowed);
         courseRepository.save(course);
@@ -119,7 +119,7 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId).
                 orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
-        checkAuthority(managerId, course);
+        throwIfAuthorizationFail(managerId, course);
         List<Session> sessions = sessionRepository.findAllByCourseId(courseId);
         attendanceRepository.deleteAllBySessionIds(sessions.stream().map(Session::getId).toList());
         sessionRepository.deleteAllByCourseId(courseId);
@@ -141,7 +141,7 @@ public class CourseServiceImpl implements CourseService {
         return uniqueAttendees.size() == attendees.size();
     }
 
-    private void checkAuthority(Long managerId, Course course) {
+    private void throwIfAuthorizationFail(Long managerId, Course course) {
         if (!course.getManager().getId().equals(managerId)) {
             throw new UnauthorizedManagerException("Manager not authorized");
         }
