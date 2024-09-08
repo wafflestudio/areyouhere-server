@@ -10,6 +10,7 @@ import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
+import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
 import com.waruru.areyouhere.session.domain.entity.Session;
 import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
@@ -33,12 +34,12 @@ public class AttendanceRDBServiceImpl implements AttendanceRDBService {
 
     private final AttendanceRepository attendanceRepository;
     private final AttendanceBatchRepository attendanceBatchRepository;
+    private final SessionRepository sessionRepository;
 
 
     @Override
     public void setAttendancesAfterDeactivate(long courseId, long sessionId,
                                               CurrentSessionAttendanceInfo currentSessionAttendanceInfo) {
-
         LocalDateTime absentTime = LocalDateTime.now();
         List<AttendeeRedisData> attendees = new LinkedList<>();
         List<AttendeeRedisData> absentees = new LinkedList<>();
@@ -58,7 +59,10 @@ public class AttendanceRDBServiceImpl implements AttendanceRDBService {
     }
 
 
-    public void setAttendanceStatuses(Long sessionId, List<UpdateAttendance> updateAttendances) {
+    public void setAttendanceStatuses(Long managerId, Long sessionId, List<UpdateAttendance> updateAttendances) {
+
+        throwIfSessionAuthorizationFail(managerId, sessionId);
+
         List<Attendance> attendancesToUpdate = updateAttendances.stream()
                 .map(updateAttendance -> {
                     Attendance attendance = attendanceRepository.findById(updateAttendance.getAttendanceId())
@@ -72,5 +76,10 @@ public class AttendanceRDBServiceImpl implements AttendanceRDBService {
         attendanceRepository.saveAll(attendancesToUpdate);
     }
 
+    private void throwIfSessionAuthorizationFail(Long managerId, Long sessionId){
+        if(!sessionRepository.isSessionMadeByManagerId(managerId, sessionId)){
+            throw new UnAuthenticatedException();
+        }
+    }
 
 }

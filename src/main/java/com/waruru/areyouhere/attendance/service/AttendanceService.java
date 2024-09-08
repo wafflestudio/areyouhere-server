@@ -10,7 +10,7 @@ public interface AttendanceService {
 
     public AttendResponseDto attend(String attendeeName, String authCode, Long attendeeId);
 
-    public void updateAllStatuses(Long sessionId, List<UpdateAttendance> updateAttendances);
+    public void updateAllStatuses(Long managerId, Long sessionId, List<UpdateAttendance> updateAttendances);
 
     public CurrentSessionAttendCount getCurrentSessionAttendCount(Long sessionId);
 

@@ -9,7 +9,9 @@ import com.waruru.areyouhere.attendance.exception.DuplicateAuthCodeAttendExcepti
 import com.waruru.areyouhere.attendance.service.AttendanceService;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendCount;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
+import com.waruru.areyouhere.common.annotation.Login;
 import com.waruru.areyouhere.common.annotation.LoginRequired;
+import com.waruru.areyouhere.manager.domain.entity.Manager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -67,11 +69,13 @@ public class AttendanceController {
 
     @LoginRequired
     @PutMapping
-    ResponseEntity<HttpStatus> update(@RequestBody UpdateAttendanceRequestDto updateAttendanceRequestDto) {
+    ResponseEntity<HttpStatus> update(
+            @Login Manager manager,
+            @RequestBody UpdateAttendanceRequestDto updateAttendanceRequestDto) {
         Long sessionId = updateAttendanceRequestDto.getSessionId();
         List<UpdateAttendance> updateAttendance = updateAttendanceRequestDto.getUpdateAttendances();
 
-        attendanceService.updateAllStatuses(sessionId, updateAttendance);
+        attendanceService.updateAllStatuses(manager.getId(), sessionId, updateAttendance);
         return ResponseEntity.ok().build();
     }
 

@@ -8,5 +8,5 @@ import java.util.List;
 public interface AttendanceRDBService {
     public void setAttendancesAfterDeactivate(long courseId, long sessionId, CurrentSessionAttendanceInfo currentSessionAttendanceInfo);
 
-    public void setAttendanceStatuses(Long sessionId, List<UpdateAttendance> updateAttendances);
+    public void setAttendanceStatuses(Long managerId, Long sessionId, List<UpdateAttendance> updateAttendances);
 }

@@ -53,8 +53,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     @Transactional
-    public void updateAllStatuses(Long sessionId, List<UpdateAttendance> updateAttendances) {
-        attendanceRDBService.setAttendanceStatuses(sessionId, updateAttendances);
+    public void updateAllStatuses(Long managerId, Long sessionId, List<UpdateAttendance> updateAttendances) {
+
+        attendanceRDBService.setAttendanceStatuses(managerId, sessionId, updateAttendances);
     }
 
     @Override
