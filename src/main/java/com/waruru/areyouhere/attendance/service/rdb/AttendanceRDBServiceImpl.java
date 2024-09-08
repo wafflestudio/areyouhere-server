@@ -34,8 +34,6 @@ public class AttendanceRDBServiceImpl implements AttendanceRDBService {
 
     private final AttendanceRepository attendanceRepository;
     private final AttendanceBatchRepository attendanceBatchRepository;
-    private final SessionRepository sessionRepository;
-
 
     @Override
     public void setAttendancesAfterDeactivate(long courseId, long sessionId,
@@ -59,9 +57,7 @@ public class AttendanceRDBServiceImpl implements AttendanceRDBService {
     }
 
 
-    public void setAttendanceStatuses(Long managerId, Long sessionId, List<UpdateAttendance> updateAttendances) {
-
-        throwIfSessionAuthorizationFail(managerId, sessionId);
+    public void setAttendanceStatuses(List<UpdateAttendance> updateAttendances) {
 
         List<Attendance> attendancesToUpdate = updateAttendances.stream()
                 .map(updateAttendance -> {
@@ -76,10 +72,10 @@ public class AttendanceRDBServiceImpl implements AttendanceRDBService {
         attendanceRepository.saveAll(attendancesToUpdate);
     }
 
-    private void throwIfSessionAuthorizationFail(Long managerId, Long sessionId){
-        if(!sessionRepository.isSessionMadeByManagerId(managerId, sessionId)){
-            throw new UnAuthenticatedException();
-        }
+    @Override
+    public long getSessionId(Long attendanceId){
+        return  attendanceRepository.getSessionIdByAttendanceId(attendanceId).orElseThrow();
     }
+
 
 }

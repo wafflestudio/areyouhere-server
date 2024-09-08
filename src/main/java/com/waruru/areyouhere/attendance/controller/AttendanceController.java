@@ -72,10 +72,8 @@ public class AttendanceController {
     ResponseEntity<HttpStatus> update(
             @Login Manager manager,
             @RequestBody UpdateAttendanceRequestDto updateAttendanceRequestDto) {
-        Long sessionId = updateAttendanceRequestDto.getSessionId();
         List<UpdateAttendance> updateAttendance = updateAttendanceRequestDto.getUpdateAttendances();
-
-        attendanceService.updateAllStatuses(manager.getId(), sessionId, updateAttendance);
+        attendanceService.updateAllStatuses(manager.getId(), updateAttendance);
         return ResponseEntity.ok().build();
     }
 

@@ -17,4 +17,6 @@ public interface SessionQueryService {
     public void checkNotDeactivated(Long sessionId);
 
     public Session get(Long managerId, Long sessionId);
+
+    public void throwIfSessionAuthorizationFail(Long managerId, Long sessionId);
 }

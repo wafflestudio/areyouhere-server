@@ -115,6 +115,14 @@ public class SessionQueryServiceImpl implements SessionQueryService {
         return session;
     }
 
+
+    @Override
+    public void throwIfSessionAuthorizationFail(Long managerId, Long sessionId){
+        if(!sessionRepository.isSessionMadeByManagerId(managerId, sessionId)){
+            throw new UnAuthenticatedException();
+        }
+    }
+
     private void throwIfSessionDeactivated(Session mostRecentSession) {
         if (mostRecentSession.isDeactivated()) {
             throw new CurrentSessionDeactivatedException();
@@ -152,11 +160,7 @@ public class SessionQueryServiceImpl implements SessionQueryService {
         }
     }
 
-    private void throwIfSessionAuthorizationFail(Long managerId, Long sessionId){
-        if(!sessionRepository.isSessionMadeByManagerId(managerId, sessionId)){
-            throw new UnAuthenticatedException();
-        }
-    }
+
 
     //FIXME : 404 발생
     private List<SessionAttendanceInfo> getSessionAttendanceInfoList(List<Session> recentFiveSessions) {
