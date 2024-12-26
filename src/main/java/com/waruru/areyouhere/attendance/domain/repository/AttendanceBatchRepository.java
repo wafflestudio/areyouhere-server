@@ -29,7 +29,7 @@ public class AttendanceBatchRepository {
                     ps.setLong(2, attendance.getId());
                     ps.setLong(3, sessionId);
                     ps.setObject(4, Timestamp.valueOf(absentTime));
-                    ps.setObject(5, AttendanceType.ABSENT);
+                    ps.setString(5, AttendanceType.ABSENT.name());
                 });
     }
 
@@ -43,7 +43,7 @@ public class AttendanceBatchRepository {
                     ps.setLong(2, attendance.getId());
                     ps.setLong(3, sessionId);
                     ps.setObject(4, Timestamp.valueOf(attendInfo.get(attendance.getId()).getAttendTime()));
-                    ps.setObject(5, attendInfo.get(attendance.getId()).getAttendanceType());
+                    ps.setString(5, attendInfo.get(attendance.getId()).getAttendanceType().name());
                 });
     }
 }
