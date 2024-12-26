@@ -1,6 +1,7 @@
 package com.waruru.areyouhere.active.service;
 
 import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
+import com.waruru.areyouhere.attendance.domain.entity.AttendanceType;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendance.service.rdb.AttendanceRDBService;
 import com.waruru.areyouhere.course.domain.entity.Course;
@@ -47,5 +48,14 @@ public class ActiveSessionServiceImpl implements ActiveSessionService {
         activeAttendanceService.deactivate(authCode);
     }
 
+    @Override
+    public void setLateStatus(String authCode, Long sessionId, Long courseId) {
+        activeAttendanceService.setStatus(authCode, AttendanceType.LATE);
+    }
+
+    @Override
+    public void setAttendStatus(String authCode, Long sessionId, Long courseId) {
+        activeAttendanceService.setStatus(authCode, AttendanceType.ATTENDED);
+    }
 
 }

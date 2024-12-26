@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.active.domain.entity;
 
+import com.waruru.areyouhere.attendance.domain.entity.AttendanceType;
 import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +39,11 @@ public class CurrentSessionAttendanceInfo {
     private List<AttendeeRedisData> attendees;
 
     @Getter
-    private Map<Long, LocalDateTime> attendanceTime = new HashMap<>();
+    @Setter
+    private AttendanceType attendanceStatus;
+
+    @Getter
+    private Map<Long, AttendInfo> attendInfos = new HashMap<>();
 
     @NotNull
     @Setter
@@ -68,6 +72,7 @@ public class CurrentSessionAttendanceInfo {
         this.courseName = courseName;
         this.sessionName = sessionName;
         this.createdAt = LocalDateTime.now();
+        this.attendanceStatus = AttendanceType.ATTENDED;
     }
 
     public void updateAttendees(List<Attendee> attendees){
@@ -82,20 +87,22 @@ public class CurrentSessionAttendanceInfo {
                 .toList();
     }
 
-    public void setAttendanceTime(Long attendeeId, LocalDateTime time){
-        attendanceTime.put(attendeeId, time);
+    public void setAttendInfos(Long attendeeId, AttendanceType status, LocalDateTime time){
+        attendInfos.put(attendeeId, new AttendInfo(time, status));
     }
 
     public void removeAttendanceTime(Long attendeeId){
-        attendanceTime.remove(attendeeId);
+        attendInfos.remove(attendeeId);
     }
 
     public Set<Long> getAttendAttendeesIds(){
-        return attendanceTime.keySet();
+        return attendInfos.keySet();
     }
 
     public boolean isAlreadyAttended(Long attendeeId){
-        return attendanceTime.containsKey(attendeeId);
+        return attendInfos.containsKey(attendeeId);
     }
 
 }
+
+

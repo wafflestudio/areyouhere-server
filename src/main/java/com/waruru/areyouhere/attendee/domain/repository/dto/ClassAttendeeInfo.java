@@ -12,4 +12,6 @@ public interface ClassAttendeeInfo {
     public int getAttendance();
 
     public int getAbsence();
+
+    public int getLate();
 }

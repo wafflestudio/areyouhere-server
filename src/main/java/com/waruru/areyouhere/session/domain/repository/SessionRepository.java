@@ -37,8 +37,9 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
     // 무엇보다 network IO 말고 DB 상에서 어떤 게 빠를지 고민해볼 필요도 있다.
 
     @Query(value = "SELECT session.id as id, session.auth_code_created_at as date, session.name as name, "
-            + "COUNT(case when attendance.is_attended = true then 1 end) as attendee, "
-            + "COUNT(case when attendance.is_attended = false then 1 end) as absentee \n"
+            + "COUNT(case when attendance.status = 'ATTENDED' then 1 end) as attendee, "
+            + "COUNT(case when attendance.status = 'ABSENT' then 1 end) as absentee,"
+            + "COUNT(case when attendance.status = 'LATE' then 1 end) as late \n"
             + "FROM session "
             + "INNER JOIN attendance ON session.id = attendance.session_id \n"
             + "WHERE session.course_id = :courseId \n"
@@ -48,8 +49,9 @@ public interface SessionRepository extends JpaRepository<Session, Long>{
 
     //TODO : refactor - application단 로직에서 출석자와 결석자를 counting 한다면 조금 더 가독성있으면서 성능 차이는 없습니다.
     @Query(value = "SELECT session.id as id, session.auth_code_created_at as date, session.name as name, "
-            + "COUNT(case when attendance.is_attended = true then 1 end) as attendee, "
-            + "COUNT(case when attendance.is_attended = false then 1 end) as absentee \n"
+            + "COUNT(case when attendance.status = 'ATTENDED' then 1 end) as attendee, "
+            + "COUNT(case when attendance.status = 'ABSENT' then 1 end) as absentee,"
+            + "COUNT(case when attendance.status = 'LATE' then 1 end) as late \n"
             + "FROM session \n"
             + "INNER JOIN attendance ON session.id = attendance.session_id \n"
             + "WHERE session.id = :sessionId \n"

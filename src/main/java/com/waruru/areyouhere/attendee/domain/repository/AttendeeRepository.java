@@ -26,13 +26,14 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
             + "FROM attendee as atdee \n"
             + "INNER JOIN attendance as atda ON atdee.id = atda.attendee_id  \n"
             + "WHERE atda.session_id = :sessionId \n"
-            + "and atda.is_attended = false", nativeQuery = true)
+            + "and atda.status = 'ABSENT'", nativeQuery = true)
     public List<SessionAttendeeInfo> findSessionOnlyAbsentee(@Param("sessionId") Long sessionId);
 
 
     @Query(value = "SELECT attd.id as AttendeeId, attd.name as Name, attd.note as note, "
-            + "COUNT(case when atdc.is_attended = true then 1 end) as attendance, "
-            + "COUNT(case when atdc.is_attended = false then 1 end) as absence \n"
+            + "COUNT(case when atdc.status = 'ATTENDED' then 1 end) as attendance, "
+            + "COUNT(case when atdc.status = 'ABSENT' then 1 end) as absence,"
+            + "COUNT(case when atdc.status = 'LATE' then 1 end) as late \n"
             + "FROM attendee as attd \n"
             + "LEFT OUTER JOIN attendance as atdc ON attd.id = atdc.attendee_id \n"
             + "WHERE attd.course_id = :courseId \n"
@@ -49,7 +50,7 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
             + "GROUP BY a.course_id", nativeQuery = true)
     public List<EachClassAttendeeCountInfo> countAttendeesEachCourseByManagerId(@Param("managerId") Long managerId);
 
-    @Query(value = "SELECT atda.id as AttendanceId,  sess.id as SessionId, sess.name as SessionName, atda.is_attended as AttendanceStatus, atda.created_at as AttendanceTime\n"
+    @Query(value = "SELECT atda.id as AttendanceId,  sess.id as SessionId, sess.name as SessionName, atda.status as AttendanceStatus, atda.created_at as AttendanceTime\n"
             + "from attendance atda\n"
             + "INNER JOIN session as sess ON atda.session_id = sess.id\n"
             + "where atda.attendee_id = :attendeeId\n"

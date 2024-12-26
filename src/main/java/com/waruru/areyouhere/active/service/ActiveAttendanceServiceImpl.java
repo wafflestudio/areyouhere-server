@@ -1,5 +1,7 @@
 package com.waruru.areyouhere.active.service;
 
+import com.waruru.areyouhere.active.domain.entity.AttendInfo;
+import com.waruru.areyouhere.attendance.domain.entity.AttendanceType;
 import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
@@ -17,6 +19,7 @@ import com.waruru.areyouhere.session.service.dto.AuthCodeInfo;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +77,7 @@ public class ActiveAttendanceServiceImpl implements ActiveAttendanceService {
     public void setAttendInRedis(String authCode, AttendeeRedisData attendeeInfo) {
         CurrentSessionAttendanceInfo currentSessionAttendanceInfoData = getSessionAttendanceInfoOrThrow(
                 authCode);
-        currentSessionAttendanceInfoData.setAttendanceTime(attendeeInfo.getId(), LocalDateTime.now());
+        currentSessionAttendanceInfoData.setAttendInfos(attendeeInfo.getId(), currentSessionAttendanceInfoData.getAttendanceStatus(), LocalDateTime.now());
         activeSessionRepository.save(currentSessionAttendanceInfoData);
     }
 
@@ -114,11 +117,16 @@ public class ActiveAttendanceServiceImpl implements ActiveAttendanceService {
                 authCode);
         List<AttendeeRedisData> attendees = new LinkedList<>();
         List<AttendeeRedisData> absentees = new LinkedList<>();
-        Set<Long> attendeesChecker = currentSessionAttendanceInfoData.getAttendAttendeesIds();
+        List<AttendeeRedisData> lateness = new LinkedList<>();
+        Map<Long, AttendInfo> attendInfos = currentSessionAttendanceInfoData.getAttendInfos();
         currentSessionAttendanceInfoData.getAttendees()
                 .forEach(att -> {
-                    if (attendeesChecker.contains(att.getId())) {
-                        attendees.add(att);
+                    if (attendInfos.containsKey(att.getId())) {
+                        if(attendInfos.get(att.getId()).getAttendanceType() == AttendanceType.ATTENDED){
+                            attendees.add(att);
+                        }else if(attendInfos.get(att.getId()).getAttendanceType() == AttendanceType.LATE){
+                            lateness.add(att);
+                        }
                     } else {
                         absentees.add(att);
                     }
@@ -126,6 +134,7 @@ public class ActiveAttendanceServiceImpl implements ActiveAttendanceService {
 
         return CurrentSessionAttendeeAttendance.builder()
                 .attendees(attendees)
+                .lateness(lateness)
                 .absentees(absentees)
                 .build();
     }
@@ -183,6 +192,15 @@ public class ActiveAttendanceServiceImpl implements ActiveAttendanceService {
         return activeSessionRepository
                 .findById(authCode)
                 .orElseThrow(AuthCodeNotFoundException::new);
+    }
+
+    @Override
+    public void setStatus(String authCode, AttendanceType status) {
+        CurrentSessionAttendanceInfo currentSessionAttendanceInfo = activeSessionRepository
+                .findById(authCode)
+                .orElseThrow(AuthCodeNotFoundException::new);
+        currentSessionAttendanceInfo.setAttendanceStatus(status);
+        activeSessionRepository.save(currentSessionAttendanceInfo);
     }
 
 

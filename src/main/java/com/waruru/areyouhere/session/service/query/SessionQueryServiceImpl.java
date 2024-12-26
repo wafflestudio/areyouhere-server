@@ -76,6 +76,7 @@ public class SessionQueryServiceImpl implements SessionQueryService {
                         .name(allSession.getname())
                         .date(allSession.getdate())
                         .attendee(allSession.getattendee())
+                        .late(allSession.getlate())
                         .absentee(allSession.getabsentee())
                         .build()
                 ).toList();
@@ -94,6 +95,7 @@ public class SessionQueryServiceImpl implements SessionQueryService {
                 .name(sessionWithAttendance.getname())
                 .date(sessionWithAttendance.getdate())
                 .attendee(sessionWithAttendance.getattendee())
+                .late(sessionWithAttendance.getlate())
                 .absentee(sessionWithAttendance.getabsentee())
                 .build();
 
@@ -171,6 +173,7 @@ public class SessionQueryServiceImpl implements SessionQueryService {
                 .map(sessionWithAttendance -> SessionAttendanceInfo.builder()
                         .attendee(sessionWithAttendance.getattendee())
                         .absentee(sessionWithAttendance.getabsentee())
+                        .late(sessionWithAttendance.getlate())
                         .date(sessionWithAttendance.getdate())
                         .name(sessionWithAttendance.getname())
                         .id(sessionWithAttendance.getid())

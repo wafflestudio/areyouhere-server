@@ -16,14 +16,17 @@ public class ClassAttendees {
 
     private int absence;
 
+    private int late;
+
     @Builder
-    public ClassAttendees(Long id, String name, String note, int attendance, int absence) {
+    public ClassAttendees(Long id, String name, String note, int attendance, int absence, int late) {
         this.attendee = AttendeeInfo.builder()
                 .id(id)
                 .name(name)
                 .note(note)
                 .build();
         this.attendance = attendance;
+        this.late = late;
         this.absence = absence;
     }
 }

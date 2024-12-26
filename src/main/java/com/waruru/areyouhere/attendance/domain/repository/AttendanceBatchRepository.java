@@ -1,6 +1,7 @@
 package com.waruru.areyouhere.attendance.domain.repository;
 
-import com.waruru.areyouhere.attendance.domain.entity.Attendance;
+import com.waruru.areyouhere.active.domain.entity.AttendInfo;
+import com.waruru.areyouhere.attendance.domain.entity.AttendanceType;
 import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -19,28 +20,30 @@ public class AttendanceBatchRepository {
 
 
     @Modifying(clearAutomatically = true)
-    public void insertAbsentBatch(List<AttendeeRedisData> attendances, Boolean isAttended, Long sessionId, LocalDateTime currentTime) {
-        jdbcTemplate.batchUpdate("INSERT INTO attendance (is_attended, attendee_id, session_id, created_at) VALUES (?, ?, ?, ?)",
+    public void insertAbsentBatch(List<AttendeeRedisData> attendances, Boolean isAttended, Long sessionId, LocalDateTime absentTime) {
+        jdbcTemplate.batchUpdate("INSERT INTO attendance (is_attended, attendee_id, session_id, created_at, status) VALUES (?, ?, ?, ?, ?)",
                 attendances,
                 attendances.size(),
                 (ps, attendance) -> {
                     ps.setBoolean(1, isAttended);
                     ps.setLong(2, attendance.getId());
                     ps.setLong(3, sessionId);
-                    ps.setObject(4, Timestamp.valueOf(currentTime));
+                    ps.setObject(4, Timestamp.valueOf(absentTime));
+                    ps.setObject(5, AttendanceType.ABSENT);
                 });
     }
 
     @Modifying(clearAutomatically = true)
-    public void insertAttendBatch(List<AttendeeRedisData> attendances, Boolean isAttended, Long sessionId, Map<Long, LocalDateTime> attendanceTime) {
-        jdbcTemplate.batchUpdate("INSERT INTO attendance (is_attended, attendee_id, session_id, created_at) VALUES (?, ?, ?, ?)",
+    public void insertAttendBatch(List<AttendeeRedisData> attendances, Boolean isAttended, Long sessionId, Map<Long, AttendInfo> attendInfo) {
+        jdbcTemplate.batchUpdate("INSERT INTO attendance (is_attended, attendee_id, session_id, created_at, status) VALUES (?, ?, ?, ?, ?)",
                 attendances,
                 attendances.size(),
                 (ps, attendance) -> {
                     ps.setBoolean(1, isAttended);
                     ps.setLong(2, attendance.getId());
                     ps.setLong(3, sessionId);
-                    ps.setObject(4, Timestamp.valueOf(attendanceTime.get(attendance.getId())));
+                    ps.setObject(4, Timestamp.valueOf(attendInfo.get(attendance.getId()).getAttendTime()));
+                    ps.setObject(5, attendInfo.get(attendance.getId()).getAttendanceType());
                 });
     }
 }

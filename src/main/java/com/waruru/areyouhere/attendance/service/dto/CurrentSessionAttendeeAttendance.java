@@ -12,10 +12,12 @@ import lombok.NoArgsConstructor;
 public class CurrentSessionAttendeeAttendance {
     private List<AttendeeRedisData> attendees;
     private List<AttendeeRedisData> absentees;
+    private List<AttendeeRedisData> lateness;
 
     @Builder
-    public CurrentSessionAttendeeAttendance(List<AttendeeRedisData> attendees, List<AttendeeRedisData> absentees) {
+    public CurrentSessionAttendeeAttendance(List<AttendeeRedisData> attendees, List<AttendeeRedisData> absentees, List<AttendeeRedisData> lateness) {
         this.attendees = attendees;
         this.absentees = absentees;
+        this.lateness = lateness;
     }
 }

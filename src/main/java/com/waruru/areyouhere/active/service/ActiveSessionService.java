@@ -4,6 +4,10 @@ public interface ActiveSessionService {
 
     public void deactivate(String authCode, Long sessionId, Long courseId);
 
+    public void setLateStatus(String authCode, Long sessionId, Long courseId);
+
+    public void setAttendStatus(String authCode, Long sessionId, Long courseId);
+
     public String activate(Long managerId, Long sessionId, Long courseId);
 
 }

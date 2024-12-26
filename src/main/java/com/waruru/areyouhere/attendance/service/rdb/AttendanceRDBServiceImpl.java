@@ -1,28 +1,21 @@
 package com.waruru.areyouhere.attendance.service.rdb;
 
 
+import com.waruru.areyouhere.active.domain.entity.AttendInfo;
 import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.attendance.domain.entity.Attendance;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceBatchRepository;
 import com.waruru.areyouhere.attendance.domain.repository.AttendanceRepository;
 import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.attendance.dto.UpdateAttendance;
-import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
-import com.waruru.areyouhere.attendee.domain.entity.Attendee;
-import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
-import com.waruru.areyouhere.manager.exception.UnAuthenticatedException;
-import com.waruru.areyouhere.session.domain.entity.Session;
-import com.waruru.areyouhere.session.domain.repository.SessionRepository;
 import com.waruru.areyouhere.session.exception.SessionIdNotFoundException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,10 +34,10 @@ public class AttendanceRDBServiceImpl implements AttendanceRDBService {
         LocalDateTime absentTime = LocalDateTime.now();
         List<AttendeeRedisData> attendees = new LinkedList<>();
         List<AttendeeRedisData> absentees = new LinkedList<>();
-        Map<Long, LocalDateTime> attendanceTime = currentSessionAttendanceInfo.getAttendanceTime();
+        Map<Long, AttendInfo> attendanceInfo = currentSessionAttendanceInfo.getAttendInfos();
         currentSessionAttendanceInfo.getAttendees()
                 .forEach(att -> {
-                    if (attendanceTime.containsKey(att.getId())) {
+                    if (attendanceInfo.containsKey(att.getId())) {
                         attendees.add(att);
                     } else {
                         absentees.add(att);
@@ -52,7 +45,7 @@ public class AttendanceRDBServiceImpl implements AttendanceRDBService {
                 });
 
 
-        attendanceBatchRepository.insertAttendBatch(attendees, true, sessionId, attendanceTime);
+        attendanceBatchRepository.insertAttendBatch(attendees, true, sessionId, attendanceInfo);
         attendanceBatchRepository.insertAbsentBatch(absentees, false, sessionId, absentTime);
     }
 
@@ -63,7 +56,7 @@ public class AttendanceRDBServiceImpl implements AttendanceRDBService {
                 .map(updateAttendance -> {
                     Attendance attendance = attendanceRepository.findById(updateAttendance.getAttendanceId())
                             .orElseThrow(SessionIdNotFoundException::new);
-                    attendance.setAttended(updateAttendance.isAttendanceStatus());
+                    attendance.setStatus(updateAttendance.getAttendanceStatus());
 
                     return attendance;
                 })

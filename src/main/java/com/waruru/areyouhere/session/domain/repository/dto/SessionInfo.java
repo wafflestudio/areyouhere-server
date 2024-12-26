@@ -9,7 +9,7 @@ public interface SessionInfo {
     LocalDateTime getdate();
     String getname();
     int getattendee();
-
+    int getlate();
     int getabsentee();
 
 }

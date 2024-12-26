@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.attendee.service.query;
 
+import com.waruru.areyouhere.attendance.domain.entity.AttendanceType;
 import com.waruru.areyouhere.attendee.domain.entity.Attendee;
 import com.waruru.areyouhere.attendee.domain.repository.AttendeeRepository;
 import com.waruru.areyouhere.attendee.domain.repository.dto.AttendeeAttendDetailInfo;
@@ -37,14 +38,19 @@ public class AttendeeQueryServiceImpl implements AttendeeQueryService{
         List<AttendeeAttendDetailInfo> attendanceInfoByAttendeeId = attendeeRepository.findAttendanceInfoByAttendeeId(attendeeId);
 
         long attendance = attendanceInfoByAttendeeId.stream()
-                .filter(AttendeeAttendDetailInfo::getAttendanceStatus)
+                .filter(it -> it.getAttendanceStatus() == AttendanceType.ATTENDED)
                 .count();
 
-        long absence = attendanceInfoByAttendeeId.size() - attendance;
+        long late = attendanceInfoByAttendeeId.stream()
+                .filter(it -> it.getAttendanceStatus() == AttendanceType.LATE)
+                .count();
+
+        long absence = attendanceInfoByAttendeeId.size() - attendance - late;
 
         return AttendeeDetailDto.builder()
                 .attendee(attendee)
                 .attendance((int) attendance)
+                .late((int) late)
                 .absence((int) absence)
                 .attendanceInfo(attendanceInfoByAttendeeId)
                 .build();
@@ -130,6 +136,7 @@ public class AttendeeQueryServiceImpl implements AttendeeQueryService{
                 .id(classAttendancesInfo.getAttendeeId())
                 .name(classAttendancesInfo.getName())
                 .note(classAttendancesInfo.getNote())
+                .late(classAttendancesInfo.getLate())
                 .attendance(classAttendancesInfo.getAttendance())
                 .absence(classAttendancesInfo.getAbsence())
                 .build()

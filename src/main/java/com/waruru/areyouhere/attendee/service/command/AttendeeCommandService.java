@@ -6,6 +6,5 @@ import java.util.List;
 public interface AttendeeCommandService {
     public void createAll(Long managerId, Long courseId, List<AttendeeInfo> newAttendees);
     public void deleteAll(Long managerId, List<Long> deleteAttendees);
-
     public void updateAll(Long managerId, Long courseId, List<AttendeeInfo> updatedAttendees);
 }

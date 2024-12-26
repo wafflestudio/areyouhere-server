@@ -1,5 +1,6 @@
 package com.waruru.areyouhere.active.service;
 
+import com.waruru.areyouhere.attendance.domain.entity.AttendanceType;
 import com.waruru.areyouhere.attendance.dto.AttendeeRedisData;
 import com.waruru.areyouhere.active.domain.entity.CurrentSessionAttendanceInfo;
 import com.waruru.areyouhere.attendance.service.dto.CurrentSessionAttendeeAttendance;
@@ -29,6 +30,8 @@ public interface ActiveAttendanceService {
                                                            CurrentSessionAttendanceInfo currentSessionAttendanceInfoData);
 
     public CurrentSessionAttendanceInfo getSessionAttendanceInfoOrThrow(String authCode);
+
+    public void setStatus(String authCode, AttendanceType status);
 
     public String findAuthCodeBySessionId(Long sessionId);
 
