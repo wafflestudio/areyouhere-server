@@ -45,6 +45,8 @@ jobs:
           spring.mail.from: ${{ secrets.DEV_MAIL_SENDER }}
           slack.webhook.url: ${{ secrets.SLACK_WEBHOOK_URL }}
           cookie.encode: ${{ secrets.SECRET_KEY }}
+          spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
+          spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
