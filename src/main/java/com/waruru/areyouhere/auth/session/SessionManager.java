@@ -18,7 +18,7 @@ public class SessionManager {
 
     private final HttpSession httpSession;
 
-    private static final String LOG_ID = "logId";
+    public static final String LOG_ID = "logId";
 
     public void createSession(Long managerId){
         LoginUser loginUser = new LoginUser(managerId);
